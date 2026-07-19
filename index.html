@@ -3,439 +3,122 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>極簡黑白 - 全螢幕個人日曆</title>
-  <!-- 引入 Font Awesome 圖標 -->
+  <title>極簡黑白 - 全螢幕個人日曆 (Firebase版)</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- 引入 Google 字體 (Inter) -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    /* --- CSS 變數：黑白灰極簡 + 潮流點綴色 --- */
     :root {
-      --bg-light: #fafafa;         /* 頂部個人檔案區背景 */
-      --bg-white: #ffffff;         /* 底部日曆區背景 */
-      --text-main: #18181b;        /* 深黑文字 */
-      --text-muted: #71717a;       /* 中灰文字 */
-      --border-color: #e4e4e7;     /* 淺灰邊框 */
-      /* 潮流點綴色：克萊因藍 */
+      --bg-light: #fafafa;         
+      --bg-white: #ffffff;         
+      --text-main: #18181b;        
+      --text-muted: #71717a;       
+      --border-color: #e4e4e7;     
       --accent-color: #4338ca;     
       --accent-hover: #3730a3;
       --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: var(--font-family);
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); }
+    body { background-color: var(--bg-white); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
 
-    body {
-      background-color: var(--bg-white);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+    /* 頂部導覽列 */
+    .top-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 5vw; background-color: var(--bg-light); }
+    .top-header .brand { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase; }
+    .top-header .brand span { color: var(--accent-color); }
+    .header-actions i { font-size: 20px; margin-left: 24px; color: var(--text-main); cursor: pointer; transition: color 0.2s; }
+    .header-actions i:hover { color: var(--accent-color); }
 
-    /* 頂部導覽列 (全寬) */
-    .top-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 5vw;
-      background-color: var(--bg-light);
-    }
-
-    .top-header .brand {
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      text-transform: uppercase;
-    }
-
-    .top-header .brand span {
-      color: var(--accent-color);
-    }
-
-    .header-actions i {
-      font-size: 20px;
-      margin-left: 24px;
-      color: var(--text-main);
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-
-    .header-actions i:hover {
-      color: var(--accent-color);
-    }
-
-    /* --- 上半部：個人檔案區 (置中排版) --- */
-    .profile-section {
-      background-color: var(--bg-light);
-      padding: 40px 20px 60px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    /* 極簡雙層實線圓框 */
-    .avatar-wrapper {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      border: 2px solid var(--text-main);
-      padding: 5px;
-      margin-bottom: 24px;
-      position: relative;
-    }
-
-    /* 潮流感的小標籤 */
-    .avatar-wrapper::after {
-      content: 'ONLINE';
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--text-main);
-      color: white;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 12px;
-      letter-spacing: 1px;
-    }
-
-    .avatar {
-      width: 100%;
-      height: 100%;
-      background-color: var(--border-color);
-      border-radius: 50%;
-      background-image: url('https://api.dicebear.com/7.x/notionists/svg?seed=Design');
-      background-size: cover;
-    }
-
-    .profile-info {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .profile-info h1 {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      margin-bottom: 6px;
-    }
-
-    .profile-info p {
-      color: var(--text-muted);
-      font-size: 15px;
-    }
-
-    /* 名字修改輸入框：橫向排列 */
-    .name-input-group {
-      display: flex;
-      gap: 10px;
-      width: 100%;
-      max-width: 380px;
-    }
-
-    .name-input-group input {
-      flex-grow: 1;
-      padding: 12px 20px;
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      font-size: 14px;
-      outline: none;
-      background: var(--bg-white);
-      transition: all 0.2s;
-    }
-
-    .name-input-group input:focus {
-      border-color: var(--text-main);
-      box-shadow: 0 0 0 3px rgba(24, 24, 27, 0.05);
-    }
-
-    .name-input-group button {
-      background-color: var(--text-main);
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      padding: 0 24px;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background-color 0.2s;
-      white-space: nowrap;
-    }
-
-    .name-input-group button:hover {
-      background-color: var(--accent-color);
-    }
-
-    /* --- 下半部：日曆區塊 (寬度限制置中) --- */
-    .calendar-wrapper {
-      flex-grow: 1;
-      background-color: var(--bg-white);
-      padding: 60px 5vw 100px;
-      display: flex;
-      justify-content: center;
-    }
-
-    .calendar-container {
-      width: 100%;
-      max-width: 900px; /* 大螢幕最大寬度，確保閱讀舒適 */
-    }
-
-    .calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 40px;
-    }
-
-    .calendar-header h2 {
-      font-size: 32px;
-      font-weight: 800;
-      letter-spacing: -1px;
-    }
-
-    .nav-controls {
-      display: flex;
-      gap: 12px;
-    }
-
-    .nav-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 1px solid var(--border-color);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: var(--text-main);
-      background: var(--bg-white);
-    }
-
-    .nav-btn:hover {
-      border-color: var(--text-main);
-      background: var(--text-main);
-      color: white;
-    }
-
-    .weekdays {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      text-align: center;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-    }
-
-    .days-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 16px 12px; /* 增加大螢幕間距 */
-    }
-
-    .day-cell {
-      aspect-ratio: 1 / 1;
-      max-height: 100px; /* 避免超大螢幕變得過高 */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 18px;
-      font-weight: 500;
-      border-radius: 16px;
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-    }
-
-    .day-cell:not(.empty) {
-      background: transparent;
-      border: 1px solid transparent;
-    }
-
-    .day-cell:not(.empty):hover {
-      background: var(--bg-light);
-      transform: translateY(-3px);
-    }
-
-    /* 今天日期的特殊樣式：黑底白字 + 底部潮流色小圓點 */
-    .day-cell.today {
-      background: var(--text-main);
-      color: white;
-      font-weight: 700;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .day-cell.today::after {
-      content: '';
-      position: absolute;
-      bottom: 12px;
-      width: 6px;
-      height: 6px;
-      background-color: var(--accent-color);
-      border-radius: 50%;
-    }
-
-    .day-cell.today:hover {
-      background: var(--accent-color);
-      color: white;
-      transform: translateY(-3px);
-    }
+    /* 個人檔案區 */
+    .profile-section { background-color: var(--bg-light); padding: 40px 20px 40px; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid var(--border-color); }
+    .avatar-wrapper { width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--text-main); padding: 4px; margin-bottom: 16px; position: relative; }
+    .avatar-wrapper::after { content: 'ONLINE'; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); background: var(--text-main); color: white; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 12px; letter-spacing: 1px; }
+    .avatar { width: 100%; height: 100%; background-color: var(--border-color); border-radius: 50%; background-image: url('https://api.dicebear.com/7.x/notionists/svg?seed=Design'); background-size: cover; }
+    .profile-info { text-align: center; margin-bottom: 24px; }
+    .profile-info h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; }
+    .profile-info p { color: var(--accent-color); font-size: 14px; font-weight: 600; letter-spacing: 1px; }
+    .profile-info span { color: var(--text-muted); font-size: 12px; }
     
-    .day-cell.today:hover::after {
-      background-color: white;
-    }
+    .logout-btn { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 16px; font-size: 12px; cursor: pointer; transition: all 0.2s; margin-top: 12px;}
+    .logout-btn:hover { background: var(--text-main); color: white; border-color: var(--text-main); }
 
-    /* --- 彈跳視窗 Modal (極簡風格) --- */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(24, 24, 27, 0.5);
-      backdrop-filter: blur(5px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s, visibility 0.3s;
-      z-index: 100;
-    }
+    /* 日曆區塊 */
+    .calendar-wrapper { flex-grow: 1; background-color: var(--bg-white); padding: 40px 5vw 80px; display: flex; justify-content: center; }
+    .calendar-container { width: 100%; max-width: 900px; }
+    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+    .calendar-header h2 { font-size: 28px; font-weight: 800; letter-spacing: -1px; }
+    .nav-controls { display: flex; gap: 12px; }
+    .nav-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s; color: var(--text-main); background: var(--bg-white); }
+    .nav-btn:hover { border-color: var(--text-main); background: var(--text-main); color: white; }
+    .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 20px; }
+    .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 16px 12px; }
+    .day-cell { aspect-ratio: 1 / 1; max-height: 80px; display: flex; justify-content: center; align-items: center; font-size: 16px; font-weight: 500; border-radius: 16px; cursor: pointer; transition: all 0.2s; position: relative; }
+    .day-cell:not(.empty):hover { background: var(--bg-light); transform: translateY(-3px); }
+    .day-cell.today { background: var(--text-main); color: white; font-weight: 700; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+    .day-cell.today::after { content: ''; position: absolute; bottom: 8px; width: 6px; height: 6px; background-color: var(--accent-color); border-radius: 50%; }
+    .day-cell.today:hover { background: var(--accent-color); color: white; transform: translateY(-3px); }
+    .day-cell.today:hover::after { background-color: white; }
 
-    .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
+    /* 共用 Modal 樣式 */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; z-index: 100; }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .modal-content { background: var(--bg-white); width: 90%; max-width: 400px; border-radius: 24px; padding: 40px; transform: translateY(20px); transition: transform 0.3s; box-shadow: 0 20px 40px rgba(0,0,0,0.1); position: relative; border: 1px solid var(--border-color); }
+    .modal-overlay.active .modal-content { transform: translateY(0); }
+    .modal-header { font-weight: 800; font-size: 24px; margin-bottom: 8px; color: var(--text-main); }
+    .modal-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+    .modal-input { width: 100%; border: none; border-bottom: 2px solid var(--border-color); padding: 12px 0; font-size: 15px; outline: none; margin-bottom: 24px; background: transparent; transition: border-color 0.3s; }
+    .modal-input:focus { border-bottom-color: var(--accent-color); }
+    .modal-btn { background: var(--text-main); color: white; border: none; border-radius: 12px; padding: 16px; font-weight: 600; font-size: 15px; cursor: pointer; width: 100%; transition: background-color 0.2s; }
+    .modal-btn:hover { background: var(--accent-color); }
+    .modal-close { position: absolute; top: 24px; right: 24px; width: 32px; height: 32px; border-radius: 50%; background: var(--bg-light); display: flex; justify-content: center; align-items: center; font-size: 14px; color: var(--text-muted); cursor: pointer; }
+    .modal-close:hover { background: var(--text-main); color: white; }
 
-    .modal-content {
-      background: var(--bg-white);
-      width: 90%;
-      max-width: 440px;
-      border-radius: 24px;
-      padding: 40px;
-      transform: translateY(20px);
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-      position: relative;
-    }
-
-    .modal-overlay.active .modal-content {
-      transform: translateY(0);
-    }
-
-    .modal-header {
-      font-weight: 800;
-      font-size: 26px;
-      margin-bottom: 8px;
-      color: var(--text-main);
-    }
-
-    .modal-subtitle {
-      font-size: 15px;
-      color: var(--text-muted);
-      margin-bottom: 32px;
-    }
-
-    .modal-input {
-      width: 100%;
-      border: none;
-      border-bottom: 2px solid var(--border-color);
-      padding: 12px 0;
-      font-size: 16px;
-      outline: none;
-      margin-bottom: 40px;
-      background: transparent;
-      transition: border-color 0.3s;
-    }
-
-    .modal-input:focus {
-      border-bottom-color: var(--accent-color);
-    }
-
-    .modal-btn {
-      background: var(--text-main);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 16px;
-      font-weight: 600;
-      font-size: 15px;
-      cursor: pointer;
-      width: 100%;
-      transition: background-color 0.2s;
-    }
+    /* 登入/註冊專屬覆蓋層 (強制滿版背景) */
+    #auth-overlay { background: var(--bg-light); z-index: 999; }
+    .auth-switch { text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-muted); }
+    .auth-switch span { color: var(--accent-color); font-weight: 600; cursor: pointer; }
+    #register-fields { display: none; } /* 預設隱藏註冊欄位 */
     
-    .modal-btn:hover {
-      background: var(--accent-color);
-    }
+    .loading-text { font-size: 12px; color: var(--accent-color); text-align: center; margin-top: 10px; display: none; }
 
-    .modal-close {
-      position: absolute;
-      top: 24px;
-      right: 24px;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: var(--bg-light);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 14px;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    
-    .modal-close:hover {
-      background: var(--text-main);
-      color: white;
-    }
-
-    /* --- 響應式設計 (手機版) --- */
     @media (max-width: 600px) {
-      .profile-section {
-        padding: 32px 20px 40px;
-      }
-      
-      .name-input-group {
-        flex-direction: column;
-      }
-      
-      .name-input-group button {
-        padding: 12px;
-      }
-      
-      .calendar-wrapper {
-        padding: 40px 20px 80px;
-      }
-
-      .calendar-header h2 {
-        font-size: 24px;
-      }
-
-      .day-cell {
-        font-size: 15px;
-      }
+      .calendar-wrapper { padding: 30px 20px 60px; }
+      .calendar-header h2 { font-size: 24px; }
+      .day-cell { font-size: 14px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- 登入 / 註冊系統 Modal (初始顯示) -->
+  <div id="auth-overlay" class="modal-overlay active">
+    <div class="modal-content">
+      <div class="modal-header" id="auth-title">登入帳號</div>
+      <div class="modal-subtitle" id="auth-subtitle">歡迎回來，請登入您的專屬日曆。</div>
+      
+      <!-- 共用欄位 -->
+      <input type="text" id="auth-username" class="modal-input" placeholder="用戶名稱 (例如: Alex)" autocomplete="off">
+      <input type="password" id="auth-password" class="modal-input" placeholder="密碼">
+      
+      <!-- 註冊專屬欄位 -->
+      <div id="register-fields">
+        <input type="text" id="auth-birthday" class="modal-input" placeholder="生日月日 (例如: 1015)" maxlength="4">
+        <input type="text" id="auth-referral" class="modal-input" placeholder="推薦碼 (選填，如: 001556484)">
+      </div>
+      
+      <button class="modal-btn" id="auth-submit-btn">確認登入</button>
+      <div class="loading-text" id="auth-loading">處理中，請稍候...</div>
+      
+      <div class="auth-switch">
+        <span id="auth-toggle-msg">還沒有帳號？ <span>立即註冊</span></span>
+      </div>
+    </div>
+  </div>
 
   <!-- 頂部 Header -->
   <div class="top-header">
     <div class="brand">My<span>Log</span></div>
     <div class="header-actions">
       <i class="fa-solid fa-magnifying-glass"></i>
-      <i class="fa-regular fa-bell"></i>
     </div>
   </div>
 
@@ -445,19 +128,16 @@
       <div class="avatar"></div>
     </div>
     <div class="profile-info">
-      <h1 id="display-name">設計師小明</h1>
-      <p>@creative_mind</p>
-    </div>
-    <div class="name-input-group">
-      <input type="text" id="name-input" placeholder="輸入新的顯示名稱..." autocomplete="off">
-      <button id="update-name-btn">更新檔案</button>
+      <h1 id="display-name">使用者名稱</h1>
+      <p id="display-exclusive-code">000-0000-ABC</p>
+      <span>專屬用戶碼</span><br>
+      <button class="logout-btn" id="logout-btn">登出</button>
     </div>
   </div>
 
   <!-- 下半部：日曆網格區 -->
   <div class="calendar-wrapper">
     <div class="calendar-container">
-      
       <div class="calendar-header">
         <h2 id="month-year-display">2023年 10月</h2>
         <div class="nav-controls">
@@ -465,91 +145,242 @@
           <div class="nav-btn" id="next-month"><i class="fa-solid fa-arrow-right"></i></div>
         </div>
       </div>
-      
       <div class="weekdays">
         <div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div>
       </div>
-
       <div class="days-grid" id="days-grid">
         <!-- JS 動態生成日期 -->
       </div>
-      
     </div>
   </div>
 
-  <!-- 點擊日期的 Modal -->
-  <div class="modal-overlay" id="date-modal">
-    <div class="modal-content">
-      <div class="modal-close" id="close-modal"><i class="fa-solid fa-xmark"></i></div>
-      <div class="modal-header" id="modal-date-title">10月15日</div>
-      <div class="modal-subtitle">這一天發生了什麼特別的事？</div>
-      <input type="text" class="modal-input" placeholder="寫下你的紀錄...">
-      <button class="modal-btn" id="save-modal-btn">發佈紀錄</button>
-    </div>
-  </div>
+  <!-- Firebase 與 應用邏輯 (ES Module) -->
+  <script type="module">
+    // 引入 Firebase 模組
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-  <script>
-    // --- 狀態變數 ---
+    // 使用者提供的 Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAP4TENSlysfRTXx-a-Nk5gPM5f8UuT1Gs",
+      authDomain: "calender-b46cb.firebaseapp.com",
+      databaseURL: "https://calender-b46cb-default-rtdb.firebaseio.com",
+      projectId: "calender-b46cb",
+      storageBucket: "calender-b46cb.firebasestorage.app",
+      messagingSenderId: "337384899854",
+      appId: "1:337384899854:web:469c3a7e2d440cf98f035f",
+      measurementId: "G-4C3BNE9BL5"
+    };
+
+    // 初始化 Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    // --- DOM 元素選取 (Auth) ---
+    const authOverlay = document.getElementById('auth-overlay');
+    const authTitle = document.getElementById('auth-title');
+    const authSubtitle = document.getElementById('auth-subtitle');
+    const authUsername = document.getElementById('auth-username');
+    const authPassword = document.getElementById('auth-password');
+    const authBirthday = document.getElementById('auth-birthday');
+    const authReferral = document.getElementById('auth-referral');
+    const registerFields = document.getElementById('register-fields');
+    const authSubmitBtn = document.getElementById('auth-submit-btn');
+    const authToggleMsg = document.getElementById('auth-toggle-msg');
+    const authLoading = document.getElementById('auth-loading');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    // UI 顯示狀態綁定
+    const displayName = document.getElementById('display-name');
+    const displayExclusiveCode = document.getElementById('display-exclusive-code');
+
+    // --- 登入與註冊狀態切換 ---
+    let isLoginMode = true;
+
+    authToggleMsg.addEventListener('click', () => {
+      isLoginMode = !isLoginMode;
+      authUsername.value = '';
+      authPassword.value = '';
+      if (isLoginMode) {
+        authTitle.textContent = '登入帳號';
+        authSubtitle.textContent = '歡迎回來，請登入您的專屬日曆。';
+        registerFields.style.display = 'none';
+        authSubmitBtn.textContent = '確認登入';
+        authToggleMsg.innerHTML = '還沒有帳號？ <span>立即註冊</span>';
+      } else {
+        authTitle.textContent = '註冊帳號';
+        authSubtitle.textContent = '建立專屬日曆與個人辨識碼。';
+        registerFields.style.display = 'block';
+        authSubmitBtn.textContent = '註冊並建立專屬碼';
+        authToggleMsg.innerHTML = '已經有帳號了？ <span>直接登入</span>';
+      }
+    });
+
+    // --- 隨機產生 3 位大寫字母 ---
+    function generateRandomLetters(length = 3) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      let result = '';
+      for (let i = 0; i < length; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+      return result;
+    }
+
+    // --- 送出表單 (登入/註冊) ---
+    authSubmitBtn.addEventListener('click', async () => {
+      const username = authUsername.value.trim();
+      const password = authPassword.value.trim();
+      // 在 Firebase Auth 中，我們將 Username 轉換成內部虛擬 Email 進行驗證
+      const pseudoEmail = `${username}@calender.local`;
+
+      if (!username || !password) {
+        alert("請填寫用戶名稱與密碼！");
+        return;
+      }
+
+      authSubmitBtn.style.display = 'none';
+      authLoading.style.display = 'block';
+
+      if (isLoginMode) {
+        // 執行登入
+        try {
+          await signInWithEmailAndPassword(auth, pseudoEmail, password);
+          // 登入成功後 AuthListener 會接手隱藏 Overlay
+        } catch (error) {
+          alert("登入失敗，請確認帳號密碼是否正確。");
+          console.error(error);
+          authSubmitBtn.style.display = 'block';
+          authLoading.style.display = 'none';
+        }
+      } else {
+        // 執行註冊
+        const birthday = authBirthday.value.trim();
+        const referral = authReferral.value.trim();
+        
+        if (!birthday || birthday.length !== 4) {
+          alert("請輸入四碼的生日月日 (例如: 1015)！");
+          authSubmitBtn.style.display = 'block';
+          authLoading.style.display = 'none';
+          return;
+        }
+
+        try {
+          // 1. 取得目前總註冊人數，以產生 001, 002 的編號
+          const countRef = ref(db, 'metadata/userCount');
+          const countSnap = await get(countRef);
+          let currentCount = 1;
+          if (countSnap.exists()) {
+            currentCount = countSnap.val() + 1;
+          }
+
+          // 2. 組合專屬碼: 人數(3碼) - 生日(4碼) - 隨機字母(3碼)
+          const countStr = String(currentCount).padStart(3, '0');
+          const letters = generateRandomLetters(3);
+          const exclusiveCode = `${countStr}-${birthday}-${letters}`;
+
+          // 3. 建立 Firebase Auth 帳號
+          const userCredential = await createUserWithEmailAndPassword(auth, pseudoEmail, password);
+          const user = userCredential.user;
+
+          // 4. 將詳細資料寫入 Realtime Database
+          await set(ref(db, 'users/' + user.uid), {
+            username: username,
+            birthday: birthday,
+            referralCode: referral,
+            exclusiveCode: exclusiveCode,
+            createdAt: new Date().toISOString()
+          });
+
+          // 5. 更新總註冊人數
+          await set(countRef, currentCount);
+          
+          alert(`註冊成功！您的專屬碼為：${exclusiveCode}`);
+          // 註冊成功後 AuthListener 會接手隱藏 Overlay
+
+        } catch (error) {
+          alert("註冊失敗：" + error.message);
+          console.error(error);
+          authSubmitBtn.style.display = 'block';
+          authLoading.style.display = 'none';
+        }
+      }
+    });
+
+    // --- 監聽登入狀態改變 ---
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // 已登入
+        authOverlay.classList.remove('active');
+        
+        // 抓取 Realtime Database 中的用戶資料
+        const dbRef = ref(db);
+        try {
+          const snapshot = await get(child(dbRef, `users/${user.uid}`));
+          if (snapshot.exists()) {
+            const userData = snapshot.val();
+            displayName.textContent = userData.username;
+            displayExclusiveCode.textContent = userData.exclusiveCode;
+          }
+        } catch (error) {
+          console.error("無法取得使用者資料", error);
+        }
+      } else {
+        // 未登入，顯示登入面板
+        authOverlay.classList.add('active');
+        authSubmitBtn.style.display = 'block';
+        authLoading.style.display = 'none';
+      }
+    });
+
+    // --- 登出 ---
+    logoutBtn.addEventListener('click', () => {
+      signOut(auth).then(() => {
+        // 登出成功
+      }).catch((error) => {
+        console.error(error);
+      });
+    });
+
+    // ==========================================
+    // --- 原生日曆渲染邏輯 (不變) ---
+    // ==========================================
     let currentDate = new Date();
     let today = new Date();
     
-    // --- DOM 元素選取 ---
     const monthYearDisplay = document.getElementById('month-year-display');
     const daysGrid = document.getElementById('days-grid');
     const prevMonthBtn = document.getElementById('prev-month');
     const nextMonthBtn = document.getElementById('next-month');
-    
-    const nameInput = document.getElementById('name-input');
-    const updateNameBtn = document.getElementById('update-name-btn');
-    const displayName = document.getElementById('display-name');
 
-    const modalOverlay = document.getElementById('date-modal');
-    const closeModalBtn = document.getElementById('close-modal');
-    const modalDateTitle = document.getElementById('modal-date-title');
-    const saveModalBtn = document.getElementById('save-modal-btn');
-
-    // --- 日曆渲染邏輯 ---
     function renderCalendar() {
       daysGrid.innerHTML = ''; 
-      
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth(); 
       
-      // 設定標題
       monthYearDisplay.textContent = `${year}年 ${month + 1}月`;
       
       const firstDayOfMonth = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       
-      // 填補空白格子
       for (let i = 0; i < firstDayOfMonth; i++) {
         const emptyCell = document.createElement('div');
         emptyCell.classList.add('day-cell', 'empty');
         daysGrid.appendChild(emptyCell);
       }
       
-      // 填寫當月日期
       for (let day = 1; day <= daysInMonth; day++) {
         const dayCell = document.createElement('div');
         dayCell.classList.add('day-cell');
         dayCell.textContent = day;
         
-        // 判斷今天
         if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
           dayCell.classList.add('today');
         }
-        
-        // 點擊事件
-        dayCell.addEventListener('click', () => {
-          openModal(`${month + 1}月${day}日`);
-        });
         
         daysGrid.appendChild(dayCell);
       }
     }
 
-    // --- 事件綁定 ---
-    
     prevMonthBtn.addEventListener('click', () => {
       currentDate.setMonth(currentDate.getMonth() - 1);
       renderCalendar();
@@ -560,64 +391,6 @@
       renderCalendar();
     });
 
-    // 更新名字動畫邏輯
-    updateNameBtn.addEventListener('click', () => {
-      const newName = nameInput.value.trim();
-      if (newName !== '') {
-        displayName.style.opacity = 0;
-        setTimeout(() => {
-            displayName.textContent = newName;
-            displayName.style.opacity = 1;
-            displayName.style.transition = "opacity 0.3s ease";
-        }, 200);
-        nameInput.value = ''; 
-      }
-    });
-
-    nameInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        updateNameBtn.click();
-      }
-    });
-
-    // Modal 邏輯
-    function openModal(dateString) {
-      modalDateTitle.textContent = dateString;
-      const input = document.querySelector('.modal-input');
-      input.value = ''; // 清空上次輸入
-      modalOverlay.classList.add('active');
-    }
-
-    function closeModal() {
-      modalOverlay.classList.remove('active');
-    }
-
-    closeModalBtn.addEventListener('click', closeModal);
-    
-    modalOverlay.addEventListener('click', (e) => {
-      if (e.target === modalOverlay) {
-        closeModal();
-      }
-    });
-
-    saveModalBtn.addEventListener('click', () => {
-      const input = document.querySelector('.modal-input');
-      if (input.value.trim() !== '') {
-        const originalText = saveModalBtn.textContent;
-        saveModalBtn.textContent = '已儲存 ✓';
-        saveModalBtn.style.background = 'var(--accent-color)'; 
-        
-        setTimeout(() => {
-          saveModalBtn.textContent = originalText;
-          saveModalBtn.style.background = '';
-          closeModal();
-        }, 800);
-      } else {
-        input.focus();
-      }
-    });
-
-    // --- 初始化 ---
     renderCalendar();
   </script>
 </body>
