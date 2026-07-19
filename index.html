@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>極簡黑白 - 全螢幕個人日曆</title>
+  <!-- 引入 Font Awesome 圖標 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- 引入 Google 字體 (Inter) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* --- CSS 變數：黑白灰極簡 + 潮流點綴色 --- */
+    :root {
+      --bg-light: #fafafa;         /* 頂部個人檔案區背景 */
+      --bg-white: #ffffff;         /* 底部日曆區背景 */
+      --text-main: #18181b;        /* 深黑文字 */
+      --text-muted: #71717a;       /* 中灰文字 */
+      --border-color: #e4e4e7;     /* 淺灰邊框 */
+      /* 潮流點綴色：克萊因藍 */
+      --accent-color: #4338ca;     
+      --accent-hover: #3730a3;
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-family);
+    }
+
+    body {
+      background-color: var(--bg-white);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 頂部導覽列 (全寬) */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 5vw;
+      background-color: var(--bg-light);
+    }
+
+    .top-header .brand {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+    }
+
+    .top-header .brand span {
+      color: var(--accent-color);
+    }
+
+    .header-actions i {
+      font-size: 20px;
+      margin-left: 24px;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .header-actions i:hover {
+      color: var(--accent-color);
+    }
+
+    /* --- 上半部：個人檔案區 (置中排版) --- */
+    .profile-section {
+      background-color: var(--bg-light);
+      padding: 40px 20px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    /* 極簡雙層實線圓框 */
+    .avatar-wrapper {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 2px solid var(--text-main);
+      padding: 5px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    /* 潮流感的小標籤 */
+    .avatar-wrapper::after {
+      content: 'ONLINE';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text-main);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      letter-spacing: 1px;
+    }
+
+    .avatar {
+      width: 100%;
+      height: 100%;
+      background-color: var(--border-color);
+      border-radius: 50%;
+      background-image: url('https://api.dicebear.com/7.x/notionists/svg?seed=Design');
+      background-size: cover;
+    }
+
+    .profile-info {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .profile-info h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .profile-info p {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    /* 名字修改輸入框：橫向排列 */
+    .name-input-group {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .name-input-group input {
+      flex-grow: 1;
+      padding: 12px 20px;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 14px;
+      outline: none;
+      background: var(--bg-white);
+      transition: all 0.2s;
+    }
+
+    .name-input-group input:focus {
+      border-color: var(--text-main);
+      box-shadow: 0 0 0 3px rgba(24, 24, 27, 0.05);
+    }
+
+    .name-input-group button {
+      background-color: var(--text-main);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 0 24px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s;
+      white-space: nowrap;
+    }
+
+    .name-input-group button:hover {
+      background-color: var(--accent-color);
+    }
+
+    /* --- 下半部：日曆區塊 (寬度限制置中) --- */
+    .calendar-wrapper {
+      flex-grow: 1;
+      background-color: var(--bg-white);
+      padding: 60px 5vw 100px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .calendar-container {
+      width: 100%;
+      max-width: 900px; /* 大螢幕最大寬度，確保閱讀舒適 */
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+
+    .calendar-header h2 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .nav-controls {
+      display: flex;
+      gap: 12px;
+    }
+
+    .nav-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-main);
+      background: var(--bg-white);
+    }
+
+    .nav-btn:hover {
+      border-color: var(--text-main);
+      background: var(--text-main);
+      color: white;
+    }
+
+    .weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 16px 12px; /* 增加大螢幕間距 */
+    }
+
+    .day-cell {
+      aspect-ratio: 1 / 1;
+      max-height: 100px; /* 避免超大螢幕變得過高 */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      font-weight: 500;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .day-cell:not(.empty) {
+      background: transparent;
+      border: 1px solid transparent;
+    }
+
+    .day-cell:not(.empty):hover {
+      background: var(--bg-light);
+      transform: translateY(-3px);
+    }
+
+    /* 今天日期的特殊樣式：黑底白字 + 底部潮流色小圓點 */
+    .day-cell.today {
+      background: var(--text-main);
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .day-cell.today::after {
+      content: '';
+      position: absolute;
+      bottom: 12px;
+      width: 6px;
+      height: 6px;
+      background-color: var(--accent-color);
+      border-radius: 50%;
+    }
+
+    .day-cell.today:hover {
+      background: var(--accent-color);
+      color: white;
+      transform: translateY(-3px);
+    }
+    
+    .day-cell.today:hover::after {
+      background-color: white;
+    }
+
+    /* --- 彈跳視窗 Modal (極簡風格) --- */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(24, 24, 27, 0.5);
+      backdrop-filter: blur(5px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+      z-index: 100;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: var(--bg-white);
+      width: 90%;
+      max-width: 440px;
+      border-radius: 24px;
+      padding: 40px;
+      transform: translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      font-weight: 800;
+      font-size: 26px;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+
+    .modal-subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    .modal-input {
+      width: 100%;
+      border: none;
+      border-bottom: 2px solid var(--border-color);
+      padding: 12px 0;
+      font-size: 16px;
+      outline: none;
+      margin-bottom: 40px;
+      background: transparent;
+      transition: border-color 0.3s;
+    }
+
+    .modal-input:focus {
+      border-bottom-color: var(--accent-color);
+    }
+
+    .modal-btn {
+      background: var(--text-main);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.2s;
+    }
+    
+    .modal-btn:hover {
+      background: var(--accent-color);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-light);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 14px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .modal-close:hover {
+      background: var(--text-main);
+      color: white;
+    }
+
+    /* --- 響應式設計 (手機版) --- */
+    @media (max-width: 600px) {
+      .profile-section {
+        padding: 32px 20px 40px;
+      }
+      
+      .name-input-group {
+        flex-direction: column;
+      }
+      
+      .name-input-group button {
+        padding: 12px;
+      }
+      
+      .calendar-wrapper {
+        padding: 40px 20px 80px;
+      }
+
+      .calendar-header h2 {
+        font-size: 24px;
+      }
+
+      .day-cell {
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 頂部 Header -->
+  <div class="top-header">
+    <div class="brand">My<span>Log</span></div>
+    <div class="header-actions">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <i class="fa-regular fa-bell"></i>
+    </div>
+  </div>
+
+  <!-- 上半部：個人檔案區 -->
+  <div class="profile-section">
+    <div class="avatar-wrapper">
+      <div class="avatar"></div>
+    </div>
+    <div class="profile-info">
+      <h1 id="display-name">設計師小明</h1>
+      <p>@creative_mind</p>
+    </div>
+    <div class="name-input-group">
+      <input type="text" id="name-input" placeholder="輸入新的顯示名稱..." autocomplete="off">
+      <button id="update-name-btn">更新檔案</button>
+    </div>
+  </div>
+
+  <!-- 下半部：日曆網格區 -->
+  <div class="calendar-wrapper">
+    <div class="calendar-container">
+      
+      <div class="calendar-header">
+        <h2 id="month-year-display">2023年 10月</h2>
+        <div class="nav-controls">
+          <div class="nav-btn" id="prev-month"><i class="fa-solid fa-arrow-left"></i></div>
+          <div class="nav-btn" id="next-month"><i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      </div>
+      
+      <div class="weekdays">
+        <div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div>
+      </div>
+
+      <div class="days-grid" id="days-grid">
+        <!-- JS 動態生成日期 -->
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- 點擊日期的 Modal -->
+  <div class="modal-overlay" id="date-modal">
+    <div class="modal-content">
+      <div class="modal-close" id="close-modal"><i class="fa-solid fa-xmark"></i></div>
+      <div class="modal-header" id="modal-date-title">10月15日</div>
+      <div class="modal-subtitle">這一天發生了什麼特別的事？</div>
+      <input type="text" class="modal-input" placeholder="寫下你的紀錄...">
+      <button class="modal-btn" id="save-modal-btn">發佈紀錄</button>
+    </div>
+  </div>
+
+  <script>
+    // --- 狀態變數 ---
+    let currentDate = new Date();
+    let today = new Date();
+    
+    // --- DOM 元素選取 ---
+    const monthYearDisplay = document.getElementById('month-year-display');
+    const daysGrid = document.getElementById('days-grid');
+    const prevMonthBtn = document.getElementById('prev-month');
+    const nextMonthBtn = document.getElementById('next-month');
+    
+    const nameInput = document.getElementById('name-input');
+    const updateNameBtn = document.getElementById('update-name-btn');
+    const displayName = document.getElementById('display-name');
+
+    const modalOverlay = document.getElementById('date-modal');
+    const closeModalBtn = document.getElementById('close-modal');
+    const modalDateTitle = document.getElementById('modal-date-title');
+    const saveModalBtn = document.getElementById('save-modal-btn');
+
+    // --- 日曆渲染邏輯 ---
+    function renderCalendar() {
+      daysGrid.innerHTML = ''; 
+      
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth(); 
+      
+      // 設定標題
+      monthYearDisplay.textContent = `${year}年 ${month + 1}月`;
+      
+      const firstDayOfMonth = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      
+      // 填補空白格子
+      for (let i = 0; i < firstDayOfMonth; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.classList.add('day-cell', 'empty');
+        daysGrid.appendChild(emptyCell);
+      }
+      
+      // 填寫當月日期
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayCell = document.createElement('div');
+        dayCell.classList.add('day-cell');
+        dayCell.textContent = day;
+        
+        // 判斷今天
+        if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
+          dayCell.classList.add('today');
+        }
+        
+        // 點擊事件
+        dayCell.addEventListener('click', () => {
+          openModal(`${month + 1}月${day}日`);
+        });
+        
+        daysGrid.appendChild(dayCell);
+      }
+    }
+
+    // --- 事件綁定 ---
+    
+    prevMonthBtn.addEventListener('click', () => {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    });
+
+    nextMonthBtn.addEventListener('click', () => {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    });
+
+    // 更新名字動畫邏輯
+    updateNameBtn.addEventListener('click', () => {
+      const newName = nameInput.value.trim();
+      if (newName !== '') {
+        displayName.style.opacity = 0;
+        setTimeout(() => {
+            displayName.textContent = newName;
+            displayName.style.opacity = 1;
+            displayName.style.transition = "opacity 0.3s ease";
+        }, 200);
+        nameInput.value = ''; 
+      }
+    });
+
+    nameInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        updateNameBtn.click();
+      }
+    });
+
+    // Modal 邏輯
+    function openModal(dateString) {
+      modalDateTitle.textContent = dateString;
+      const input = document.querySelector('.modal-input');
+      input.value = ''; // 清空上次輸入
+      modalOverlay.classList.add('active');
+    }
+
+    function closeModal() {
+      modalOverlay.classList.remove('active');
+    }
+
+    closeModalBtn.addEventListener('click', closeModal);
+    
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        closeModal();
+      }
+    });
+
+    saveModalBtn.addEventListener('click', () => {
+      const input = document.querySelector('.modal-input');
+      if (input.value.trim() !== '') {
+        const originalText = saveModalBtn.textContent;
+        saveModalBtn.textContent = '已儲存 ✓';
+        saveModalBtn.style.background = 'var(--accent-color)'; 
+        
+        setTimeout(() => {
+          saveModalBtn.textContent = originalText;
+          saveModalBtn.style.background = '';
+          closeModal();
+        }, 800);
+      } else {
+        input.focus();
+      }
+    });
+
+    // --- 初始化 ---
+    renderCalendar();
+  </script>
+</body>
+</html>
