@@ -3,66 +3,84 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MyLog 專屬日曆系統</title>
+  <title>MyLog 專屬日曆系統 (純黑白極簡版)</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    /* 純黑白極簡風格設定 */
     :root {
-      --bg-light: #fafafa; --bg-white: #ffffff; --text-main: #18181b; 
-      --text-muted: #71717a; --border-color: #e4e4e7; --accent-color: #4338ca;
+      --bg-light: #ffffff; 
+      --bg-white: #ffffff; 
+      --text-main: #000000; 
+      --text-muted: #666666; 
+      --border-color: #000000; 
+      --accent-color: #000000;
       --font-family: 'Inter', -apple-system, sans-serif;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); }
     body { background-color: var(--bg-white); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
-    .top-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 5vw; background-color: var(--bg-light); }
-    .top-header .brand { font-size: 18px; font-weight: 800; text-transform: uppercase; }
-    .top-header .brand span { color: var(--accent-color); }
-    .profile-section { background-color: var(--bg-light); padding: 40px 20px; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid var(--border-color); }
-    .avatar-wrapper { width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--text-main); padding: 4px; margin-bottom: 16px; position: relative; }
-    .avatar-wrapper::after { content: 'ONLINE'; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); background: var(--text-main); color: white; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 12px; }
-    .avatar { width: 100%; height: 100%; background-color: var(--border-color); border-radius: 50%; background-image: url('https://api.dicebear.com/7.x/notionists/svg?seed=Design'); background-size: cover; }
+    
+    .top-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 5vw; border-bottom: 1px solid var(--border-color); }
+    .top-header .brand { font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .profile-section { padding: 40px 20px; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid var(--border-color); }
+    .avatar-wrapper { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--text-main); padding: 4px; margin-bottom: 16px; position: relative; }
+    .avatar-wrapper::after { content: 'ONLINE'; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); background: var(--text-main); color: #fff; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 12px; border: 1px solid var(--text-main); }
+    .avatar { width: 100%; height: 100%; background-color: var(--bg-white); border-radius: 50%; background-image: url('https://api.dicebear.com/7.x/notionists/svg?seed=Design'); background-size: cover; filter: grayscale(100%); }
+    
     .profile-info { text-align: center; margin-bottom: 24px; }
-    .profile-info h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
-    .profile-info p { color: var(--accent-color); font-size: 14px; font-weight: 600; }
-    .profile-info span { color: var(--text-muted); font-size: 12px; }
-    .logout-btn { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 16px; font-size: 12px; cursor: pointer; margin-top: 12px;}
-    .logout-btn:hover { background: var(--text-main); color: white; border-color: var(--text-main); }
+    .profile-info h1 { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+    .profile-info p { color: var(--text-main); font-size: 14px; font-weight: 700; letter-spacing: 1px; }
+    .profile-info span { color: var(--text-muted); font-size: 12px; text-transform: uppercase; }
+    
+    .logout-btn { background: var(--bg-white); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 0; padding: 8px 20px; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 16px; transition: 0.2s; text-transform: uppercase; }
+    .logout-btn:hover { background: var(--text-main); color: var(--bg-white); }
+    
     .calendar-wrapper { flex-grow: 1; padding: 40px 5vw 80px; display: flex; justify-content: center; }
     .calendar-container { width: 100%; max-width: 900px; }
     .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
     .calendar-header h2 { font-size: 28px; font-weight: 800; }
     .nav-controls { display: flex; gap: 12px; }
-    .nav-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); display: flex; justify-content: center; align-items: center; cursor: pointer; }
-    .nav-btn:hover { border-color: var(--text-main); background: var(--text-main); color: white; }
-    .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 20px; }
+    .nav-btn { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--border-color); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+    .nav-btn:hover { background: var(--text-main); color: var(--bg-white); }
+    
+    .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 20px; text-transform: uppercase; border-bottom: 2px solid var(--border-color); padding-bottom: 12px;}
     .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 16px 12px; }
-    .day-cell { aspect-ratio: 1 / 1; max-height: 80px; display: flex; justify-content: center; align-items: center; font-size: 16px; font-weight: 500; border-radius: 16px; cursor: pointer; position: relative; }
-    .day-cell:not(.empty):hover { background: var(--bg-light); transform: translateY(-3px); }
-    .day-cell.today { background: var(--text-main); color: white; font-weight: 700; }
-    .day-cell.today::after { content: ''; position: absolute; bottom: 8px; width: 6px; height: 6px; background-color: var(--accent-color); border-radius: 50%; }
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 100; }
+    .day-cell { aspect-ratio: 1 / 1; max-height: 80px; display: flex; justify-content: center; align-items: center; font-size: 16px; font-weight: 600; border-radius: 0; border: 1px solid transparent; cursor: pointer; position: relative; transition: 0.2s; }
+    .day-cell:not(.empty):hover { border-color: var(--text-main); }
+    .day-cell.today { background: var(--text-main); color: var(--bg-white); font-weight: 800; }
+    .day-cell.today::after { content: ''; position: absolute; bottom: 8px; width: 6px; height: 6px; background-color: var(--bg-white); border-radius: 50%; }
+    
+    /* Modal 樣式 */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 100; }
     .modal-overlay.active { opacity: 1; visibility: visible; }
-    .modal-content { background: var(--bg-white); width: 90%; max-width: 400px; border-radius: 24px; padding: 40px; transform: translateY(20px); transition: 0.3s; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 1px solid var(--border-color); }
-    .modal-overlay.active .modal-content { transform: translateY(0); }
-    .auth-main-title { font-size: 20px; font-weight: 800; color: var(--accent-color); text-transform: uppercase; margin-bottom: 24px; text-align: center; border-bottom: 1px solid var(--border-color); padding-bottom: 16px;}
+    .modal-content { background: var(--bg-white); width: 90%; max-width: 400px; border-radius: 0; padding: 40px; border: 3px solid var(--border-color); box-shadow: 12px 12px 0px rgba(0,0,0,1); }
+    
+    .auth-main-title { font-size: 22px; font-weight: 900; color: var(--text-main); text-transform: uppercase; margin-bottom: 24px; text-align: center; border-bottom: 2px solid var(--border-color); padding-bottom: 16px; letter-spacing: 2px;}
     .modal-header { font-weight: 800; font-size: 24px; margin-bottom: 8px; }
-    .modal-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
-    .modal-input { width: 100%; border: none; border-bottom: 2px solid var(--border-color); padding: 12px 0; font-size: 15px; outline: none; margin-bottom: 24px; background: transparent; transition: 0.3s; }
-    .modal-input:focus { border-bottom-color: var(--accent-color); }
-    .modal-btn { background: var(--text-main); color: white; border: none; border-radius: 12px; padding: 14px; font-weight: 600; font-size: 15px; cursor: pointer; width: 100%; transition: 0.2s; margin-bottom: 12px; display: flex; justify-content: center; align-items: center; gap: 8px; }
-    .modal-btn:hover { background: var(--accent-color); }
-    .google-btn { background: var(--bg-white); color: var(--text-main); border: 1px solid var(--border-color); }
-    .google-btn:hover { background: var(--bg-light); border-color: var(--text-main); }
-    .google-btn i { font-size: 18px; color: #4285F4; }
-    .apple-btn { background: #000000; color: #ffffff; border: 1px solid #000000; }
-    .apple-btn:hover { background: #333333; }
-    .apple-btn i { font-size: 20px; }
-    .divider { display: flex; align-items: center; text-align: center; color: var(--text-muted); font-size: 12px; margin-bottom: 12px; }
-    .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-color); margin: 0 10px; }
+    .modal-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; font-weight: 500;}
+    
+    .modal-input { width: 100%; border: none; border-bottom: 2px solid var(--border-color); padding: 12px 0; font-size: 15px; outline: none; margin-bottom: 24px; background: transparent; font-weight: 600; transition: 0.2s; }
+    .modal-input:focus { border-bottom-width: 4px; }
+    .modal-input::placeholder { color: #aaaaaa; font-weight: 400; }
+    
+    .modal-btn { background: var(--text-main); color: var(--bg-white); border: 2px solid var(--text-main); border-radius: 0; padding: 14px; font-weight: 700; font-size: 15px; cursor: pointer; width: 100%; transition: 0.2s; margin-bottom: 12px; display: flex; justify-content: center; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 1px;}
+    .modal-btn:hover { background: var(--bg-white); color: var(--text-main); }
+    
+    .google-btn { background: var(--bg-white); color: var(--text-main); border: 2px solid var(--border-color); }
+    .google-btn:hover { background: var(--text-main); color: var(--bg-white); }
+    .google-btn i { font-size: 18px; }
+    
+    .divider { display: flex; align-items: center; text-align: center; color: var(--text-main); font-size: 12px; font-weight: 700; margin-bottom: 16px; margin-top: 8px; text-transform: uppercase;}
+    .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 2px solid var(--border-color); margin: 0 10px; }
+    
     #register-fields { display: none; } 
-    .auth-switch { text-align: center; margin-top: 16px; font-size: 14px; color: var(--text-muted); }
-    .auth-switch span { color: var(--accent-color); font-weight: 600; cursor: pointer; }
-    .loading-text { font-size: 12px; color: var(--accent-color); text-align: center; margin-bottom: 10px; display: none; }
+    .auth-switch { text-align: center; margin-top: 20px; font-size: 14px; color: var(--text-muted); font-weight: 500;}
+    .auth-switch span { color: var(--text-main); font-weight: 800; cursor: pointer; text-decoration: underline; text-underline-offset: 4px;}
+    .loading-text { font-size: 13px; font-weight: 700; color: var(--text-main); text-align: center; margin-bottom: 12px; display: none; text-transform: uppercase;}
+    
+    /* Google 註冊新畫面隱藏 */
+    #google-complete-form { display: none; }
   </style>
 </head>
 <body>
@@ -70,40 +88,55 @@
   <!-- 登入 / 註冊系統 Modal -->
   <div id="auth-overlay" class="modal-overlay active">
     <div class="modal-content">
-      <div class="auth-main-title">MyLog 日曆系統</div>
+      <div class="auth-main-title">MyLog</div>
 
-      <div class="modal-header" id="auth-title">登入帳號</div>
-      <div class="modal-subtitle" id="auth-subtitle">歡迎回來，請登入您的專屬日曆。</div>
-      
-      <input type="text" id="auth-username" class="modal-input" placeholder="用戶名稱" autocomplete="off">
-      
-      <div id="register-fields">
-        <input type="text" id="auth-birthday" class="modal-input" placeholder="生日月日" maxlength="4">
+      <!-- 主驗證表單 (登入/一般註冊) -->
+      <div id="main-auth-form">
+        <div class="modal-header" id="auth-title">登入帳號</div>
+        <div class="modal-subtitle" id="auth-subtitle">登入以存取您的專屬日曆。</div>
+        
+        <input type="text" id="auth-username" class="modal-input" placeholder="用戶名稱" autocomplete="off">
+        
+        <div id="register-fields">
+          <input type="text" id="auth-birthday" class="modal-input" placeholder="生日月日" maxlength="4">
+        </div>
+        
+        <input type="password" id="auth-password" class="modal-input" placeholder="密碼 (至少8碼，須含英文字母與數字)">
+        
+        <div class="loading-text" id="auth-loading">處理中...</div>
+        
+        <button class="modal-btn" id="auth-submit-btn">登入</button>
+        
+        <div class="divider">或</div>
+        <button class="modal-btn google-btn" id="google-auth-btn">
+          <i class="fa-brands fa-google"></i> <span id="google-btn-text">使用 Google 登入</span>
+        </button>
+        
+        <div class="auth-switch">
+          <span id="auth-toggle-msg">還沒有帳號？ <span>立即註冊</span></span>
+        </div>
       </div>
-      
-      <input type="password" id="auth-password" class="modal-input" placeholder="密碼 (至少8碼，須含英文字母與數字)">
-      
-      <div class="loading-text" id="auth-loading">處理中，請稍候...</div>
-      
-      <button class="modal-btn" id="auth-submit-btn">登入</button>
-      
-      <div class="divider">或使用其他方式</div>
-      <button class="modal-btn google-btn" id="google-auth-btn">
-        <i class="fa-brands fa-google"></i> <span id="google-btn-text">使用 Google 登入</span>
-      </button>
 
-      <button class="modal-btn apple-btn" id="apple-auth-btn">
-        <i class="fa-brands fa-apple"></i> <span id="apple-btn-text">使用 Apple 登入</span>
-      </button>
-      
-      <div class="auth-switch">
-        <span id="auth-toggle-msg">還沒有帳號？ <span>立即註冊</span></span>
+      <!-- Google 註冊補全畫面 -->
+      <div id="google-complete-form">
+        <div class="modal-header">即將完成註冊</div>
+        <div class="modal-subtitle">請為您的帳號設定一個用戶名稱。</div>
+        
+        <input type="text" id="google-username" class="modal-input" placeholder="用戶名稱" autocomplete="off">
+        
+        <div class="loading-text" id="google-loading">處理中...</div>
+        <button class="modal-btn" id="google-complete-submit">確認註冊</button>
+        
+        <div class="auth-switch" style="margin-top: 10px;">
+          <span id="cancel-google-complete" style="color: var(--text-muted); text-decoration: none; font-weight: 500;">返回上一步</span>
+        </div>
       </div>
+
     </div>
   </div>
 
   <!-- 主畫面 -->
-  <div class="top-header"><div class="brand">My<span>Log</span></div></div>
+  <div class="top-header"><div class="brand">MyLog</div></div>
   <div class="profile-section">
     <div class="avatar-wrapper"><div class="avatar"></div></div>
     <div class="profile-info">
@@ -130,7 +163,7 @@
   <!-- Firebase Web SDK 邏輯 -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, OAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
@@ -147,15 +180,15 @@
     const auth = getAuth(app);
     const db = getDatabase(app);
     
-    // 初始化社群登入 Provider
     const googleProvider = new GoogleAuthProvider();
     googleProvider.setCustomParameters({ prompt: 'select_account' });
-    const appleProvider = new OAuthProvider('apple.com');
 
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
     const elements = {
       overlay: document.getElementById('auth-overlay'),
+      mainForm: document.getElementById('main-auth-form'),
+      googleCompleteForm: document.getElementById('google-complete-form'),
       title: document.getElementById('auth-title'),
       subtitle: document.getElementById('auth-subtitle'),
       username: document.getElementById('auth-username'),
@@ -165,44 +198,56 @@
       submitBtn: document.getElementById('auth-submit-btn'),
       googleBtn: document.getElementById('google-auth-btn'),
       googleBtnText: document.getElementById('google-btn-text'),
-      appleBtn: document.getElementById('apple-auth-btn'),
-      appleBtnText: document.getElementById('apple-btn-text'),
       toggleMsg: document.getElementById('auth-toggle-msg'),
       loading: document.getElementById('auth-loading'),
+      googleLoading: document.getElementById('google-loading'),
+      googleUsernameInput: document.getElementById('google-username'),
+      googleSubmitBtn: document.getElementById('google-complete-submit'),
+      cancelGoogleComplete: document.getElementById('cancel-google-complete'),
       displayName: document.getElementById('display-name'),
       displayCode: document.getElementById('display-exclusive-code'),
       logoutBtn: document.getElementById('logout-btn')
     };
 
     let isLoginMode = true;
+    let pendingGoogleUser = null; // 暫存等待完成註冊的 Google 帳號
 
-    // 統一更新介面文字的功能
     function updateProfileUI(username, exclusiveCode) {
       elements.overlay.classList.remove('active');
       elements.displayName.textContent = username;
       elements.displayCode.textContent = exclusiveCode;
     }
 
+    // --- 切換 登入/註冊 模式 ---
     elements.toggleMsg.addEventListener('click', () => {
       isLoginMode = !isLoginMode;
       [elements.username, elements.password, elements.birthday].forEach(el => el.value = '');
       if (isLoginMode) {
         elements.title.textContent = '登入帳號';
-        elements.subtitle.textContent = '歡迎回來，請登入您的專屬日曆。';
+        elements.subtitle.textContent = '登入以存取您的專屬日曆。';
         elements.registerFields.style.display = 'none';
         elements.submitBtn.textContent = '登入';
         elements.googleBtnText.textContent = '使用 Google 登入';
-        elements.appleBtnText.textContent = '使用 Apple 登入';
         elements.toggleMsg.innerHTML = '還沒有帳號？ <span>立即註冊</span>';
       } else {
         elements.title.textContent = '註冊帳號';
-        elements.subtitle.textContent = '建立專屬日曆與個人辨識碼。';
+        elements.subtitle.textContent = '建立專屬日曆與辨識碼。';
         elements.registerFields.style.display = 'block';
         elements.submitBtn.textContent = '註冊';
         elements.googleBtnText.textContent = '使用 Google 註冊';
-        elements.appleBtnText.textContent = '使用 Apple 註冊';
         elements.toggleMsg.innerHTML = '已經有帳號了？ <span>直接登入</span>';
       }
+    });
+
+    // 取消 Google 註冊流程
+    elements.cancelGoogleComplete.addEventListener('click', async () => {
+      if(pendingGoogleUser) {
+        await pendingGoogleUser.delete().catch(()=>{});
+        await signOut(auth);
+      }
+      pendingGoogleUser = null;
+      elements.googleCompleteForm.style.display = 'none';
+      elements.mainForm.style.display = 'block';
     });
 
     function getSafeEmail(username) {
@@ -226,8 +271,8 @@
       const exclusiveCode = `${String(currentCount).padStart(3, '0')}-${birthday || '0000'}-${generateRandomLetters(3)}`;
 
       await set(ref(db, 'users/' + user.uid), {
-        username: username || user.displayName || '使用者',
-        birthday: birthday || '',
+        username: username || '使用者',
+        birthday: birthday || '0000',
         exclusiveCode: exclusiveCode,
         createdAt: new Date().toISOString()
       });
@@ -235,7 +280,7 @@
       return { username, exclusiveCode };
     }
 
-    // --- 帳號密碼提交 ---
+    // --- 帳號密碼提交 (一般) ---
     elements.submitBtn.addEventListener('click', async () => {
       const username = elements.username.value.trim();
       const password = elements.password.value.trim();
@@ -254,7 +299,7 @@
         }
       } else {
         const birthday = elements.birthday.value.trim();
-        if (!birthday || birthday.length !== 4) { elements.loading.style.display = 'none'; return alert("請輸入四碼生日！"); }
+        if (!birthday || birthday.length !== 4) { elements.loading.style.display = 'none'; return alert("請填寫四碼生日！"); }
         if (!passwordRegex.test(password)) { elements.loading.style.display = 'none'; return alert("密碼必須至少 8 個字元，包含英文字母與數字。"); }
 
         try {
@@ -270,20 +315,12 @@
       elements.loading.style.display = 'none';
     });
 
-    // --- 統一的第三方登入處理 (Google & Apple) ---
-    async function handleSocialAuth(provider) {
-      const username = elements.username.value.trim();
-      const birthday = elements.birthday.value.trim();
-
-      if (!isLoginMode) {
-        if (!username) return alert("請先填寫用戶名稱！");
-        if (!birthday || birthday.length !== 4) return alert("請填寫四碼生日！");
-      }
-
+    // --- Google 登入/註冊 按鈕 ---
+    elements.googleBtn.addEventListener('click', async () => {
       elements.loading.style.display = 'block';
       
       try {
-        const result = await signInWithPopup(auth, provider);
+        const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
         const userSnap = await get(child(ref(db), `users/${user.uid}`));
         
@@ -291,14 +328,15 @@
           if (isLoginMode) {
             await user.delete(); 
             await signOut(auth);
-            alert("此帳號尚未註冊！請切換至「註冊」填寫基本資料。");
+            alert("此 Google 帳號尚未註冊！請切換至「註冊」進行註冊。");
           } else {
-            const userData = await createUserDataInDB(user, username, birthday);
-            alert(`註冊成功！專屬碼：${userData.exclusiveCode}`);
-            updateProfileUI(userData.username, userData.exclusiveCode);
+            // 進入 Google 補全畫面 (只需要輸入用戶名稱)
+            pendingGoogleUser = user;
+            elements.mainForm.style.display = 'none';
+            elements.googleCompleteForm.style.display = 'block';
           }
         } else {
-          if (!isLoginMode) alert("此帳號已經註冊過，已為您自動登入！");
+          if (!isLoginMode) alert("此 Google 帳號已經註冊過，已為您自動登入！");
           updateProfileUI(userSnap.val().username, userSnap.val().exclusiveCode);
         }
       } catch (error) {
@@ -308,14 +346,35 @@
       } finally {
         elements.loading.style.display = 'none';
       }
-    }
+    });
 
-    elements.googleBtn.addEventListener('click', () => handleSocialAuth(googleProvider));
-    elements.appleBtn.addEventListener('click', () => handleSocialAuth(appleProvider));
+    // --- Google 註冊補全提交 ---
+    elements.googleSubmitBtn.addEventListener('click', async () => {
+      const gUsername = elements.googleUsernameInput.value.trim();
+      if (!gUsername) return alert("請填寫用戶名稱！");
+      
+      elements.googleLoading.style.display = 'block';
+      try {
+        // 出生月日與密碼免填，後台由 Google 管理，專屬碼生日預設帶 0000
+        const userData = await createUserDataInDB(pendingGoogleUser, gUsername, "0000");
+        alert(`註冊成功！專屬碼：${userData.exclusiveCode}`);
+        updateProfileUI(userData.username, userData.exclusiveCode);
+        elements.googleCompleteForm.style.display = 'none';
+        elements.mainForm.style.display = 'block';
+        pendingGoogleUser = null;
+      } catch (error) {
+        alert("資料建立失敗：" + error.message);
+      }
+      elements.googleLoading.style.display = 'none';
+    });
+
 
     // --- 嚴格的狀態監聽器 ---
     onAuthStateChanged(auth, async (user) => {
       if (user) {
+        // 如果目前正在補全表單的過程中，不執行自動關閉畫面
+        if (pendingGoogleUser && user.uid === pendingGoogleUser.uid) return;
+
         try {
           const snapshot = await get(child(ref(db), `users/${user.uid}`));
           if (snapshot.exists()) {
