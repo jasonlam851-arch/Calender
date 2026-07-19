@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>專屬日曆系統 (安全修復版)</title>
+  <title>MyLog 專屬日曆系統</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -54,6 +54,9 @@
     .google-btn { background: var(--bg-white); color: var(--text-main); border: 1px solid var(--border-color); }
     .google-btn:hover { background: var(--bg-light); border-color: var(--text-main); }
     .google-btn i { font-size: 18px; color: #4285F4; }
+    .apple-btn { background: #000000; color: #ffffff; border: 1px solid #000000; }
+    .apple-btn:hover { background: #333333; }
+    .apple-btn i { font-size: 20px; }
     .divider { display: flex; align-items: center; text-align: center; color: var(--text-muted); font-size: 12px; margin-bottom: 12px; }
     .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-color); margin: 0 10px; }
     #register-fields { display: none; } 
@@ -67,27 +70,30 @@
   <!-- 登入 / 註冊系統 Modal -->
   <div id="auth-overlay" class="modal-overlay active">
     <div class="modal-content">
-      <div class="auth-main-title">MyLog 專屬日曆系統</div>
+      <div class="auth-main-title">MyLog 日曆系統</div>
 
       <div class="modal-header" id="auth-title">登入帳號</div>
       <div class="modal-subtitle" id="auth-subtitle">歡迎回來，請登入您的專屬日曆。</div>
       
-      <input type="text" id="auth-username" class="modal-input" placeholder="用戶名稱 (必填)" autocomplete="off">
+      <input type="text" id="auth-username" class="modal-input" placeholder="用戶名稱" autocomplete="off">
       
       <div id="register-fields">
-        <input type="text" id="auth-birthday" class="modal-input" placeholder="生日月日 (例如: 1015)" maxlength="4">
-        <input type="text" id="auth-referral" class="modal-input" placeholder="系統推薦碼 (必填)">
+        <input type="text" id="auth-birthday" class="modal-input" placeholder="生日月日" maxlength="4">
       </div>
       
       <input type="password" id="auth-password" class="modal-input" placeholder="密碼 (至少8碼，須含英文字母與數字)">
       
       <div class="loading-text" id="auth-loading">處理中，請稍候...</div>
       
-      <button class="modal-btn" id="auth-submit-btn">確認登入</button>
+      <button class="modal-btn" id="auth-submit-btn">登入</button>
       
       <div class="divider">或使用其他方式</div>
       <button class="modal-btn google-btn" id="google-auth-btn">
         <i class="fa-brands fa-google"></i> <span id="google-btn-text">使用 Google 登入</span>
+      </button>
+
+      <button class="modal-btn apple-btn" id="apple-auth-btn">
+        <i class="fa-brands fa-apple"></i> <span id="apple-btn-text">使用 Apple 登入</span>
       </button>
       
       <div class="auth-switch">
@@ -124,7 +130,7 @@
   <!-- Firebase Web SDK 邏輯 -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, OAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
@@ -137,13 +143,14 @@
       appId: "1:337384899854:web:469c3a7e2d440cf98f035f"
     };
 
-    const SECRET_INVITE_CODE = "001556484"; 
-
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
+    
+    // 初始化社群登入 Provider
     const googleProvider = new GoogleAuthProvider();
     googleProvider.setCustomParameters({ prompt: 'select_account' });
+    const appleProvider = new OAuthProvider('apple.com');
 
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
@@ -154,11 +161,12 @@
       username: document.getElementById('auth-username'),
       password: document.getElementById('auth-password'),
       birthday: document.getElementById('auth-birthday'),
-      referral: document.getElementById('auth-referral'),
       registerFields: document.getElementById('register-fields'),
       submitBtn: document.getElementById('auth-submit-btn'),
       googleBtn: document.getElementById('google-auth-btn'),
       googleBtnText: document.getElementById('google-btn-text'),
+      appleBtn: document.getElementById('apple-auth-btn'),
+      appleBtnText: document.getElementById('apple-btn-text'),
       toggleMsg: document.getElementById('auth-toggle-msg'),
       loading: document.getElementById('auth-loading'),
       displayName: document.getElementById('display-name'),
@@ -168,27 +176,35 @@
 
     let isLoginMode = true;
 
+    // 統一更新介面文字的功能
+    function updateProfileUI(username, exclusiveCode) {
+      elements.overlay.classList.remove('active');
+      elements.displayName.textContent = username;
+      elements.displayCode.textContent = exclusiveCode;
+    }
+
     elements.toggleMsg.addEventListener('click', () => {
       isLoginMode = !isLoginMode;
-      [elements.username, elements.password, elements.birthday, elements.referral].forEach(el => el.value = '');
+      [elements.username, elements.password, elements.birthday].forEach(el => el.value = '');
       if (isLoginMode) {
         elements.title.textContent = '登入帳號';
         elements.subtitle.textContent = '歡迎回來，請登入您的專屬日曆。';
         elements.registerFields.style.display = 'none';
-        elements.submitBtn.textContent = '確認登入';
+        elements.submitBtn.textContent = '登入';
         elements.googleBtnText.textContent = '使用 Google 登入';
+        elements.appleBtnText.textContent = '使用 Apple 登入';
         elements.toggleMsg.innerHTML = '還沒有帳號？ <span>立即註冊</span>';
       } else {
         elements.title.textContent = '註冊帳號';
         elements.subtitle.textContent = '建立專屬日曆與個人辨識碼。';
         elements.registerFields.style.display = 'block';
-        elements.submitBtn.textContent = '註冊並建立專屬碼';
+        elements.submitBtn.textContent = '註冊';
         elements.googleBtnText.textContent = '使用 Google 註冊';
+        elements.appleBtnText.textContent = '使用 Apple 註冊';
         elements.toggleMsg.innerHTML = '已經有帳號了？ <span>直接登入</span>';
       }
     });
 
-    // 解決中文帳號問題：將用戶名稱轉為安全字串作為信箱
     function getSafeEmail(username) {
       let safeStr = '';
       for(let i=0; i<username.length; i++) {
@@ -238,20 +254,14 @@
         }
       } else {
         const birthday = elements.birthday.value.trim();
-        const referral = elements.referral.value.trim();
-        
-        if (referral !== SECRET_INVITE_CODE) { elements.loading.style.display = 'none'; return alert("推薦碼錯誤！"); }
-        if (!birthday || birthday.length !== 4) { elements.loading.style.display = 'none'; return alert("請輸入四碼生日 (例如: 1015)"); }
+        if (!birthday || birthday.length !== 4) { elements.loading.style.display = 'none'; return alert("請輸入四碼生日！"); }
         if (!passwordRegex.test(password)) { elements.loading.style.display = 'none'; return alert("密碼必須至少 8 個字元，包含英文字母與數字。"); }
 
         try {
           const userCredential = await createUserWithEmailAndPassword(auth, pseudoEmail, password);
           const userData = await createUserDataInDB(userCredential.user, username, birthday);
           alert(`註冊成功！專屬碼：${userData.exclusiveCode}`);
-          
-          elements.overlay.classList.remove('active');
-          elements.displayName.textContent = userData.username;
-          elements.displayCode.textContent = userData.exclusiveCode;
+          updateProfileUI(userData.username, userData.exclusiveCode);
         } catch (error) {
           if (error.code === 'auth/email-already-in-use') alert("此用戶名稱已被註冊！");
           else alert("註冊失敗：" + error.message);
@@ -260,53 +270,48 @@
       elements.loading.style.display = 'none';
     });
 
-    // --- Google 登入 / 註冊 ---
-    elements.googleBtn.addEventListener('click', async () => {
+    // --- 統一的第三方登入處理 (Google & Apple) ---
+    async function handleSocialAuth(provider) {
       const username = elements.username.value.trim();
       const birthday = elements.birthday.value.trim();
-      const referral = elements.referral.value.trim();
 
       if (!isLoginMode) {
         if (!username) return alert("請先填寫用戶名稱！");
-        if (referral !== SECRET_INVITE_CODE) return alert("推薦碼錯誤！");
-        if (!birthday || birthday.length !== 4) return alert("請輸入四碼的生日！");
+        if (!birthday || birthday.length !== 4) return alert("請填寫四碼生日！");
       }
 
       elements.loading.style.display = 'block';
       
       try {
-        const result = await signInWithPopup(auth, googleProvider);
+        const result = await signInWithPopup(auth, provider);
         const user = result.user;
         const userSnap = await get(child(ref(db), `users/${user.uid}`));
         
         if (!userSnap.exists()) {
           if (isLoginMode) {
-            // 解決防護漏洞：登入模式下發現未註冊的 Google 帳號，強制刪除並登出
             await user.delete(); 
             await signOut(auth);
-            alert("此 Google 帳號尚未註冊！請切換至「註冊帳號」填寫基本資料。");
+            alert("此帳號尚未註冊！請切換至「註冊」填寫基本資料。");
           } else {
             const userData = await createUserDataInDB(user, username, birthday);
-            alert(`Google 註冊成功！專屬碼：${userData.exclusiveCode}`);
-            // 註冊成功，手動放行畫面
-            elements.overlay.classList.remove('active');
-            elements.displayName.textContent = userData.username;
-            elements.displayCode.textContent = userData.exclusiveCode;
+            alert(`註冊成功！專屬碼：${userData.exclusiveCode}`);
+            updateProfileUI(userData.username, userData.exclusiveCode);
           }
         } else {
-          if (!isLoginMode) alert("此 Google 帳號已經註冊過，已為您自動登入！");
-          
-          // 已經註冊過，手動放行畫面
-          elements.overlay.classList.remove('active');
-          elements.displayName.textContent = userSnap.val().username;
-          elements.displayCode.textContent = userSnap.val().exclusiveCode;
+          if (!isLoginMode) alert("此帳號已經註冊過，已為您自動登入！");
+          updateProfileUI(userSnap.val().username, userSnap.val().exclusiveCode);
         }
       } catch (error) {
-        if (error.code !== 'auth/popup-closed-by-user') alert("驗證失敗：" + error.message);
+        if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
+            alert("驗證失敗：" + error.message);
+        }
       } finally {
         elements.loading.style.display = 'none';
       }
-    });
+    }
+
+    elements.googleBtn.addEventListener('click', () => handleSocialAuth(googleProvider));
+    elements.appleBtn.addEventListener('click', () => handleSocialAuth(appleProvider));
 
     // --- 嚴格的狀態監聽器 ---
     onAuthStateChanged(auth, async (user) => {
@@ -314,12 +319,8 @@
         try {
           const snapshot = await get(child(ref(db), `users/${user.uid}`));
           if (snapshot.exists()) {
-            // 只有「確認資料庫有該用戶資料」時，才移除登入畫面 (放行)
-            elements.overlay.classList.remove('active');
-            elements.displayName.textContent = snapshot.val().username;
-            elements.displayCode.textContent = snapshot.val().exclusiveCode;
+            updateProfileUI(snapshot.val().username, snapshot.val().exclusiveCode);
           } else {
-            // 系統發現這個帳號在資料庫沒紀錄，強制顯示登入畫面攔截
             elements.overlay.classList.add('active');
           }
         } catch (e) { console.error(e); }
@@ -330,7 +331,7 @@
 
     elements.logoutBtn.addEventListener('click', () => {
       signOut(auth);
-      location.reload(); // 確保畫面重置
+      location.reload(); 
     });
 
     // --- 日曆渲染邏輯 ---
