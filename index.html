@@ -18,88 +18,90 @@
       --font-family: 'Inter', -apple-system, sans-serif;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); }
-    body { background-color: var(--bg-white); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+    body { background-color: var(--bg-white); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 70px; }
     
     .top-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 5vw; border-bottom: 1px solid var(--border-color); }
     .top-header .brand { font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
     
-    .profile-section { padding: 40px 20px; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid var(--border-color); }
-    .avatar-wrapper { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--text-main); padding: 4px; margin-bottom: 16px; position: relative; }
-    .avatar-wrapper::after { content: 'ONLINE'; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); background: var(--text-main); color: #fff; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 12px; border: 1px solid var(--text-main); }
+    .profile-section { padding: 30px 20px; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid var(--border-color); }
+    .avatar-wrapper { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--text-main); padding: 4px; margin-bottom: 12px; position: relative; }
+    .avatar-wrapper::after { content: 'ONLINE'; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); background: var(--text-main); color: #fff; font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 12px; border: 1px solid var(--text-main); }
     .avatar { width: 100%; height: 100%; background-color: var(--bg-white); border-radius: 50%; background-image: url('https://api.dicebear.com/7.x/notionists/svg?seed=Design'); background-size: cover; filter: grayscale(100%); }
     
-    .profile-info { text-align: center; margin-bottom: 24px; }
-    .profile-info h1 { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
-    .profile-info p { color: var(--text-main); font-size: 14px; font-weight: 700; letter-spacing: 1px; }
-    .profile-info span { color: var(--text-muted); font-size: 12px; text-transform: uppercase; }
+    .profile-info { text-align: center; }
+    .profile-info h1 { font-size: 22px; font-weight: 800; margin-bottom: 2px; }
+    .profile-info p { color: var(--text-main); font-size: 13px; font-weight: 700; letter-spacing: 1px; }
+    .profile-info span { color: var(--text-muted); font-size: 11px; text-transform: uppercase; }
     
-    .logout-btn { background: var(--bg-white); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 0; padding: 8px 20px; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 16px; transition: 0.2s; text-transform: uppercase; }
+    .logout-btn { background: var(--bg-white); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 0; padding: 6px 16px; font-size: 11px; font-weight: 600; cursor: pointer; margin-top: 12px; transition: 0.2s; text-transform: uppercase; }
     .logout-btn:hover { background: var(--text-main); color: var(--bg-white); }
     
-    .calendar-wrapper { padding: 40px 5vw 40px; display: flex; justify-content: center; border-bottom: 1px solid var(--border-color); }
-    .calendar-container, .friends-container { width: 100%; max-width: 900px; }
-    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-    .calendar-header h2 { font-size: 28px; font-weight: 800; }
-    .nav-controls { display: flex; gap: 12px; }
-    .nav-btn { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--border-color); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+    /* 視圖切換區塊 */
+    .view-section { display: none; padding: 30px 5vw; width: 100%; max-width: 900px; margin: 0 auto; flex-grow: 1; }
+    .view-section.active { display: block; }
+
+    /* 日曆樣式 */
+    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+    .calendar-header h2 { font-size: 24px; font-weight: 800; }
+    .nav-controls { display: flex; gap: 10px; }
+    .nav-btn { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border-color); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
     .nav-btn:hover { background: var(--text-main); color: var(--bg-white); }
     
-    .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 20px; text-transform: uppercase; border-bottom: 2px solid var(--border-color); padding-bottom: 12px;}
-    .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 16px 12px; }
-    .day-cell { aspect-ratio: 1 / 1; max-height: 80px; display: flex; justify-content: center; align-items: center; font-size: 16px; font-weight: 600; border-radius: 0; border: 1px solid transparent; cursor: pointer; position: relative; transition: 0.2s; }
+    .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 16px; text-transform: uppercase; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;}
+    .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px 10px; }
+    .day-cell { aspect-ratio: 1 / 1; max-height: 70px; display: flex; justify-content: center; align-items: center; font-size: 15px; font-weight: 600; border: 1px solid transparent; cursor: pointer; position: relative; transition: 0.2s; }
     .day-cell:not(.empty):hover { border-color: var(--text-main); }
     .day-cell.today { background: var(--text-main); color: var(--bg-white); font-weight: 800; }
-    .day-cell.today::after { content: ''; position: absolute; bottom: 8px; width: 6px; height: 6px; background-color: var(--bg-white); border-radius: 50%; }
+    .day-cell.today::after { content: ''; position: absolute; bottom: 6px; width: 5px; height: 5px; background-color: var(--bg-white); border-radius: 50%; }
     
     /* 朋友系統樣式 */
-    .friends-wrapper { padding: 40px 5vw 80px; display: flex; justify-content: center; flex-grow: 1; }
-    .friends-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .friends-header h2 { font-size: 24px; font-weight: 800; }
-    .requests-btn { width: auto; padding: 10px 20px; margin: 0; position: relative; font-size: 13px; }
-    .requests-badge { position: absolute; top: -8px; right: -8px; background: var(--text-main); color: var(--bg-white); font-size: 11px; font-weight: 800; width: 22px; height: 22px; display: flex; justify-content: center; align-items: center; border-radius: 50%; border: 2px solid var(--bg-white); }
+    .sticky-top-search { position: sticky; top: 0; background: var(--bg-white); z-index: 10; padding-bottom: 16px; border-bottom: 2px solid var(--border-color); margin-bottom: 24px; }
+    .section-title { font-size: 18px; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
+    .badge { background: var(--text-main); color: var(--bg-white); font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 12px; }
+
+    .search-bar { display: flex; gap: 10px; margin-bottom: 12px; }
+    .search-bar input { margin-bottom: 0; flex-grow: 1; border: 2px solid var(--border-color); padding: 10px; font-size: 14px; font-weight: 600; outline: none; transition: 0.2s; }
+    .search-bar input:focus { background: #f9f9f9; }
+    .search-bar button { width: auto; margin-bottom: 0; padding: 0 20px; border: 2px solid var(--text-main); background: var(--text-main); color: var(--bg-white); font-weight: 700; cursor: pointer; transition: 0.2s; }
+    .search-bar button:hover { background: var(--bg-white); color: var(--text-main); }
     
-    .search-bar { display: flex; gap: 12px; margin-bottom: 32px; }
-    .search-bar input { margin-bottom: 0; flex-grow: 1; }
-    .search-bar button { width: auto; margin-bottom: 0; padding: 0 24px; }
+    .friends-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
+    .friend-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; border: 2px solid var(--border-color); background: var(--bg-white); }
+    .friend-info { display: flex; align-items: center; gap: 14px; }
+    .friend-avatar { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--text-main); background-color: #eee; }
+    .friend-details h4 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+    .friend-details p { font-size: 11px; color: var(--text-muted); font-weight: 600; letter-spacing: 1px; }
     
-    .friends-list { display: flex; flex-direction: column; gap: 16px; }
-    .friend-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 2px solid var(--border-color); }
-    .friend-info { display: flex; align-items: center; gap: 16px; }
-    .friend-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--text-main); background-color: #eee; }
-    .friend-details h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-    .friend-details p { font-size: 12px; color: var(--text-muted); font-weight: 600; letter-spacing: 1px; }
-    
-    .action-btns { display: flex; gap: 8px; }
-    .btn-small { padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; border: 2px solid var(--text-main); text-transform: uppercase; background: var(--bg-white); color: var(--text-main); transition: 0.2s; }
+    .action-btns { display: flex; gap: 6px; }
+    .btn-small { padding: 6px 12px; font-size: 11px; font-weight: 700; cursor: pointer; border: 2px solid var(--text-main); text-transform: uppercase; background: var(--bg-white); color: var(--text-main); transition: 0.2s; }
     .btn-small.primary { background: var(--text-main); color: var(--bg-white); }
     .btn-small:hover { background: var(--text-main); color: var(--bg-white); }
     .btn-small.primary:hover { background: var(--bg-white); color: var(--text-main); }
-    .empty-state { text-align: center; padding: 40px; color: var(--text-muted); font-weight: 600; font-size: 14px; border: 2px dashed var(--border-color); }
+    .empty-state { text-align: center; padding: 30px; color: var(--text-muted); font-weight: 600; font-size: 13px; border: 2px solid var(--border-color); }
+
+    /* 底部導覽列 */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; border-top: 2px solid var(--border-color); background: var(--bg-white); z-index: 50; }
+    .nav-tab { flex: 1; padding: 18px 0; text-align: center; font-weight: 800; font-size: 15px; cursor: pointer; background: var(--bg-white); color: var(--text-muted); border: none; border-right: 2px solid var(--border-color); text-transform: uppercase; transition: 0.2s; }
+    .nav-tab:last-child { border-right: none; }
+    .nav-tab.active { background: var(--text-main); color: var(--bg-white); }
+    .nav-tab:hover:not(.active) { background: #f0f0f0; color: var(--text-main); }
 
     /* Modal 樣式 */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 100; }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.98); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 100; }
     .modal-overlay.active { opacity: 1; visibility: visible; }
-    .modal-content { background: var(--bg-white); width: 90%; max-width: 400px; border-radius: 0; padding: 40px; border: 3px solid var(--border-color); box-shadow: 12px 12px 0px rgba(0,0,0,1); max-height: 90vh; overflow-y: auto; }
-    .modal-close { position: absolute; top: 20px; right: 20px; font-size: 20px; cursor: pointer; color: var(--text-main); background: none; border: none; }
-    .modal-content-relative { position: relative; }
-    
+    .modal-content { background: var(--bg-white); width: 90%; max-width: 400px; padding: 40px; border: 3px solid var(--border-color); box-shadow: 12px 12px 0px rgba(0,0,0,1); max-height: 90vh; overflow-y: auto; }
     .auth-main-title { font-size: 22px; font-weight: 900; color: var(--text-main); text-transform: uppercase; margin-bottom: 24px; text-align: center; border-bottom: 2px solid var(--border-color); padding-bottom: 16px; letter-spacing: 2px;}
     .modal-header { font-weight: 800; font-size: 24px; margin-bottom: 8px; }
     .modal-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; font-weight: 500;}
-    
     .modal-input { width: 100%; border: none; border-bottom: 2px solid var(--border-color); padding: 12px 0; font-size: 15px; outline: none; margin-bottom: 24px; background: transparent; font-weight: 600; transition: 0.2s; }
     .modal-input:focus { border-bottom-width: 4px; }
     .modal-input::placeholder { color: #aaaaaa; font-weight: 400; }
-    
-    .modal-btn { background: var(--text-main); color: var(--bg-white); border: 2px solid var(--text-main); border-radius: 0; padding: 14px; font-weight: 700; font-size: 15px; cursor: pointer; width: 100%; transition: 0.2s; margin-bottom: 12px; display: flex; justify-content: center; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 1px;}
+    .modal-btn { background: var(--text-main); color: var(--bg-white); border: 2px solid var(--text-main); padding: 14px; font-weight: 700; font-size: 15px; cursor: pointer; width: 100%; transition: 0.2s; margin-bottom: 12px; display: flex; justify-content: center; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 1px;}
     .modal-btn:hover { background: var(--bg-white); color: var(--text-main); }
-    
     .google-btn { background: var(--bg-white); color: var(--text-main); border: 2px solid var(--border-color); }
     .google-btn:hover { background: var(--text-main); color: var(--bg-white); }
-    
     .divider { display: flex; align-items: center; text-align: center; color: var(--text-main); font-size: 12px; font-weight: 700; margin-bottom: 16px; margin-top: 8px; text-transform: uppercase;}
     .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 2px solid var(--border-color); margin: 0 10px; }
-    
     #register-fields, #google-complete-form { display: none; } 
     .auth-switch { text-align: center; margin-top: 20px; font-size: 14px; color: var(--text-muted); font-weight: 500;}
     .auth-switch span { color: var(--text-main); font-weight: 800; cursor: pointer; text-decoration: underline; text-underline-offset: 4px;}
@@ -114,13 +116,12 @@
 
   <!-- 登入 / 註冊系統 Modal -->
   <div id="auth-overlay" class="modal-overlay active">
-    <div class="modal-content modal-content-relative">
+    <div class="modal-content">
       <div class="auth-main-title">MyLog</div>
 
       <div id="main-auth-form">
         <div class="modal-header" id="auth-title">登入帳號</div>
         <div class="modal-subtitle" id="auth-subtitle">登入以存取您的專屬日曆。</div>
-        
         <input type="text" id="auth-username" class="modal-input" placeholder="用戶名稱" autocomplete="off">
         <div id="register-fields">
           <input type="text" id="auth-birthday" class="modal-input" placeholder="生日月日 (選填)" maxlength="4">
@@ -129,7 +130,6 @@
         
         <div class="loading-text" id="auth-loading">處理中...</div>
         <button class="modal-btn" id="auth-submit-btn">登入</button>
-        
         <div class="divider">或</div>
         <button class="modal-btn google-btn" id="google-auth-btn">
           <i class="fa-brands fa-google"></i> <span id="google-btn-text">使用 Google 登入</span>
@@ -153,19 +153,7 @@
     </div>
   </div>
 
-  <!-- 好友申請 Modal -->
-  <div id="requests-overlay" class="modal-overlay">
-    <div class="modal-content modal-content-relative">
-      <button class="modal-close" id="close-requests-modal"><i class="fa-solid fa-xmark"></i></button>
-      <div class="modal-header">好友申請</div>
-      <div class="modal-subtitle">管理您的好友邀請</div>
-      <div class="friends-list" id="pending-requests-list">
-        <!-- 申請列表渲染區域 -->
-      </div>
-    </div>
-  </div>
-
-  <!-- 主畫面 -->
+  <!-- 主畫面：頂部資訊 -->
   <div class="top-header"><div class="brand">MyLog</div></div>
   <div class="profile-section">
     <div class="avatar-wrapper"><div class="avatar"></div></div>
@@ -177,50 +165,55 @@
     </div>
   </div>
 
-  <!-- 日曆區塊 -->
-  <div class="calendar-wrapper">
-    <div class="calendar-container">
-      <div class="calendar-header">
-        <h2 id="month-year-display"></h2>
-        <div class="nav-controls">
-          <div class="nav-btn" id="prev-month"><i class="fa-solid fa-arrow-left"></i></div>
-          <div class="nav-btn" id="next-month"><i class="fa-solid fa-arrow-right"></i></div>
-        </div>
+  <!-- 視圖 1：日曆 -->
+  <div class="view-section active" id="view-calendar">
+    <div class="calendar-header">
+      <h2 id="month-year-display"></h2>
+      <div class="nav-controls">
+        <div class="nav-btn" id="prev-month"><i class="fa-solid fa-arrow-left"></i></div>
+        <div class="nav-btn" id="next-month"><i class="fa-solid fa-arrow-right"></i></div>
       </div>
-      <div class="weekdays"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div>
-      <div class="days-grid" id="days-grid"></div>
+    </div>
+    <div class="weekdays"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div>
+    <div class="days-grid" id="days-grid"></div>
+  </div>
+
+  <!-- 視圖 2：朋友系統 -->
+  <div class="view-section" id="view-friends">
+    <!-- 頂部搜尋區塊 (置頂) -->
+    <div class="sticky-top-search">
+      <div class="section-title">搜尋好友</div>
+      <div class="search-bar">
+        <input type="text" id="friend-search-input" placeholder="輸入用戶名或專屬碼搜尋...">
+        <button id="friend-search-btn">搜尋</button>
+      </div>
+      <div id="search-result-area" style="display: none; margin-top: 16px;"></div>
+    </div>
+
+    <!-- 好友申請區塊 -->
+    <div class="section-title">好友申請 <span class="badge" id="requests-badge" style="display: none;">0</span></div>
+    <div class="friends-list" id="pending-requests-list">
+      <div class="empty-state">目前沒有新的好友申請。</div>
+    </div>
+
+    <!-- 我的好友區塊 -->
+    <div class="section-title">我的好友</div>
+    <div class="friends-list" id="my-friends-list">
+      <div class="empty-state">尚未添加任何好友。</div>
     </div>
   </div>
 
-  <!-- 朋友系統區塊 -->
-  <div class="friends-wrapper">
-    <div class="friends-container">
-      <div class="friends-header">
-        <h2>日曆 - 朋友</h2>
-        <button class="modal-btn requests-btn" id="show-requests-btn">
-          好友申請 <div class="requests-badge" id="requests-badge" style="display: none;">0</div>
-        </button>
-      </div>
-      
-      <div class="search-bar">
-        <input type="text" id="friend-search-input" class="modal-input" placeholder="輸入用戶名或專屬碼搜尋好友...">
-        <button class="modal-btn" id="friend-search-btn">搜尋</button>
-      </div>
-      
-      <!-- 搜尋結果暫時顯示區 -->
-      <div id="search-result-area" style="display: none; margin-bottom: 24px;"></div>
-
-      <div class="friends-list" id="my-friends-list">
-        <div class="empty-state">尚未添加任何好友</div>
-      </div>
-    </div>
+  <!-- 底部導覽列 -->
+  <div class="bottom-nav">
+    <button class="nav-tab active" data-target="view-calendar"><i class="fa-regular fa-calendar" style="margin-right: 6px;"></i> 日曆</button>
+    <button class="nav-tab" data-target="view-friends"><i class="fa-solid fa-user-group" style="margin-right: 6px;"></i> 朋友</button>
   </div>
 
   <!-- Firebase Web SDK 邏輯 -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getDatabase, ref, set, get, child, query, orderByChild, equalTo, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, set, get, child, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAP4TENSlysfRTXx-a-Nk5gPM5f8UuT1Gs",
@@ -241,6 +234,20 @@
 
     let currentUserUid = null;
     let currentUserData = null;
+
+    // --- 底部導覽列切換邏輯 ---
+    const navTabs = document.querySelectorAll('.nav-tab');
+    const views = document.querySelectorAll('.view-section');
+
+    navTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        navTabs.forEach(t => t.classList.remove('active'));
+        views.forEach(v => v.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.getAttribute('data-target')).classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
 
     // --- 驗證與登入邏輯 ---
     const elements = {
@@ -397,12 +404,11 @@
             currentUserData = snapshot.val();
             currentUserUid = user.uid;
             updateProfileUI(currentUserData.username, currentUserData.exclusiveCode);
-            initFriendsSystem(); // 初始化好友系統
+            initFriendsSystem(); 
           } else { elements.overlay.classList.add('active'); }
         } catch (e) { console.error(e); }
       } else { elements.overlay.classList.add('active'); currentUserUid = null; }
     });
-
 
     // ==========================================
     // =           朋友系統核心邏輯             =
@@ -413,7 +419,7 @@
       listenToFriendsList();
     }
 
-    // 1. 搜尋好友
+    // 1. 搜尋好友 (修復：改為抓取全體資料並於客戶端過濾，避開 Firebase IndexOn 錯誤)
     document.getElementById('friend-search-btn').addEventListener('click', async () => {
       const term = document.getElementById('friend-search-input').value.trim();
       const resultArea = document.getElementById('search-result-area');
@@ -423,56 +429,60 @@
       resultArea.innerHTML = '<div class="empty-state">搜尋中...</div>';
 
       try {
-        // 先嘗試搜尋專屬碼
-        let q = query(ref(db, 'users'), orderByChild('exclusiveCode'), equalTo(term));
-        let snap = await get(q);
+        const usersSnap = await get(ref(db, 'users'));
+        let found = false;
+        let html = '';
         
-        // 若找不到，嘗試搜尋用戶名
-        if (!snap.exists()) {
-          q = query(ref(db, 'users'), orderByChild('username'), equalTo(term));
-          snap = await get(q);
-        }
-
-        if (snap.exists()) {
-          let html = '';
-          snap.forEach(childSnap => {
+        if (usersSnap.exists()) {
+          usersSnap.forEach(childSnap => {
             const uId = childSnap.key;
             const uData = childSnap.val();
+            
             if (uId === currentUserUid) return; // 排除自己
             
-            html += `
-              <div class="friend-item">
-                <div class="friend-info">
-                  <div class="friend-avatar"></div>
-                  <div class="friend-details">
-                    <h4>${uData.username}</h4>
-                    <p>ID: ${uData.exclusiveCode}</p>
+            // 進行比對 (精準比對用戶名或專屬碼)
+            if (uData.username === term || uData.exclusiveCode === term) {
+              found = true;
+              html += `
+                <div class="friend-item">
+                  <div class="friend-info">
+                    <div class="friend-avatar"></div>
+                    <div class="friend-details">
+                      <h4>${uData.username}</h4>
+                      <p>ID: ${uData.exclusiveCode}</p>
+                    </div>
+                  </div>
+                  <div class="action-btns">
+                    <button class="btn-small primary" onclick="sendFriendRequest('${uId}')">發送申請</button>
                   </div>
                 </div>
-                <div class="action-btns">
-                  <button class="btn-small primary" onclick="sendFriendRequest('${uId}')">發送申請</button>
-                </div>
-              </div>
-            `;
+              `;
+            }
           });
-          resultArea.innerHTML = html || '<div class="empty-state">找不到符合條件的用戶。</div>';
+          
+          if(found) {
+            resultArea.innerHTML = html;
+          } else {
+            resultArea.innerHTML = '<div class="empty-state">找不到符合條件的用戶，請確認輸入是否正確。</div>';
+          }
         } else {
-          resultArea.innerHTML = '<div class="empty-state">找不到該用戶，請確認輸入是否正確。</div>';
+          resultArea.innerHTML = '<div class="empty-state">系統內尚無其他用戶。</div>';
         }
-      } catch (error) { console.error(error); resultArea.innerHTML = '<div class="empty-state">搜尋發生錯誤。</div>'; }
+      } catch (error) { 
+        console.error(error); 
+        resultArea.innerHTML = '<div class="empty-state">搜尋發生錯誤，請重新整理頁面後再試。</div>'; 
+      }
     });
 
-    // 2. 發送好友申請 (掛載到全域)
+    // 2. 發送好友申請
     window.sendFriendRequest = async (targetUid) => {
       try {
-        // 檢查是否已是好友
         const friendCheck = await get(ref(db, `friends/${currentUserUid}/list/${targetUid}`));
         if(friendCheck.exists()) return alert("你們已經是好友了！");
         
-        // 發送申請
         await set(ref(db, `friends/${targetUid}/pending/${currentUserUid}`), true);
         alert("已成功發送好友申請！");
-        document.getElementById('search-result-area').innerHTML = ''; // 清空搜尋
+        document.getElementById('search-result-area').innerHTML = ''; 
         document.getElementById('friend-search-input').value = '';
       } catch (e) { alert("發送失敗"); }
     };
@@ -487,7 +497,7 @@
         if (snapshot.exists()) {
           const requests = snapshot.val();
           const uids = Object.keys(requests);
-          badge.style.display = 'flex';
+          badge.style.display = 'inline-block';
           badge.textContent = uids.length;
 
           let html = '';
@@ -496,7 +506,7 @@
             if (userSnap.exists()) {
               const uData = userSnap.val();
               html += `
-                <div class="friend-item" style="border-width: 1px; margin-bottom: 8px;">
+                <div class="friend-item">
                   <div class="friend-info">
                     <div class="friend-details">
                       <h4>${uData.username}</h4>
@@ -519,17 +529,13 @@
       });
     }
 
-    // 打開與關閉申請 Modal
-    document.getElementById('show-requests-btn').addEventListener('click', () => document.getElementById('requests-overlay').classList.add('active'));
-    document.getElementById('close-requests-modal').addEventListener('click', () => document.getElementById('requests-overlay').classList.remove('active'));
-
     // 4. 接受 / 拒絕 申請
     window.acceptRequest = async (requesterUid) => {
       try {
         const updates = {};
         updates[`friends/${currentUserUid}/list/${requesterUid}`] = true;
         updates[`friends/${requesterUid}/list/${currentUserUid}`] = true;
-        updates[`friends/${currentUserUid}/pending/${requesterUid}`] = null; // 刪除申請
+        updates[`friends/${currentUserUid}/pending/${requesterUid}`] = null;
         await update(ref(db), updates);
       } catch (e) { alert("操作失敗"); }
     };
@@ -570,12 +576,11 @@
           }
           listDiv.innerHTML = html;
         } else {
-          listDiv.innerHTML = '<div class="empty-state">尚未添加任何好友</div>';
+          listDiv.innerHTML = '<div class="empty-state">尚未添加任何好友。</div>';
         }
       });
     }
 
-    // 刪除好友
     window.removeFriend = async (targetUid) => {
       if(confirm("確定要刪除這位好友嗎？")) {
         const updates = {};
