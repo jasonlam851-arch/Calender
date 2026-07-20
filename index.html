@@ -25,7 +25,6 @@
     
     .profile-section { padding: 30px 20px; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid var(--border-color); }
     .avatar-wrapper { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--text-main); padding: 4px; margin-bottom: 12px; position: relative; }
-    /* 已將假在線標籤 (ONLINE) 移除，改由真實系統判定 */
     .avatar { width: 100%; height: 100%; background-color: var(--bg-white); border-radius: 50%; background-image: url('https://api.dicebear.com/7.x/notionists/svg?seed=Design'); background-size: cover; filter: grayscale(100%); }
     
     .profile-info { text-align: center; }
@@ -405,14 +404,12 @@
             currentUserUid = user.uid;
             updateProfileUI(currentUserData.username, currentUserData.exclusiveCode);
             
-            // 【新增】上下線狀態偵測 (Presence System)
+            // 【即時連線狀態判定邏輯】
             const connectedRef = ref(db, '.info/connected');
             const userStatusRef = ref(db, `users/${user.uid}/status`);
             onValue(connectedRef, (snap) => {
               if (snap.val() === true) {
-                // 當斷線時自動將 Firebase 中的狀態改為 offline
                 onDisconnect(userStatusRef).set('offline').then(() => {
-                  // 連線成功時設為 online
                   set(userStatusRef, 'online');
                 });
               }
@@ -457,9 +454,8 @@
             const uId = childSnap.key;
             const uData = childSnap.val();
             
-            if (uId === currentUserUid) return; // 排除自己
+            if (uId === currentUserUid) return; 
             
-            // 進行比對 (精準比對用戶名或專屬碼)
             if (uData.username === term || uData.exclusiveCode === term) {
               found = true;
               html += `
@@ -506,7 +502,7 @@
       } catch (e) { alert("發送失敗"); }
     };
 
-    // 3. 監聽收到的好友申請 (修復手機端非同步卡住問題)
+    // 3. 監聽收到的好友申請
     function listenToPendingRequests() {
       const pendingRef = ref(db, `friends/${currentUserUid}/pending`);
       onValue(pendingRef, async (snapshot) => {
@@ -520,7 +516,6 @@
           badge.textContent = uids.length;
 
           try {
-            // 使用 Promise.all 平行處理，避免手機網路稍慢造成整個迴圈卡死
             const requestsPromises = uids.map(async (uid) => {
               const userSnap = await get(child(ref(db), `users/${uid}`));
               return { uid, data: userSnap.exists() ? userSnap.val() : null };
@@ -576,7 +571,7 @@
       catch (e) { alert("操作失敗"); }
     };
 
-    // 5. 監聽並渲染我的好友列表 (加入即時 Online 顯示)
+    // 5. 監聽並渲染我的好友列表 (狀態已移至左側)
     function listenToFriendsList() {
       const friendsRef = ref(db, `friends/${currentUserUid}/list`);
       onValue(friendsRef, async (snapshot) => {
@@ -597,15 +592,15 @@
             friendsData.forEach(friend => {
               if (friend.data) {
                 const uData = friend.data;
-                // 姓名區塊旁預留一個 span 來顯示狀態
+                // 狀態顯示已調整至名稱前方
                 html += `
                   <div class="friend-item">
                     <div class="friend-info">
                       <div class="friend-avatar"></div>
                       <div class="friend-details">
                         <h4 style="display: flex; align-items: center;">
+                          <span id="status-${friend.uid}" style="font-size: 11px; font-weight: 800; margin-right: 8px; color: var(--text-muted);">離線</span>
                           ${uData.username} 
-                          <span id="status-${friend.uid}" style="font-size: 11px; font-weight: 800; margin-left: 6px;"></span>
                         </h4>
                         <p>專屬碼: ${uData.exclusiveCode}</p>
                       </div>
@@ -619,16 +614,18 @@
             });
             listDiv.innerHTML = html;
 
-            // 畫面渲染完成後，為每位好友綁定獨立的即時狀態監聽器
+            // 即時狀態綁定
             uids.forEach(uid => {
               const statusRef = ref(db, `users/${uid}/status`);
               onValue(statusRef, (statusSnap) => {
                 const statusEl = document.getElementById(`status-${uid}`);
                 if (statusEl) {
                   if (statusSnap.exists() && statusSnap.val() === 'online') {
-                    statusEl.textContent = '(Online)';
+                    statusEl.textContent = '在線';
+                    statusEl.style.color = 'var(--text-main)'; 
                   } else {
-                    statusEl.textContent = ''; // 離線則清空不顯示
+                    statusEl.textContent = '離線';
+                    statusEl.style.color = 'var(--text-muted)'; 
                   }
                 }
               });
