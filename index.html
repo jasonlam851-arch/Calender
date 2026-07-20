@@ -25,7 +25,7 @@
     
     .profile-section { padding: 30px 20px; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid var(--border-color); }
     .avatar-wrapper { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--text-main); padding: 4px; margin-bottom: 12px; position: relative; }
-    .avatar-wrapper::after { content: 'ONLINE'; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); background: var(--text-main); color: #fff; font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 12px; border: 1px solid var(--text-main); }
+    /* 已將假在線標籤 (ONLINE) 移除，改由真實系統判定 */
     .avatar { width: 100%; height: 100%; background-color: var(--bg-white); border-radius: 50%; background-image: url('https://api.dicebear.com/7.x/notionists/svg?seed=Design'); background-size: cover; filter: grayscale(100%); }
     
     .profile-info { text-align: center; }
@@ -213,7 +213,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getDatabase, ref, set, get, child, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, set, get, child, onValue, remove, update, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAP4TENSlysfRTXx-a-Nk5gPM5f8UuT1Gs",
@@ -404,14 +404,33 @@
             currentUserData = snapshot.val();
             currentUserUid = user.uid;
             updateProfileUI(currentUserData.username, currentUserData.exclusiveCode);
+            
+            // 【新增】上下線狀態偵測 (Presence System)
+            const connectedRef = ref(db, '.info/connected');
+            const userStatusRef = ref(db, `users/${user.uid}/status`);
+            onValue(connectedRef, (snap) => {
+              if (snap.val() === true) {
+                // 當斷線時自動將 Firebase 中的狀態改為 offline
+                onDisconnect(userStatusRef).set('offline').then(() => {
+                  // 連線成功時設為 online
+                  set(userStatusRef, 'online');
+                });
+              }
+            });
+
             initFriendsSystem(); 
-          } else { elements.overlay.classList.add('active'); }
+          } else { 
+            elements.overlay.classList.add('active'); 
+          }
         } catch (e) { console.error(e); }
-      } else { elements.overlay.classList.add('active'); currentUserUid = null; }
+      } else { 
+        elements.overlay.classList.add('active'); 
+        currentUserUid = null; 
+      }
     });
 
     // ==========================================
-    // =           朋友系統核心邏輯             =
+    // =            朋友系統核心邏輯              =
     // ==========================================
 
     function initFriendsSystem() {
@@ -419,7 +438,7 @@
       listenToFriendsList();
     }
 
-    // 1. 搜尋好友 (修復：改為抓取全體資料並於客戶端過濾，避開 Firebase IndexOn 錯誤)
+    // 1. 搜尋好友 
     document.getElementById('friend-search-btn').addEventListener('click', async () => {
       const term = document.getElementById('friend-search-input').value.trim();
       const resultArea = document.getElementById('search-result-area');
@@ -487,7 +506,7 @@
       } catch (e) { alert("發送失敗"); }
     };
 
-    // 3. 監聽收到的好友申請
+    // 3. 監聽收到的好友申請 (修復手機端非同步卡住問題)
     function listenToPendingRequests() {
       const pendingRef = ref(db, `friends/${currentUserUid}/pending`);
       onValue(pendingRef, async (snapshot) => {
@@ -500,28 +519,40 @@
           badge.style.display = 'inline-block';
           badge.textContent = uids.length;
 
-          let html = '';
-          for (const uid of uids) {
-            const userSnap = await get(child(ref(db), `users/${uid}`));
-            if (userSnap.exists()) {
-              const uData = userSnap.val();
-              html += `
-                <div class="friend-item">
-                  <div class="friend-info">
-                    <div class="friend-details">
-                      <h4>${uData.username}</h4>
-                      <p>${uData.exclusiveCode}</p>
+          try {
+            // 使用 Promise.all 平行處理，避免手機網路稍慢造成整個迴圈卡死
+            const requestsPromises = uids.map(async (uid) => {
+              const userSnap = await get(child(ref(db), `users/${uid}`));
+              return { uid, data: userSnap.exists() ? userSnap.val() : null };
+            });
+
+            const requestsData = await Promise.all(requestsPromises);
+            let html = '';
+            
+            requestsData.forEach(req => {
+              if (req.data) {
+                const uData = req.data;
+                html += `
+                  <div class="friend-item">
+                    <div class="friend-info">
+                      <div class="friend-avatar"></div>
+                      <div class="friend-details">
+                        <h4>${uData.username}</h4>
+                        <p>${uData.exclusiveCode}</p>
+                      </div>
+                    </div>
+                    <div class="action-btns">
+                      <button class="btn-small primary" onclick="acceptRequest('${req.uid}')">接受</button>
+                      <button class="btn-small" onclick="rejectRequest('${req.uid}')">拒絕</button>
                     </div>
                   </div>
-                  <div class="action-btns">
-                    <button class="btn-small primary" onclick="acceptRequest('${uid}')">接受</button>
-                    <button class="btn-small" onclick="rejectRequest('${uid}')">拒絕</button>
-                  </div>
-                </div>
-              `;
-            }
+                `;
+              }
+            });
+            listDiv.innerHTML = html;
+          } catch (error) {
+            console.error("載入好友申請失敗:", error);
           }
-          listDiv.innerHTML = html;
         } else {
           badge.style.display = 'none';
           listDiv.innerHTML = '<div class="empty-state">目前沒有新的好友申請。</div>';
@@ -545,7 +576,7 @@
       catch (e) { alert("操作失敗"); }
     };
 
-    // 5. 監聽並渲染我的好友列表
+    // 5. 監聽並渲染我的好友列表 (加入即時 Online 顯示)
     function listenToFriendsList() {
       const friendsRef = ref(db, `friends/${currentUserUid}/list`);
       onValue(friendsRef, async (snapshot) => {
@@ -553,28 +584,59 @@
         if (snapshot.exists()) {
           const friends = snapshot.val();
           const uids = Object.keys(friends);
-          let html = '';
-          for (const uid of uids) {
-            const userSnap = await get(child(ref(db), `users/${uid}`));
-            if (userSnap.exists()) {
-              const uData = userSnap.val();
-              html += `
-                <div class="friend-item">
-                  <div class="friend-info">
-                    <div class="friend-avatar"></div>
-                    <div class="friend-details">
-                      <h4>${uData.username}</h4>
-                      <p>專屬碼: ${uData.exclusiveCode}</p>
+          
+          try {
+            const friendsDataPromises = uids.map(async (uid) => {
+              const userSnap = await get(child(ref(db), `users/${uid}`));
+              return { uid, data: userSnap.exists() ? userSnap.val() : null };
+            });
+
+            const friendsData = await Promise.all(friendsDataPromises);
+            let html = '';
+            
+            friendsData.forEach(friend => {
+              if (friend.data) {
+                const uData = friend.data;
+                // 姓名區塊旁預留一個 span 來顯示狀態
+                html += `
+                  <div class="friend-item">
+                    <div class="friend-info">
+                      <div class="friend-avatar"></div>
+                      <div class="friend-details">
+                        <h4 style="display: flex; align-items: center;">
+                          ${uData.username} 
+                          <span id="status-${friend.uid}" style="font-size: 11px; font-weight: 800; margin-left: 6px;"></span>
+                        </h4>
+                        <p>專屬碼: ${uData.exclusiveCode}</p>
+                      </div>
+                    </div>
+                    <div class="action-btns">
+                      <button class="btn-small" onclick="removeFriend('${friend.uid}')">刪除</button>
                     </div>
                   </div>
-                  <div class="action-btns">
-                    <button class="btn-small" onclick="removeFriend('${uid}')">刪除</button>
-                  </div>
-                </div>
-              `;
-            }
+                `;
+              }
+            });
+            listDiv.innerHTML = html;
+
+            // 畫面渲染完成後，為每位好友綁定獨立的即時狀態監聽器
+            uids.forEach(uid => {
+              const statusRef = ref(db, `users/${uid}/status`);
+              onValue(statusRef, (statusSnap) => {
+                const statusEl = document.getElementById(`status-${uid}`);
+                if (statusEl) {
+                  if (statusSnap.exists() && statusSnap.val() === 'online') {
+                    statusEl.textContent = '(Online)';
+                  } else {
+                    statusEl.textContent = ''; // 離線則清空不顯示
+                  }
+                }
+              });
+            });
+
+          } catch (error) {
+            console.error("載入好友列表失敗:", error);
           }
-          listDiv.innerHTML = html;
         } else {
           listDiv.innerHTML = '<div class="empty-state">尚未添加任何好友。</div>';
         }
