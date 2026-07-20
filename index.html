@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MyLog 專屬日曆系統 (純黑白極簡版)</title>
+  <title>MyLog 專屬日曆系統</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -23,12 +23,22 @@
     .top-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 5vw; border-bottom: 1px solid var(--border-color); }
     .top-header .brand { font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
     
-    /* --- 新增：頂部右側動作按鈕與版本號 --- */
+    /* 頂部右側動作按鈕與客製化語言選單 */
     .header-actions { display: flex; align-items: center; gap: 10px; }
     .action-icon-btn { background: var(--bg-white); color: var(--text-main); border: 2px solid var(--text-main); width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; font-size: 14px; border-radius: 4px; }
     .action-icon-btn:hover { background: var(--text-main); color: var(--bg-white); }
     .version-text { font-size: 12px; font-weight: 800; color: var(--text-main); letter-spacing: 1px; margin-left: 4px; text-transform: uppercase; border: 2px solid var(--text-main); padding: 4px 8px; border-radius: 4px; }
-    /* -------------------------------------- */
+    
+    /* --- 客製化語言下拉選單 --- */
+    .custom-lang-selector { position: relative; display: inline-block; user-select: none; }
+    .lang-selected { border: 2px solid var(--text-main); padding: 4px 10px; height: 32px; font-size: 12px; font-weight: 800; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 6px; background: var(--bg-white); color: var(--text-main); transition: 0.2s; }
+    .lang-selected:hover { background: var(--text-main); color: var(--bg-white); }
+    .lang-options { position: absolute; top: 100%; right: 0; margin-top: 6px; background: var(--bg-white); border: 2px solid var(--text-main); border-radius: 4px; display: none; flex-direction: column; min-width: 110px; z-index: 1000; box-shadow: 4px 4px 0px rgba(0,0,0,1); overflow: hidden; }
+    .lang-options.show { display: flex; }
+    .lang-option { padding: 10px 12px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; text-align: center; border-bottom: 1px solid var(--border-color); }
+    .lang-option:last-child { border-bottom: none; }
+    .lang-option:hover { background: var(--text-main); color: var(--bg-white); }
+    /* -------------------------- */
 
     .profile-section { padding: 30px 20px; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid var(--border-color); }
     .avatar-wrapper { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--text-main); padding: 4px; margin-bottom: 12px; position: relative; }
@@ -48,7 +58,7 @@
 
     /* 日曆樣式 */
     .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-    .calendar-header h2 { font-size: 24px; font-weight: 800; }
+    .calendar-header h2 { font-size: 24px; font-weight: 800; text-transform: uppercase; }
     .nav-controls { display: flex; gap: 10px; }
     .nav-btn { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border-color); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
     .nav-btn:hover { background: var(--text-main); color: var(--bg-white); }
@@ -113,7 +123,6 @@
     .auth-switch span { color: var(--text-main); font-weight: 800; cursor: pointer; text-decoration: underline; text-underline-offset: 4px;}
     .loading-text { font-size: 13px; font-weight: 700; color: var(--text-main); text-align: center; margin-bottom: 12px; display: none; text-transform: uppercase;}
     
-    /* 隱藏滾動條 */
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-thumb { background: var(--text-main); }
   </style>
@@ -126,43 +135,56 @@
       <div class="auth-main-title">MyLog</div>
 
       <div id="main-auth-form">
-        <div class="modal-header" id="auth-title">登入帳號</div>
-        <div class="modal-subtitle" id="auth-subtitle">登入以存取您的專屬日曆。</div>
-        <input type="text" id="auth-username" class="modal-input" placeholder="用戶名稱" autocomplete="off">
+        <div class="modal-header" id="auth-title" data-i18n="auth_login_title">登入帳號</div>
+        <div class="modal-subtitle" id="auth-subtitle" data-i18n="auth_login_subtitle">登入以存取您的專屬日曆。</div>
+        <input type="text" id="auth-username" class="modal-input" data-i18n-placeholder="auth_username_placeholder" placeholder="用戶名稱" autocomplete="off">
         <div id="register-fields">
-          <input type="text" id="auth-birthday" class="modal-input" placeholder="生日月日 (選填)" maxlength="4">
+          <input type="text" id="auth-birthday" class="modal-input" data-i18n-placeholder="auth_birthday_placeholder" placeholder="生日月日 (選填)" maxlength="4">
         </div>
-        <input type="password" id="auth-password" class="modal-input" placeholder="密碼 (至少8碼，須含英文字母與數字)">
+        <input type="password" id="auth-password" class="modal-input" data-i18n-placeholder="auth_password_placeholder" placeholder="密碼 (至少8碼，須含英文字母與數字)">
         
-        <div class="loading-text" id="auth-loading">處理中...</div>
-        <button class="modal-btn" id="auth-submit-btn">登入</button>
-        <div class="divider">或</div>
+        <div class="loading-text" id="auth-loading" data-i18n="loading">處理中...</div>
+        <button class="modal-btn" id="auth-submit-btn" data-i18n="auth_login_btn">登入</button>
+        <div class="divider" data-i18n="auth_or">或</div>
         <button class="modal-btn google-btn" id="google-auth-btn">
-          <i class="fa-brands fa-google"></i> <span id="google-btn-text">使用 Google 登入</span>
+          <i class="fa-brands fa-google"></i> <span id="google-btn-text" data-i18n="auth_google_login">使用 Google 登入</span>
         </button>
         
-        <div class="auth-switch"><span id="auth-toggle-msg">還沒有帳號？ <span>立即註冊</span></span></div>
+        <div class="auth-switch" id="auth-toggle-msg" data-i18n="auth_toggle_to_register_html">還沒有帳號？ <span>立即註冊</span></div>
       </div>
 
       <div id="google-complete-form">
-        <div class="modal-header">即推完成註冊</div>
-        <div class="modal-subtitle">請為您的帳號設定一個用戶名稱。</div>
-        <input type="text" id="google-username" class="modal-input" placeholder="用戶名稱" autocomplete="off">
+        <div class="modal-header" data-i18n="google_comp_title">完成註冊</div>
+        <div class="modal-subtitle" data-i18n="google_comp_subtitle">請為您的帳號設定一個用戶名稱。</div>
+        <input type="text" id="google-username" class="modal-input" data-i18n-placeholder="auth_username_placeholder" placeholder="用戶名稱" autocomplete="off">
         
-        <div class="loading-text" id="google-loading">處理中...</div>
-        <button class="modal-btn" id="google-complete-submit">確認註冊</button>
+        <div class="loading-text" id="google-loading" data-i18n="loading">處理中...</div>
+        <button class="modal-btn" id="google-complete-submit" data-i18n="google_comp_submit">確認註冊</button>
         
         <div class="auth-switch" style="margin-top: 10px;">
-          <span id="cancel-google-complete" style="color: var(--text-muted); text-decoration: none; font-weight: 500;">返回上一步</span>
+          <span id="cancel-google-complete" style="color: var(--text-muted); text-decoration: none; font-weight: 500;" data-i18n="google_comp_cancel">返回上一步</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 主畫面：頂部資訊與新加入的設定區塊 -->
+  <!-- 主畫面：頂部資訊與設定區塊 -->
   <div class="top-header">
     <div class="brand">MyLog</div>
     <div class="header-actions">
+      
+      <!-- 客製化語言下拉選單 -->
+      <div class="custom-lang-selector" id="lang-selector">
+        <div class="lang-selected" id="lang-selected-btn">
+          <i class="fa-solid fa-globe"></i> <span id="current-lang-text">繁中</span>
+        </div>
+        <div class="lang-options" id="lang-options-list">
+          <div class="lang-option" data-lang="zh-TW">繁體中文</div>
+          <div class="lang-option" data-lang="zh-CN">简体中文</div>
+          <div class="lang-option" data-lang="en">English</div>
+        </div>
+      </div>
+
       <button class="action-icon-btn" title="設定"><i class="fa-solid fa-gear"></i></button>
       <button class="action-icon-btn" title="信件/訊息"><i class="fa-regular fa-envelope"></i></button>
       <span class="version-text">v.01</span>
@@ -172,10 +194,10 @@
   <div class="profile-section">
     <div class="avatar-wrapper"><div class="avatar"></div></div>
     <div class="profile-info">
-      <h1 id="display-name">使用者名稱</h1>
-      <p id="display-exclusive-code">載入中...</p>
-      <span>專屬用戶碼</span><br>
-      <button class="logout-btn" id="logout-btn">登出系統</button>
+      <h1 id="display-name">UserName</h1>
+      <p id="display-exclusive-code" data-i18n="profile_loading">載入中...</p>
+      <span data-i18n="profile_code_label">專屬用戶碼</span><br>
+      <button class="logout-btn" id="logout-btn" data-i18n="profile_logout">登出系統</button>
     </div>
   </div>
 
@@ -188,47 +210,291 @@
         <div class="nav-btn" id="next-month"><i class="fa-solid fa-arrow-right"></i></div>
       </div>
     </div>
-    <div class="weekdays"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div>
+    <div class="weekdays" id="calendar-weekdays">
+      <div data-i18n="day_0">日</div><div data-i18n="day_1">一</div><div data-i18n="day_2">二</div>
+      <div data-i18n="day_3">三</div><div data-i18n="day_4">四</div><div data-i18n="day_5">五</div><div data-i18n="day_6">六</div>
+    </div>
     <div class="days-grid" id="days-grid"></div>
   </div>
 
   <!-- 視圖 2：朋友系統 -->
   <div class="view-section" id="view-friends">
-    <!-- 頂部搜尋區塊 (置頂) -->
     <div class="sticky-top-search">
-      <div class="section-title">搜尋好友</div>
+      <div class="section-title" data-i18n="friends_search_title">搜尋好友</div>
       <div class="search-bar">
-        <input type="text" id="friend-search-input" placeholder="輸入用戶名或專屬碼搜尋...">
-        <button id="friend-search-btn">搜尋</button>
+        <input type="text" id="friend-search-input" data-i18n-placeholder="friends_search_placeholder" placeholder="輸入用戶名或專屬碼搜尋...">
+        <button id="friend-search-btn" data-i18n="friends_search_btn">搜尋</button>
       </div>
       <div id="search-result-area" style="display: none; margin-top: 16px;"></div>
     </div>
 
-    <!-- 好友申請區塊 -->
-    <div class="section-title">好友申請 <span class="badge" id="requests-badge" style="display: none;">0</span></div>
+    <div class="section-title"><span data-i18n="friends_requests_title">好友申請</span> <span class="badge" id="requests-badge" style="display: none;">0</span></div>
     <div class="friends-list" id="pending-requests-list">
-      <div class="empty-state">目前沒有新的好友申請。</div>
+      <div class="empty-state" data-i18n="friends_requests_empty">目前沒有新的好友申請。</div>
     </div>
 
-    <!-- 我的好友區塊 -->
-    <div class="section-title">我的好友</div>
+    <div class="section-title" data-i18n="friends_list_title">我的好友</div>
     <div class="friends-list" id="my-friends-list">
-      <div class="empty-state">尚未添加任何好友。</div>
+      <div class="empty-state" data-i18n="friends_list_empty">尚未添加任何好友。</div>
     </div>
   </div>
 
   <!-- 底部導覽列 -->
   <div class="bottom-nav">
-    <button class="nav-tab active" data-target="view-calendar"><i class="fa-regular fa-calendar" style="margin-right: 6px;"></i> 日曆</button>
-    <button class="nav-tab" data-target="view-friends"><i class="fa-solid fa-user-group" style="margin-right: 6px;"></i> 朋友</button>
+    <button class="nav-tab active" data-target="view-calendar">
+      <i class="fa-regular fa-calendar" style="margin-right: 6px;"></i> <span data-i18n="nav_calendar">日曆</span>
+    </button>
+    <button class="nav-tab" data-target="view-friends">
+      <i class="fa-solid fa-user-group" style="margin-right: 6px;"></i> <span data-i18n="nav_friends">朋友</span>
+    </button>
   </div>
 
-  <!-- Firebase Web SDK 邏輯 -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, get, child, onValue, remove, update, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+    // ==========================================
+    // =            多國語言字典系統             =
+    // ==========================================
+    const i18n = {
+      "zh-TW": {
+        lang_name: "繁中",
+        auth_login_title: "登入帳號",
+        auth_login_subtitle: "登入以存取您的專屬日曆。",
+        auth_reg_title: "註冊帳號",
+        auth_reg_subtitle: "建立專屬日曆與辨識碼。",
+        auth_username_placeholder: "用戶名稱",
+        auth_birthday_placeholder: "生日月日 (選填)",
+        auth_password_placeholder: "密碼 (至少8碼，須含英文字母與數字)",
+        loading: "處理中...",
+        auth_login_btn: "登入",
+        auth_reg_btn: "註冊",
+        auth_or: "或",
+        auth_google_login: "使用 Google 登入",
+        auth_google_reg: "使用 Google 註冊",
+        auth_toggle_to_register_html: "還沒有帳號？ <span>立即註冊</span>",
+        auth_toggle_to_login_html: "已經有帳號了？ <span>直接登入</span>",
+        google_comp_title: "完成註冊",
+        google_comp_subtitle: "請為您的帳號設定一個用戶名稱。",
+        google_comp_submit: "確認註冊",
+        google_comp_cancel: "返回上一步",
+        profile_loading: "載入中...",
+        profile_code_label: "專屬用戶碼",
+        profile_logout: "登出系統",
+        nav_calendar: "日曆",
+        nav_friends: "朋友",
+        day_0: "日", day_1: "一", day_2: "二", day_3: "三", day_4: "四", day_5: "五", day_6: "六",
+        friends_search_title: "搜尋好友",
+        friends_search_placeholder: "輸入用戶名或專屬碼搜尋...",
+        friends_search_btn: "搜尋",
+        friends_requests_title: "好友申請",
+        friends_requests_empty: "目前沒有新的好友申請。",
+        friends_list_title: "我的好友",
+        friends_list_empty: "尚未添加任何好友。",
+        btn_send_request: "發送申請",
+        btn_accept: "接受",
+        btn_reject: "拒絕",
+        btn_delete: "刪除",
+        status_online: "在線",
+        status_offline: "離線",
+        alert_no_user: "請填寫用戶名稱！",
+        alert_no_pw: "請填寫密碼！",
+        alert_login_fail: "登入失敗，請確認帳號或密碼是否正確。",
+        alert_bd_length: "生日請填寫四碼！",
+        alert_pw_format: "密碼必須至少 8 個字元，包含英文字母與數字。",
+        alert_reg_success: "註冊成功！專屬碼：",
+        alert_name_used: "此用戶名稱已被註冊！",
+        alert_reg_fail: "註冊失敗：",
+        alert_g_not_reg: "此 Google 帳號尚未註冊！請切換至「註冊」進行註冊。",
+        alert_g_auto_login: "此 Google 帳號已經註冊過，已為您自動登入！",
+        alert_auth_fail: "驗證失敗：",
+        alert_search_empty: "搜尋中...",
+        alert_already_friend: "你們已經是好友了！",
+        alert_req_sent: "已成功發送好友申請！",
+        alert_no_match: "找不到符合條件的用戶，請確認輸入是否正確。",
+        alert_no_users_sys: "系統內尚無其他用戶。",
+        alert_search_err: "搜尋發生錯誤，請重新整理頁面後再試。",
+        alert_op_fail: "操作失敗",
+        alert_del_confirm: "確定要刪除這位好友嗎？",
+        month_format: (y, m) => `${y}年 ${m}月`,
+        id_label: "ID:"
+      },
+      "zh-CN": {
+        lang_name: "简中",
+        auth_login_title: "登录账号",
+        auth_login_subtitle: "登录以访问您的专属日历。",
+        auth_reg_title: "注册账号",
+        auth_reg_subtitle: "建立专属日历与识别码。",
+        auth_username_placeholder: "用户名称",
+        auth_birthday_placeholder: "生日月日 (选填)",
+        auth_password_placeholder: "密码 (至少8码，须含英文字母与数字)",
+        loading: "处理中...",
+        auth_login_btn: "登录",
+        auth_reg_btn: "注册",
+        auth_or: "或",
+        auth_google_login: "使用 Google 登录",
+        auth_google_reg: "使用 Google 注册",
+        auth_toggle_to_register_html: "还没有账号？ <span>立即注册</span>",
+        auth_toggle_to_login_html: "已经有账号了？ <span>直接登录</span>",
+        google_comp_title: "完成注册",
+        google_comp_subtitle: "请为您的账号设定一个用户名称。",
+        google_comp_submit: "确认注册",
+        google_comp_cancel: "返回上一步",
+        profile_loading: "载入中...",
+        profile_code_label: "专属用户码",
+        profile_logout: "登出系统",
+        nav_calendar: "日历",
+        nav_friends: "朋友",
+        day_0: "日", day_1: "一", day_2: "二", day_3: "三", day_4: "四", day_5: "五", day_6: "六",
+        friends_search_title: "搜索好友",
+        friends_search_placeholder: "输入用户名或专属码搜索...",
+        friends_search_btn: "搜索",
+        friends_requests_title: "好友申请",
+        friends_requests_empty: "目前没有新的好友申请。",
+        friends_list_title: "我的好友",
+        friends_list_empty: "尚未添加任何好友。",
+        btn_send_request: "发送申请",
+        btn_accept: "接受",
+        btn_reject: "拒绝",
+        btn_delete: "删除",
+        status_online: "在线",
+        status_offline: "离线",
+        alert_no_user: "请填写用户名称！",
+        alert_no_pw: "请填写密码！",
+        alert_login_fail: "登录失败，请确认账号或密码是否正确。",
+        alert_bd_length: "生日请填写四码！",
+        alert_pw_format: "密码必须至少 8 个字符，包含英文字母与数字。",
+        alert_reg_success: "注册成功！专属码：",
+        alert_name_used: "此用户名称已被注册！",
+        alert_reg_fail: "注册失败：",
+        alert_g_not_reg: "此 Google 账号尚未注册！请切换至「注册」进行注册。",
+        alert_g_auto_login: "此 Google 账号已经注册过，已为您自动登录！",
+        alert_auth_fail: "验证失败：",
+        alert_search_empty: "搜索中...",
+        alert_already_friend: "你们已经是好友了！",
+        alert_req_sent: "已成功发送好友申请！",
+        alert_no_match: "找不到符合条件的用户，请确认输入是否正确。",
+        alert_no_users_sys: "系统内尚无其他用户。",
+        alert_search_err: "搜索发生错误，请重新刷新页面后重试。",
+        alert_op_fail: "操作失败",
+        alert_del_confirm: "确定要删除这位好友吗？",
+        month_format: (y, m) => `${y}年 ${m}月`,
+        id_label: "ID:"
+      },
+      "en": {
+        lang_name: "EN",
+        auth_login_title: "Login",
+        auth_login_subtitle: "Login to access your calendar.",
+        auth_reg_title: "Register",
+        auth_reg_subtitle: "Create your calendar & unique ID.",
+        auth_username_placeholder: "Username",
+        auth_birthday_placeholder: "Birthday MMDD (Opt)",
+        auth_password_placeholder: "Password (Min 8 chars, letters & numbers)",
+        loading: "Processing...",
+        auth_login_btn: "Login",
+        auth_reg_btn: "Register",
+        auth_or: "OR",
+        auth_google_login: "Login with Google",
+        auth_google_reg: "Register with Google",
+        auth_toggle_to_register_html: "No account? <span>Register Now</span>",
+        auth_toggle_to_login_html: "Have an account? <span>Login</span>",
+        google_comp_title: "Complete Setup",
+        google_comp_subtitle: "Please set a username for your account.",
+        google_comp_submit: "Confirm Registration",
+        google_comp_cancel: "Go Back",
+        profile_loading: "Loading...",
+        profile_code_label: "Exclusive ID",
+        profile_logout: "Logout",
+        nav_calendar: "Calendar",
+        nav_friends: "Friends",
+        day_0: "Sun", day_1: "Mon", day_2: "Tue", day_3: "Wed", day_4: "Thu", day_5: "Fri", day_6: "Sat",
+        friends_search_title: "Search Friends",
+        friends_search_placeholder: "Search by username or ID...",
+        friends_search_btn: "Search",
+        friends_requests_title: "Requests",
+        friends_requests_empty: "No new friend requests.",
+        friends_list_title: "My Friends",
+        friends_list_empty: "No friends added yet.",
+        btn_send_request: "Send Request",
+        btn_accept: "Accept",
+        btn_reject: "Reject",
+        btn_delete: "Delete",
+        status_online: "Online",
+        status_offline: "Offline",
+        alert_no_user: "Please enter a username!",
+        alert_no_pw: "Please enter a password!",
+        alert_login_fail: "Login failed. Check your credentials.",
+        alert_bd_length: "Birthday must be 4 digits!",
+        alert_pw_format: "Password must be at least 8 characters with letters & numbers.",
+        alert_reg_success: "Registration successful! ID: ",
+        alert_name_used: "Username already taken!",
+        alert_reg_fail: "Registration failed: ",
+        alert_g_not_reg: "Google account not registered. Please switch to Register.",
+        alert_g_auto_login: "Google account found. Logged in automatically!",
+        alert_auth_fail: "Authentication failed: ",
+        alert_search_empty: "Searching...",
+        alert_already_friend: "You are already friends!",
+        alert_req_sent: "Friend request sent!",
+        alert_no_match: "No users found matching your search.",
+        alert_no_users_sys: "No other users in the system.",
+        alert_search_err: "Search error. Please try again.",
+        alert_op_fail: "Operation failed",
+        alert_del_confirm: "Are you sure you want to delete this friend?",
+        month_format: (y, m) => { const ms = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; return `${ms[m-1]} ${y}`; },
+        id_label: "ID:"
+      }
+    };
+
+    let currentLang = 'zh-TW';
+
+    function t(key) { return i18n[currentLang][key] || key; }
+
+    function updateLanguageUI() {
+      // 更新擁有 data-i18n 的文字
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if(key.endsWith('_html')) el.innerHTML = t(key);
+        else el.textContent = t(key);
+      });
+      // 更新 placeholder
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+      });
+      // 重新渲染需動態組裝的組件
+      renderCalendar();
+      if(lastSearchedHtml) updateSearchAreaByLang();
+      if(currentUserUid) {
+        renderPendingRequests(currentPendingData);
+        renderMyFriendsList(currentFriendsData);
+      }
+    }
+
+    // --- 語言選擇器邏輯 ---
+    const langSelectorBtn = document.getElementById('lang-selected-btn');
+    const langOptionsList = document.getElementById('lang-options-list');
+    const currentLangText = document.getElementById('current-lang-text');
+
+    langSelectorBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      langOptionsList.classList.toggle('show');
+    });
+
+    document.querySelectorAll('.lang-option').forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        currentLang = e.target.getAttribute('data-lang');
+        currentLangText.textContent = t('lang_name');
+        langOptionsList.classList.remove('show');
+        updateLanguageUI();
+      });
+    });
+
+    document.addEventListener('click', () => { langOptionsList.classList.remove('show'); });
+
+
+    // ==========================================
+    // =            Firebase 基礎設定            =
+    // ==========================================
     const firebaseConfig = {
       apiKey: "AIzaSyAP4TENSlysfRTXx-a-Nk5gPM5f8UuT1Gs",
       authDomain: "calender-b46cb.firebaseapp.com",
@@ -292,28 +558,29 @@
 
     function updateProfileUI(username, exclusiveCode) {
       elements.overlay.classList.remove('active');
-      elements.displayName.textContent = username;
-      elements.displayCode.textContent = exclusiveCode;
+      elements.displayName.textContent = username; // Username 不翻譯
+      elements.displayCode.textContent = exclusiveCode; // Exclusive code 不翻譯
     }
 
     elements.toggleMsg.addEventListener('click', () => {
       isLoginMode = !isLoginMode;
       [elements.username, elements.password, elements.birthday].forEach(el => el.value = '');
       if (isLoginMode) {
-        elements.title.textContent = '登入帳號';
-        elements.subtitle.textContent = '登入以存取您的專屬日曆。';
+        elements.title.setAttribute('data-i18n', 'auth_login_title');
+        elements.subtitle.setAttribute('data-i18n', 'auth_login_subtitle');
         elements.registerFields.style.display = 'none';
-        elements.submitBtn.textContent = '登入';
-        document.getElementById('google-btn-text').textContent = '使用 Google 登入';
-        elements.toggleMsg.innerHTML = '還沒有帳號？ <span>立即註冊</span>';
+        elements.submitBtn.setAttribute('data-i18n', 'auth_login_btn');
+        document.getElementById('google-btn-text').setAttribute('data-i18n', 'auth_google_login');
+        elements.toggleMsg.setAttribute('data-i18n', 'auth_toggle_to_register_html');
       } else {
-        elements.title.textContent = '註冊帳號';
-        elements.subtitle.textContent = '建立專屬日曆與辨識碼。';
+        elements.title.setAttribute('data-i18n', 'auth_reg_title');
+        elements.subtitle.setAttribute('data-i18n', 'auth_reg_subtitle');
         elements.registerFields.style.display = 'block';
-        elements.submitBtn.textContent = '註冊';
-        document.getElementById('google-btn-text').textContent = '使用 Google 註冊';
-        elements.toggleMsg.innerHTML = '已經有帳號了？ <span>直接登入</span>';
+        elements.submitBtn.setAttribute('data-i18n', 'auth_reg_btn');
+        document.getElementById('google-btn-text').setAttribute('data-i18n', 'auth_google_reg');
+        elements.toggleMsg.setAttribute('data-i18n', 'auth_toggle_to_login_html');
       }
+      updateLanguageUI();
     });
 
     elements.cancelGoogleComplete.addEventListener('click', async () => {
@@ -346,25 +613,25 @@
     elements.submitBtn.addEventListener('click', async () => {
       const username = elements.username.value.trim();
       const password = elements.password.value.trim();
-      if (!username) return alert("請填寫用戶名稱！");
-      if (!password) return alert("請填寫密碼！");
+      if (!username) return alert(t('alert_no_user'));
+      if (!password) return alert(t('alert_no_pw'));
       const pseudoEmail = getSafeEmail(username);
       elements.loading.style.display = 'block';
 
       if (isLoginMode) {
         try { await signInWithEmailAndPassword(auth, pseudoEmail, password); } 
-        catch (error) { alert("登入失敗，請確認帳號或密碼是否正確。"); }
+        catch (error) { alert(t('alert_login_fail')); }
       } else {
         let birthday = elements.birthday.value.trim();
-        if(birthday && birthday.length !== 4) { elements.loading.style.display = 'none'; return alert("生日請填寫四碼！"); }
-        if (!passwordRegex.test(password)) { elements.loading.style.display = 'none'; return alert("密碼必須至少 8 個字元，包含英文字母與數字。"); }
+        if(birthday && birthday.length !== 4) { elements.loading.style.display = 'none'; return alert(t('alert_bd_length')); }
+        if (!passwordRegex.test(password)) { elements.loading.style.display = 'none'; return alert(t('alert_pw_format')); }
         try {
           const cred = await createUserWithEmailAndPassword(auth, pseudoEmail, password);
           const userData = await createUserDataInDB(cred.user, username, birthday);
-          alert(`註冊成功！專屬碼：${userData.exclusiveCode}`);
+          alert(`${t('alert_reg_success')}${userData.exclusiveCode}`);
           updateProfileUI(userData.username, userData.exclusiveCode);
         } catch (error) {
-          if (error.code === 'auth/email-already-in-use') alert("此用戶名稱已被註冊！"); else alert("註冊失敗：" + error.message);
+          if (error.code === 'auth/email-already-in-use') alert(t('alert_name_used')); else alert(t('alert_reg_fail') + error.message);
         }
       }
       elements.loading.style.display = 'none';
@@ -377,38 +644,37 @@
         const user = result.user;
         const userSnap = await get(child(ref(db), `users/${user.uid}`));
         if (!userSnap.exists()) {
-          if (isLoginMode) { await user.delete(); await signOut(auth); alert("此 Google 帳號尚未註冊！請切換至「註冊」進行註冊。"); } 
+          if (isLoginMode) { await user.delete(); await signOut(auth); alert(t('alert_g_not_reg')); } 
           else {
             pendingGoogleUser = user;
             elements.mainForm.style.display = 'none';
             elements.googleCompleteForm.style.display = 'block';
           }
         } else {
-          if (!isLoginMode) alert("此 Google 帳號已經註冊過，已為您自動登入！");
+          if (!isLoginMode) alert(t('alert_g_auto_login'));
           updateProfileUI(userSnap.val().username, userSnap.val().exclusiveCode);
         }
-      } catch (error) { if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') alert("驗證失敗：" + error.message); } 
+      } catch (error) { if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') alert(t('alert_auth_fail') + error.message); } 
       finally { elements.loading.style.display = 'none'; }
     });
 
     elements.googleSubmitBtn.addEventListener('click', async () => {
       const gUsername = elements.googleUsernameInput.value.trim();
-      if (!gUsername) return alert("請填寫用戶名稱！");
+      if (!gUsername) return alert(t('alert_no_user'));
       elements.googleLoading.style.display = 'block';
       try {
         const userData = await createUserDataInDB(pendingGoogleUser, gUsername, "0000");
-        alert(`註冊成功！專屬碼：${userData.exclusiveCode}`);
+        alert(`${t('alert_reg_success')}${userData.exclusiveCode}`);
         updateProfileUI(userData.username, userData.exclusiveCode);
         elements.googleCompleteForm.style.display = 'none';
         elements.mainForm.style.display = 'block';
         pendingGoogleUser = null;
-      } catch (error) { alert("資料建立失敗：" + error.message); }
+      } catch (error) { alert(t('alert_reg_fail') + error.message); }
       elements.googleLoading.style.display = 'none';
     });
 
     elements.logoutBtn.addEventListener('click', () => { signOut(auth); location.reload(); });
 
-    // --- 嚴格狀態監聽與朋友系統初始化 ---
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         if (pendingGoogleUser && user.uid === pendingGoogleUser.uid) return;
@@ -419,7 +685,6 @@
             currentUserUid = user.uid;
             updateProfileUI(currentUserData.username, currentUserData.exclusiveCode);
             
-            // 【即時連線狀態判定邏輯】
             const connectedRef = ref(db, '.info/connected');
             const userStatusRef = ref(db, `users/${user.uid}/status`);
             onValue(connectedRef, (snap) => {
@@ -431,9 +696,7 @@
             });
 
             initFriendsSystem(); 
-          } else { 
-            elements.overlay.classList.add('active'); 
-          }
+          } else { elements.overlay.classList.add('active'); }
         } catch (e) { console.error(e); }
       } else { 
         elements.overlay.classList.add('active'); 
@@ -445,19 +708,30 @@
     // =            朋友系統核心邏輯              =
     // ==========================================
 
+    let currentPendingData = [];
+    let currentFriendsData = [];
+    let lastSearchedHtml = '';
+
     function initFriendsSystem() {
       listenToPendingRequests();
       listenToFriendsList();
     }
 
-    // 1. 搜尋好友 
+    // 更新搜尋結果的語言
+    function updateSearchAreaByLang() {
+      if(lastSearchedHtml === 'empty') document.getElementById('search-result-area').innerHTML = `<div class="empty-state">${t('alert_no_match')}</div>`;
+      else if(lastSearchedHtml === 'no_users') document.getElementById('search-result-area').innerHTML = `<div class="empty-state">${t('alert_no_users_sys')}</div>`;
+      else if(lastSearchedHtml === 'err') document.getElementById('search-result-area').innerHTML = `<div class="empty-state">${t('alert_search_err')}</div>`;
+      // 若是真正的結果，因為需要替換按鈕文字，需重新產生HTML。實作上若有上次搜尋緩存可以直接重繪。為簡化，由使用者再次搜尋觸發即可。
+    }
+
     document.getElementById('friend-search-btn').addEventListener('click', async () => {
       const term = document.getElementById('friend-search-input').value.trim();
       const resultArea = document.getElementById('search-result-area');
-      if (!term) return alert("請輸入搜尋內容！");
+      if (!term) return alert(t('alert_search_empty').replace('...','')); // Simple check
 
       resultArea.style.display = 'block';
-      resultArea.innerHTML = '<div class="empty-state">搜尋中...</div>';
+      resultArea.innerHTML = `<div class="empty-state">${t('alert_search_empty')}</div>`;
 
       try {
         const usersSnap = await get(ref(db, 'users'));
@@ -468,9 +742,7 @@
           usersSnap.forEach(childSnap => {
             const uId = childSnap.key;
             const uData = childSnap.val();
-            
             if (uId === currentUserUid) return; 
-            
             if (uData.username === term || uData.exclusiveCode === term) {
               found = true;
               html += `
@@ -479,98 +751,91 @@
                     <div class="friend-avatar"></div>
                     <div class="friend-details">
                       <h4>${uData.username}</h4>
-                      <p>ID: ${uData.exclusiveCode}</p>
+                      <p>${t('id_label')} ${uData.exclusiveCode}</p>
                     </div>
                   </div>
                   <div class="action-btns">
-                    <button class="btn-small primary" onclick="sendFriendRequest('${uId}')">發送申請</button>
+                    <button class="btn-small primary" onclick="sendFriendRequest('${uId}')">${t('btn_send_request')}</button>
                   </div>
-                </div>
-              `;
+                </div>`;
             }
           });
           
-          if(found) {
-            resultArea.innerHTML = html;
-          } else {
-            resultArea.innerHTML = '<div class="empty-state">找不到符合條件的用戶，請確認輸入是否正確。</div>';
-          }
+          if(found) { resultArea.innerHTML = html; lastSearchedHtml = 'found'; } 
+          else { resultArea.innerHTML = `<div class="empty-state">${t('alert_no_match')}</div>`; lastSearchedHtml = 'empty'; }
         } else {
-          resultArea.innerHTML = '<div class="empty-state">系統內尚無其他用戶。</div>';
+          resultArea.innerHTML = `<div class="empty-state">${t('alert_no_users_sys')}</div>`; lastSearchedHtml = 'no_users';
         }
       } catch (error) { 
-        console.error(error); 
-        resultArea.innerHTML = '<div class="empty-state">搜尋發生錯誤，請重新整理頁面後再試。</div>'; 
+        resultArea.innerHTML = `<div class="empty-state">${t('alert_search_err')}</div>`; lastSearchedHtml = 'err';
       }
     });
 
-    // 2. 發送好友申請
     window.sendFriendRequest = async (targetUid) => {
       try {
         const friendCheck = await get(ref(db, `friends/${currentUserUid}/list/${targetUid}`));
-        if(friendCheck.exists()) return alert("你們已經是好友了！");
+        if(friendCheck.exists()) return alert(t('alert_already_friend'));
         
         await set(ref(db, `friends/${targetUid}/pending/${currentUserUid}`), true);
-        alert("已成功發送好友申請！");
+        alert(t('alert_req_sent'));
         document.getElementById('search-result-area').innerHTML = ''; 
         document.getElementById('friend-search-input').value = '';
-      } catch (e) { alert("發送失敗"); }
+      } catch (e) { alert(t('alert_op_fail')); }
     };
 
-    // 3. 監聽收到的好友申請
+    function renderPendingRequests(dataArray) {
+      const listDiv = document.getElementById('pending-requests-list');
+      if(dataArray.length === 0) {
+        listDiv.innerHTML = `<div class="empty-state">${t('friends_requests_empty')}</div>`;
+        return;
+      }
+      let html = '';
+      dataArray.forEach(req => {
+        if (req.data) {
+          html += `
+            <div class="friend-item">
+              <div class="friend-info">
+                <div class="friend-avatar"></div>
+                <div class="friend-details">
+                  <h4>${req.data.username}</h4>
+                  <p>${req.data.exclusiveCode}</p>
+                </div>
+              </div>
+              <div class="action-btns">
+                <button class="btn-small primary" onclick="acceptRequest('${req.uid}')">${t('btn_accept')}</button>
+                <button class="btn-small" onclick="rejectRequest('${req.uid}')">${t('btn_reject')}</button>
+              </div>
+            </div>`;
+        }
+      });
+      listDiv.innerHTML = html;
+    }
+
     function listenToPendingRequests() {
       const pendingRef = ref(db, `friends/${currentUserUid}/pending`);
       onValue(pendingRef, async (snapshot) => {
         const badge = document.getElementById('requests-badge');
-        const listDiv = document.getElementById('pending-requests-list');
-        
         if (snapshot.exists()) {
           const requests = snapshot.val();
           const uids = Object.keys(requests);
           badge.style.display = 'inline-block';
           badge.textContent = uids.length;
-
           try {
             const requestsPromises = uids.map(async (uid) => {
               const userSnap = await get(child(ref(db), `users/${uid}`));
               return { uid, data: userSnap.exists() ? userSnap.val() : null };
             });
-
-            const requestsData = await Promise.all(requestsPromises);
-            let html = '';
-            
-            requestsData.forEach(req => {
-              if (req.data) {
-                const uData = req.data;
-                html += `
-                  <div class="friend-item">
-                    <div class="friend-info">
-                      <div class="friend-avatar"></div>
-                      <div class="friend-details">
-                        <h4>${uData.username}</h4>
-                        <p>${uData.exclusiveCode}</p>
-                      </div>
-                    </div>
-                    <div class="action-btns">
-                      <button class="btn-small primary" onclick="acceptRequest('${req.uid}')">接受</button>
-                      <button class="btn-small" onclick="rejectRequest('${req.uid}')">拒絕</button>
-                    </div>
-                  </div>
-                `;
-              }
-            });
-            listDiv.innerHTML = html;
-          } catch (error) {
-            console.error("載入好友申請失敗:", error);
-          }
+            currentPendingData = await Promise.all(requestsPromises);
+            renderPendingRequests(currentPendingData);
+          } catch (error) { console.error(error); }
         } else {
           badge.style.display = 'none';
-          listDiv.innerHTML = '<div class="empty-state">目前沒有新的好友申請。</div>';
+          currentPendingData = [];
+          renderPendingRequests(currentPendingData);
         }
       });
     }
 
-    // 4. 接受 / 拒絕 申請
     window.acceptRequest = async (requesterUid) => {
       try {
         const updates = {};
@@ -578,85 +843,84 @@
         updates[`friends/${requesterUid}/list/${currentUserUid}`] = true;
         updates[`friends/${currentUserUid}/pending/${requesterUid}`] = null;
         await update(ref(db), updates);
-      } catch (e) { alert("操作失敗"); }
+      } catch (e) { alert(t('alert_op_fail')); }
     };
 
     window.rejectRequest = async (requesterUid) => {
       try { await remove(ref(db, `friends/${currentUserUid}/pending/${requesterUid}`)); } 
-      catch (e) { alert("操作失敗"); }
+      catch (e) { alert(t('alert_op_fail')); }
     };
 
-    // 5. 監聽並渲染我的好友列表 (狀態已移至左側)
+    function renderMyFriendsList(dataArray) {
+      const listDiv = document.getElementById('my-friends-list');
+      if(dataArray.length === 0) {
+        listDiv.innerHTML = `<div class="empty-state">${t('friends_list_empty')}</div>`;
+        return;
+      }
+      let html = '';
+      dataArray.forEach(friend => {
+        if (friend.data) {
+          html += `
+            <div class="friend-item">
+              <div class="friend-info">
+                <div class="friend-avatar"></div>
+                <div class="friend-details">
+                  <h4 style="display: flex; align-items: center;">
+                    <span id="status-${friend.uid}" class="friend-status" data-uid="${friend.uid}" style="font-size: 11px; font-weight: 800; margin-right: 8px; color: var(--text-muted);">${t('status_offline')}</span>
+                    ${friend.data.username} 
+                  </h4>
+                  <p>${t('id_label')} ${friend.data.exclusiveCode}</p>
+                </div>
+              </div>
+              <div class="action-btns">
+                <button class="btn-small" onclick="removeFriend('${friend.uid}')">${t('btn_delete')}</button>
+              </div>
+            </div>`;
+        }
+      });
+      listDiv.innerHTML = html;
+      
+      // 重新綁定狀態監聽以更新文字
+      dataArray.forEach(friend => {
+        const statusRef = ref(db, `users/${friend.uid}/status`);
+        onValue(statusRef, (statusSnap) => {
+          const statusEl = document.getElementById(`status-${friend.uid}`);
+          if (statusEl) {
+            if (statusSnap.exists() && statusSnap.val() === 'online') {
+              statusEl.textContent = t('status_online');
+              statusEl.style.color = 'var(--text-main)'; 
+            } else {
+              statusEl.textContent = t('status_offline');
+              statusEl.style.color = 'var(--text-muted)'; 
+            }
+          }
+        });
+      });
+    }
+
     function listenToFriendsList() {
       const friendsRef = ref(db, `friends/${currentUserUid}/list`);
       onValue(friendsRef, async (snapshot) => {
-        const listDiv = document.getElementById('my-friends-list');
         if (snapshot.exists()) {
           const friends = snapshot.val();
           const uids = Object.keys(friends);
-          
           try {
             const friendsDataPromises = uids.map(async (uid) => {
               const userSnap = await get(child(ref(db), `users/${uid}`));
               return { uid, data: userSnap.exists() ? userSnap.val() : null };
             });
-
-            const friendsData = await Promise.all(friendsDataPromises);
-            let html = '';
-            
-            friendsData.forEach(friend => {
-              if (friend.data) {
-                const uData = friend.data;
-                // 狀態顯示已調整至名稱前方
-                html += `
-                  <div class="friend-item">
-                    <div class="friend-info">
-                      <div class="friend-avatar"></div>
-                      <div class="friend-details">
-                        <h4 style="display: flex; align-items: center;">
-                          <span id="status-${friend.uid}" style="font-size: 11px; font-weight: 800; margin-right: 8px; color: var(--text-muted);">離線</span>
-                          ${uData.username} 
-                        </h4>
-                        <p>專屬碼: ${uData.exclusiveCode}</p>
-                      </div>
-                    </div>
-                    <div class="action-btns">
-                      <button class="btn-small" onclick="removeFriend('${friend.uid}')">刪除</button>
-                    </div>
-                  </div>
-                `;
-              }
-            });
-            listDiv.innerHTML = html;
-
-            // 即時狀態綁定
-            uids.forEach(uid => {
-              const statusRef = ref(db, `users/${uid}/status`);
-              onValue(statusRef, (statusSnap) => {
-                const statusEl = document.getElementById(`status-${uid}`);
-                if (statusEl) {
-                  if (statusSnap.exists() && statusSnap.val() === 'online') {
-                    statusEl.textContent = '在線';
-                    statusEl.style.color = 'var(--text-main)'; 
-                  } else {
-                    statusEl.textContent = '離線';
-                    statusEl.style.color = 'var(--text-muted)'; 
-                  }
-                }
-              });
-            });
-
-          } catch (error) {
-            console.error("載入好友列表失敗:", error);
-          }
+            currentFriendsData = await Promise.all(friendsDataPromises);
+            renderMyFriendsList(currentFriendsData);
+          } catch (error) { console.error(error); }
         } else {
-          listDiv.innerHTML = '<div class="empty-state">尚未添加任何好友。</div>';
+          currentFriendsData = [];
+          renderMyFriendsList(currentFriendsData);
         }
       });
     }
 
     window.removeFriend = async (targetUid) => {
-      if(confirm("確定要刪除這位好友嗎？")) {
+      if(confirm(t('alert_del_confirm'))) {
         const updates = {};
         updates[`friends/${currentUserUid}/list/${targetUid}`] = null;
         updates[`friends/${targetUid}/list/${currentUserUid}`] = null;
@@ -673,7 +937,7 @@
       daysGrid.innerHTML = ''; 
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth(); 
-      document.getElementById('month-year-display').textContent = `${year}年 ${month + 1}月`;
+      document.getElementById('month-year-display').textContent = i18n[currentLang].month_format(year, month + 1);
       
       const firstDay = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -693,7 +957,9 @@
 
     document.getElementById('prev-month').addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
     document.getElementById('next-month').addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
-    renderCalendar();
+    
+    // 初始化UI語系與日曆
+    updateLanguageUI();
   </script>
 </body>
 </html>
