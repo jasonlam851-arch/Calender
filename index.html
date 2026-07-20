@@ -23,6 +23,13 @@
     .top-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 5vw; border-bottom: 1px solid var(--border-color); }
     .top-header .brand { font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
     
+    /* --- 新增：頂部右側動作按鈕與版本號 --- */
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .action-icon-btn { background: var(--bg-white); color: var(--text-main); border: 2px solid var(--text-main); width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; font-size: 14px; border-radius: 4px; }
+    .action-icon-btn:hover { background: var(--text-main); color: var(--bg-white); }
+    .version-text { font-size: 12px; font-weight: 800; color: var(--text-main); letter-spacing: 1px; margin-left: 4px; text-transform: uppercase; border: 2px solid var(--text-main); padding: 4px 8px; border-radius: 4px; }
+    /* -------------------------------------- */
+
     .profile-section { padding: 30px 20px; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid var(--border-color); }
     .avatar-wrapper { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--text-main); padding: 4px; margin-bottom: 12px; position: relative; }
     .avatar { width: 100%; height: 100%; background-color: var(--bg-white); border-radius: 50%; background-image: url('https://api.dicebear.com/7.x/notionists/svg?seed=Design'); background-size: cover; filter: grayscale(100%); }
@@ -138,7 +145,7 @@
       </div>
 
       <div id="google-complete-form">
-        <div class="modal-header">即將完成註冊</div>
+        <div class="modal-header">即推完成註冊</div>
         <div class="modal-subtitle">請為您的帳號設定一個用戶名稱。</div>
         <input type="text" id="google-username" class="modal-input" placeholder="用戶名稱" autocomplete="off">
         
@@ -152,8 +159,16 @@
     </div>
   </div>
 
-  <!-- 主畫面：頂部資訊 -->
-  <div class="top-header"><div class="brand">MyLog</div></div>
+  <!-- 主畫面：頂部資訊與新加入的設定區塊 -->
+  <div class="top-header">
+    <div class="brand">MyLog</div>
+    <div class="header-actions">
+      <button class="action-icon-btn" title="設定"><i class="fa-solid fa-gear"></i></button>
+      <button class="action-icon-btn" title="信件/訊息"><i class="fa-regular fa-envelope"></i></button>
+      <span class="version-text">v.01</span>
+    </div>
+  </div>
+
   <div class="profile-section">
     <div class="avatar-wrapper"><div class="avatar"></div></div>
     <div class="profile-info">
