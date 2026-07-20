@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <!-- 引入 QR Code 生成與掃描庫 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
@@ -34,7 +33,6 @@
     .version-text { font-size: 12px; font-weight: 800; color: var(--text-main); letter-spacing: 1px; margin-left: 4px; text-transform: uppercase; border: 2px solid var(--text-main); padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: 0.2s; }
     .version-text:hover { background: var(--text-main); color: var(--bg-white); }
     
-    /* 信件未讀徽章 */
     .mail-badge { position: absolute; top: -5px; right: -5px; background: var(--text-main); color: var(--bg-white); font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 10px; border: 1px solid var(--bg-white); display: none; }
 
     .profile-section { padding: 30px 20px; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid var(--border-color); }
@@ -49,7 +47,6 @@
     .logout-btn { background: var(--bg-white); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 0; padding: 6px 16px; font-size: 11px; font-weight: 600; cursor: pointer; margin-top: 12px; transition: 0.2s; text-transform: uppercase; }
     .logout-btn:hover { background: var(--text-main); color: var(--bg-white); }
     
-    /* 視圖切換區塊 */
     .view-section { display: none; padding: 30px 5vw; width: 100%; max-width: 900px; margin: 0 auto; flex-grow: 1; }
     .view-section.active { display: block; }
 
@@ -67,7 +64,7 @@
     .day-cell.today { background: var(--text-main); color: var(--bg-white); font-weight: 800; }
     .day-cell.today::after { content: ''; position: absolute; bottom: 6px; width: 5px; height: 5px; background-color: var(--bg-white); border-radius: 50%; }
     
-    /* 朋友系統樣式 */
+    /* 朋友系統與設定樣式 */
     .sticky-top-search { position: sticky; top: 0; background: var(--bg-white); z-index: 10; padding-bottom: 16px; border-bottom: 2px solid var(--border-color); margin-bottom: 24px; }
     .section-title { font-size: 18px; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
     .badge { background: var(--text-main); color: var(--bg-white); font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 12px; }
@@ -92,14 +89,11 @@
     .btn-small.primary:hover { background: var(--bg-white); color: var(--text-main); }
     .empty-state { text-align: center; padding: 30px; color: var(--text-muted); font-weight: 600; font-size: 13px; border: 2px solid var(--border-color); }
 
-    /* 設定頁面樣式 */
     .setting-group { border: 2px solid var(--border-color); padding: 20px; margin-bottom: 20px; background: var(--bg-white); }
     .setting-group h3 { font-size: 16px; font-weight: 800; margin-bottom: 14px; text-transform: uppercase; border-bottom: 2px solid var(--border-color); padding-bottom: 8px; }
     .setting-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; font-weight: 700; }
-    .setting-row:last-child { margin-bottom: 0; }
     .setting-select { border: 2px solid var(--text-main); padding: 6px 12px; font-weight: 700; background: var(--bg-white); color: var(--text-main); outline: none; cursor: pointer; font-size: 13px; }
     
-    /* Toggle Switch */
     .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
     .switch input { opacity: 0; width: 0; height: 0; }
     .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; border: 2px solid var(--text-main); transition: .2s; }
@@ -107,12 +101,10 @@
     input:checked + .slider { background-color: var(--text-main); }
     input:checked + .slider:before { transform: translateX(22px); background-color: var(--bg-white); }
 
-    /* 信件頁面樣式 */
     .mail-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border: 2px solid var(--border-color); margin-bottom: 10px; background: var(--bg-white); }
     .mail-content p { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
     .mail-content span { font-size: 11px; color: var(--text-muted); font-weight: 600; }
 
-    /* 底部導覽列 */
     .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; border-top: 2px solid var(--border-color); background: var(--bg-white); z-index: 50; }
     .nav-tab { flex: 1; padding: 18px 0; text-align: center; font-weight: 800; font-size: 15px; cursor: pointer; background: var(--bg-white); color: var(--text-muted); border: none; border-right: 2px solid var(--border-color); text-transform: uppercase; transition: 0.2s; }
     .nav-tab:last-child { border-right: none; }
@@ -135,12 +127,11 @@
     .google-btn:hover { background: var(--text-main); color: var(--bg-white); }
     .divider { display: flex; align-items: center; text-align: center; color: var(--text-main); font-size: 12px; font-weight: 700; margin-bottom: 16px; margin-top: 8px; text-transform: uppercase;}
     .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 2px solid var(--border-color); margin: 0 10px; }
-    #register-fields, #google-complete-form { display: none; } 
+    
     .auth-switch { text-align: center; margin-top: 20px; font-size: 14px; color: var(--text-muted); font-weight: 500;}
     .auth-switch span { color: var(--text-main); font-weight: 800; cursor: pointer; text-decoration: underline; text-underline-offset: 4px;}
     .loading-text { font-size: 13px; font-weight: 700; color: var(--text-main); text-align: center; margin-bottom: 12px; display: none; text-transform: uppercase;}
     
-    /* 掃描器與聊天室特殊樣式 */
     #reader { border: none !important; width: 100%; }
     #reader video { width: 100% !important; object-fit: cover; }
 
@@ -169,11 +160,22 @@
       <div id="main-auth-form">
         <div class="modal-header" id="auth-title" data-i18n="auth_login_title">登入帳號</div>
         <div class="modal-subtitle" id="auth-subtitle" data-i18n="auth_login_subtitle">登入以存取您的專屬日曆。</div>
-        <input type="text" id="auth-username" class="modal-input" data-i18n-placeholder="auth_username_placeholder" placeholder="用戶名稱" autocomplete="off">
-        <div id="register-fields">
-          <input type="text" id="auth-birthday" class="modal-input" data-i18n-placeholder="auth_birthday_placeholder" placeholder="生日月日 (選填)" maxlength="4">
+        
+        <!-- 登入專用欄位 -->
+        <div id="login-fields">
+          <input type="text" id="auth-identifier" class="modal-input" data-i18n-placeholder="auth_identifier_placeholder" placeholder="專屬碼 (例0001) 或 電子郵件" autocomplete="off">
         </div>
+        
+        <!-- 註冊專用欄位 -->
+        <div id="register-fields" style="display: none;">
+          <input type="email" id="auth-reg-email" class="modal-input" data-i18n-placeholder="auth_reg_email_placeholder" placeholder="電子郵件 (必填)">
+          <input type="text" id="auth-reg-username" class="modal-input" data-i18n-placeholder="auth_reg_username_placeholder" placeholder="用戶名稱 (必填)" autocomplete="off">
+        </div>
+
         <input type="password" id="auth-password" class="modal-input" data-i18n-placeholder="auth_password_placeholder" placeholder="密碼 (至少8碼，須含英文字母與數字)">
+        
+        <!-- 忘記密碼按鈕 -->
+        <div id="forgot-pw-link" style="text-align: right; font-size: 12px; margin-bottom: 24px; cursor: pointer; text-decoration: underline; color: var(--text-muted); font-weight: 600;" data-i18n="forgot_pw_text">忘記密碼？</div>
         
         <div class="loading-text" id="auth-loading" data-i18n="loading">處理中...</div>
         <button class="modal-btn" id="auth-submit-btn" data-i18n="auth_login_btn">登入</button>
@@ -185,10 +187,11 @@
         <div class="auth-switch" id="auth-toggle-msg" data-i18n="auth_toggle_to_register_html">還沒有帳號？ <span>立即註冊</span></div>
       </div>
 
-      <div id="google-complete-form">
+      <!-- Google 註冊完成填寫用戶名 -->
+      <div id="google-complete-form" style="display: none;">
         <div class="modal-header" data-i18n="google_comp_title">完成註冊</div>
         <div class="modal-subtitle" data-i18n="google_comp_subtitle">請為您的帳號設定一個用戶名稱。</div>
-        <input type="text" id="google-username" class="modal-input" data-i18n-placeholder="auth_username_placeholder" placeholder="用戶名稱" autocomplete="off">
+        <input type="text" id="google-username" class="modal-input" data-i18n-placeholder="auth_reg_username_placeholder" placeholder="用戶名稱" autocomplete="off">
         
         <div class="loading-text" id="google-loading" data-i18n="loading">處理中...</div>
         <button class="modal-btn" id="google-complete-submit" data-i18n="google_comp_submit">確認註冊</button>
@@ -200,13 +203,33 @@
     </div>
   </div>
 
+  <!-- 舊用戶綁定信箱 Modal -->
+  <div id="bind-email-overlay" class="modal-overlay">
+    <div class="modal-content">
+      <div class="auth-main-title" data-i18n="bind_email_title">補充資料</div>
+      <div class="modal-subtitle" style="color: var(--text-main); font-weight: 700;" data-i18n="bind_email_subtitle">為保障您的帳號安全並啟用忘記密碼功能，請綁定您的電子郵件。</div>
+      <input type="email" id="bind-email-input" class="modal-input" data-i18n-placeholder="bind_email_placeholder" placeholder="輸入您的電子郵件">
+      <button class="modal-btn" id="bind-email-submit" data-i18n="bind_email_submit">確認綁定</button>
+    </div>
+  </div>
+
+  <!-- 忘記密碼 Modal -->
+  <div id="forgot-pw-overlay" class="modal-overlay">
+    <div class="modal-content">
+      <div class="auth-main-title" data-i18n="forgot_pw_title">重設密碼</div>
+      <div class="modal-subtitle" data-i18n="forgot_pw_subtitle">請輸入您註冊時綁定的電子郵件，我們將發送密碼重設連結給您。</div>
+      <input type="email" id="forgot-pw-email-input" class="modal-input" data-i18n-placeholder="bind_email_placeholder" placeholder="輸入您的電子郵件">
+      <button class="modal-btn" id="forgot-pw-submit" data-i18n="forgot_pw_submit_btn">發送重設信件</button>
+      <button class="modal-btn google-btn" id="forgot-pw-cancel" data-i18n="btn_cancel" style="margin-top: 10px;">取消</button>
+    </div>
+  </div>
+
+  <!-- 其他系統 Modal... -->
   <!-- 更新日誌 Modal -->
   <div id="changelog-overlay" class="modal-overlay">
     <div class="modal-content">
-      <div class="auth-main-title" id="changelog-title" data-i18n="changelog_title">更新日誌 v.06</div>
-      <div class="modal-subtitle" id="changelog-body" data-i18n="changelog_content_html" style="text-align: left; line-height: 1.7; color: var(--text-main); margin-bottom: 30px;">
-        <!-- 由 JS 動態注入 -->
-      </div>
+      <div class="auth-main-title" id="changelog-title" data-i18n="changelog_title">更新日誌 v.07</div>
+      <div class="modal-subtitle" id="changelog-body" data-i18n="changelog_content_html" style="text-align: left; line-height: 1.7; color: var(--text-main); margin-bottom: 30px;"></div>
       <button class="modal-btn" id="close-changelog-btn" data-i18n="btn_close">關閉</button>
     </div>
   </div>
@@ -248,7 +271,7 @@
     </div>
   </div>
 
-  <!-- 主畫面：頂部資訊與設定區塊 -->
+  <!-- 主畫面 -->
   <div class="top-header">
     <div class="brand">MyLog</div>
     <div class="header-actions">
@@ -257,7 +280,7 @@
         <i class="fa-regular fa-envelope"></i>
         <span class="mail-badge" id="mail-badge">0</span>
       </button>
-      <span class="version-text" id="version-btn">v.06</span>
+      <span class="version-text" id="version-btn">v.07</span>
     </div>
   </div>
 
@@ -271,7 +294,7 @@
     </div>
   </div>
 
-  <!-- 視圖 1：日曆 -->
+  <!-- 視圖區塊 (日曆、朋友、設定、信件) 保持原樣 -->
   <div class="view-section active" id="view-calendar">
     <div class="calendar-header">
       <h2 id="month-year-display"></h2>
@@ -287,21 +310,17 @@
     <div class="days-grid" id="days-grid"></div>
   </div>
 
-  <!-- 視圖 2：朋友系統 -->
   <div class="view-section" id="view-friends">
     <div class="sticky-top-search">
       <div class="section-title" data-i18n="friends_search_title">搜尋好友</div>
       <div class="search-bar">
-        <input type="text" id="friend-search-input" data-i18n-placeholder="friends_search_placeholder" placeholder="輸入用戶名或專屬碼搜尋...">
+        <input type="text" id="friend-search-input" data-i18n-placeholder="friends_search_placeholder" placeholder="輸入專屬碼搜尋...">
         <button id="friend-search-btn" data-i18n="friends_search_btn">搜尋</button>
       </div>
-      
-      <!-- 二維碼快捷操作 -->
       <div class="action-btns" style="margin-bottom: 12px; gap: 10px;">
         <button class="btn-small primary" id="show-qr-btn" style="flex: 1;"><i class="fa-solid fa-qrcode"></i> <span data-i18n="btn_my_qr">我的二維碼</span></button>
         <button class="btn-small" id="scan-qr-btn" style="flex: 1;"><i class="fa-solid fa-camera"></i> <span data-i18n="btn_scan_qr">掃描二維碼</span></button>
       </div>
-
       <div id="search-result-area" style="display: none; margin-top: 16px;"></div>
     </div>
 
@@ -316,10 +335,8 @@
     </div>
   </div>
 
-  <!-- 視圖 3：設定頁面 -->
   <div class="view-section" id="view-settings">
     <div class="section-title" data-i18n="setting_title">系統設定</div>
-    
     <div class="setting-group">
       <h3 data-i18n="setting_lang_title">語言設定 / Language</h3>
       <div class="setting-row">
@@ -330,7 +347,6 @@
         </select>
       </div>
     </div>
-
     <div class="setting-group">
       <h3 data-i18n="setting_privacy_title">隱私設定</h3>
       <div class="setting-row">
@@ -343,7 +359,6 @@
     </div>
   </div>
 
-  <!-- 視圖 4：信箱 / 通知頁面 -->
   <div class="view-section" id="view-mail">
     <div class="section-title" data-i18n="mail_page_title">訊息通知</div>
     <div class="friends-list" id="mail-list">
@@ -363,8 +378,8 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getDatabase, ref, set, get, child, onValue, remove, update, onDisconnect, push, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail, updateEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getDatabase, ref, set, get, child, onValue, remove, update, onDisconnect, push, runTransaction, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     // ==========================================
     // =            多國語言字典系統             =
@@ -375,7 +390,9 @@
         auth_login_subtitle: "登入以存取您的專屬日曆。",
         auth_reg_title: "註冊帳號",
         auth_reg_subtitle: "建立專屬日曆與辨識碼。",
-        auth_username_placeholder: "用戶名稱",
+        auth_identifier_placeholder: "專屬碼 (例0001) 或 電子郵件",
+        auth_reg_email_placeholder: "電子郵件 (必填)",
+        auth_reg_username_placeholder: "用戶名稱 (必填)",
         auth_password_placeholder: "密碼 (至少8碼，須含英文字母與數字)",
         loading: "處理中...",
         auth_login_btn: "登入",
@@ -385,6 +402,14 @@
         auth_google_reg: "使用 Google 註冊",
         auth_toggle_to_register_html: "還沒有帳號？ <span>立即註冊</span>",
         auth_toggle_to_login_html: "已經有帳號了？ <span>直接登入</span>",
+        forgot_pw_text: "忘記密碼？",
+        forgot_pw_title: "重設密碼",
+        forgot_pw_subtitle: "請輸入您註冊時綁定的電子郵件，我們將發送密碼重設連結給您。",
+        forgot_pw_submit_btn: "發送重設信件",
+        bind_email_title: "補充資料",
+        bind_email_subtitle: "為保障您的帳號安全並啟用忘記密碼功能，請綁定您的電子郵件。",
+        bind_email_placeholder: "輸入您的電子郵件",
+        bind_email_submit: "確認綁定",
         google_comp_title: "完成註冊",
         google_comp_subtitle: "請為您的帳號設定一個用戶名稱。",
         google_comp_submit: "確認註冊",
@@ -396,7 +421,7 @@
         nav_friends: "朋友",
         day_0: "日", day_1: "一", day_2: "二", day_3: "三", day_4: "四", day_5: "五", day_6: "六",
         friends_search_title: "搜尋好友",
-        friends_search_placeholder: "輸入用戶名或專屬碼...",
+        friends_search_placeholder: "輸入專屬碼或用戶名...",
         friends_search_btn: "搜尋",
         friends_requests_title: "好友申請",
         friends_requests_empty: "目前沒有新的好友申請。",
@@ -421,11 +446,13 @@
         mail_page_title: "訊息通知",
         mail_empty: "目前沒有新的訊息通知。",
         alert_no_user: "請填寫用戶名稱！",
+        alert_no_email: "請填寫電子郵件！",
         alert_no_pw: "請填寫密碼！",
-        alert_login_fail: "登入失敗，請確認帳號或密碼是否正確。",
+        alert_login_fail: "登入失敗，請確認專屬碼/信箱或密碼是否正確。",
+        alert_no_user_code: "系統內找不到該專屬碼的用戶！",
         alert_pw_format: "密碼必須至少 8 個字元，包含英文字母與數字。",
         alert_reg_success: "註冊成功！專屬碼：",
-        alert_name_used: "此用戶名稱已被註冊！",
+        alert_email_used: "此電子郵件已被註冊！",
         alert_reg_fail: "註冊失敗：",
         alert_g_not_reg: "此 Google 帳號尚未註冊！請切換至「註冊」進行註冊。",
         alert_g_auto_login: "此 Google 帳號已經註冊過，已為您自動登入！",
@@ -439,13 +466,17 @@
         alert_cam_err: "無法開啟相機，請確認設備權限設定。",
         alert_op_fail: "操作失敗",
         alert_del_confirm: "確定要刪除這位好友嗎？",
+        alert_invalid_email: "請輸入有效的電子郵件格式！",
+        alert_bind_success: "電子郵件綁定成功！",
+        alert_reset_sent: "密碼重設信件已發送，請至您的電子信箱檢查！",
+        alert_reset_fail: "發送失敗，請確認該信箱是否已註冊。",
         msg_added_you: "向你發送了好友申請",
         msg_accepted_you: "接受了你的好友申請",
         msg_rejected_you: "拒絕了你的好友申請",
         month_format: (y, m) => `${y}年 ${m}月`,
         id_label: "ID:",
-        changelog_title: "更新日誌 v.06",
-        changelog_content_html: "<strong>本次更新內容：</strong><br><br>1. <strong>即時聊天室</strong>：現在點擊朋友清單中的任何一位好友，即可直接進入專屬的一對一聊天室！<br>2. <strong>Neubrutalism 經典風格對話框</strong>：採用黑白高對比對話泡泡設計，支援即時滾動與 Enter 發送。",
+        changelog_title: "更新日誌 v.07",
+        changelog_content_html: "<strong>本次更新內容：</strong><br><br>1. <strong>註冊安全升級</strong>：註冊時全面要求使用真實「電子郵件」。<br>2. <strong>快捷登入系統</strong>：登入時不再使用用戶名，改為支援直接輸入「4 碼專屬帳號」或「電子郵件」快速登入。<br>3. <strong>忘記密碼功能</strong>：實裝密碼重設系統，不再擔心遺失密碼。<br>4. <strong>舊用戶保護機制</strong>：早期未綁定信箱的用戶，登入時將引導無痛綁定，無縫接軌新系統。",
         btn_close: "關閉",
         btn_cancel: "取消",
         chat_input_placeholder: "輸入訊息...",
@@ -456,7 +487,9 @@
         auth_login_subtitle: "Login to access your calendar.",
         auth_reg_title: "Register",
         auth_reg_subtitle: "Create your calendar & unique ID.",
-        auth_username_placeholder: "Username",
+        auth_identifier_placeholder: "Account ID (e.g. 0001) or Email",
+        auth_reg_email_placeholder: "Email (Required)",
+        auth_reg_username_placeholder: "Username (Required)",
         auth_password_placeholder: "Password (Min 8 chars, letters & numbers)",
         loading: "Processing...",
         auth_login_btn: "Login",
@@ -466,6 +499,14 @@
         auth_google_reg: "Register with Google",
         auth_toggle_to_register_html: "No account? <span>Register Now</span>",
         auth_toggle_to_login_html: "Have an account? <span>Login</span>",
+        forgot_pw_text: "Forgot Password?",
+        forgot_pw_title: "Reset Password",
+        forgot_pw_subtitle: "Enter your registered email to receive a password reset link.",
+        forgot_pw_submit_btn: "Send Reset Link",
+        bind_email_title: "Update Info",
+        bind_email_subtitle: "To secure your account and enable password recovery, please bind an email address.",
+        bind_email_placeholder: "Enter your email",
+        bind_email_submit: "Confirm",
         google_comp_title: "Complete Setup",
         google_comp_subtitle: "Please set a username for your account.",
         google_comp_submit: "Confirm Registration",
@@ -477,7 +518,7 @@
         nav_friends: "Friends",
         day_0: "Sun", day_1: "Mon", day_2: "Tue", day_3: "Wed", day_4: "Thu", day_5: "Fri", day_6: "Sat",
         friends_search_title: "Search Friends",
-        friends_search_placeholder: "Search username or ID...",
+        friends_search_placeholder: "Search ID or Username...",
         friends_search_btn: "Search",
         friends_requests_title: "Requests",
         friends_requests_empty: "No new friend requests.",
@@ -502,11 +543,13 @@
         mail_page_title: "Notifications",
         mail_empty: "No new notifications.",
         alert_no_user: "Please enter a username!",
+        alert_no_email: "Please enter an email!",
         alert_no_pw: "Please enter a password!",
-        alert_login_fail: "Login failed. Check your credentials.",
+        alert_login_fail: "Login failed. Check your ID/Email or Password.",
+        alert_no_user_code: "No user found with this ID!",
         alert_pw_format: "Password must be at least 8 characters with letters & numbers.",
         alert_reg_success: "Registration successful! ID: ",
-        alert_name_used: "Username already taken!",
+        alert_email_used: "Email already in use!",
         alert_reg_fail: "Registration failed: ",
         alert_g_not_reg: "Google account not registered. Please switch to Register.",
         alert_g_auto_login: "Google account found. Logged in automatically!",
@@ -520,13 +563,17 @@
         alert_cam_err: "Cannot open camera, check device permissions.",
         alert_op_fail: "Operation failed",
         alert_del_confirm: "Are you sure you want to delete this friend?",
+        alert_invalid_email: "Please enter a valid email address!",
+        alert_bind_success: "Email bound successfully!",
+        alert_reset_sent: "Password reset email sent! Check your inbox.",
+        alert_reset_fail: "Failed to send. Make sure the email is registered.",
         msg_added_you: "sent you a friend request",
         msg_accepted_you: "accepted your friend request",
         msg_rejected_you: "rejected your friend request",
         month_format: (y, m) => { const ms = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; return `${ms[m-1]} ${y}`; },
         id_label: "ID:",
-        changelog_title: "Changelog v.06",
-        changelog_content_html: "<strong>What's New:</strong><br><br>1. <strong>Real-time Chatroom</strong>: Click on any friend in your list to open a private 1-on-1 chat room instantly!<br>2. <strong>Minimalist Chat Interface</strong>: Brutalist high-contrast message bubbles supporting real-time auto-scroll and Enter key mapping.",
+        changelog_title: "Changelog v.07",
+        changelog_content_html: "<strong>What's New:</strong><br><br>1. <strong>Email Requirement</strong>: Registration now strictly requires a valid email.<br>2. <strong>Fast Login</strong>: Log in using your 4-digit Account ID or Email (Username login removed for simplicity).<br>3. <strong>Forgot Password</strong>: Added native password reset capabilities.<br>4. <strong>Legacy User Migration</strong>: Older users without an email will be seamlessly prompted to bind one upon their next login.",
         btn_close: "Close",
         btn_cancel: "Cancel",
         chat_input_placeholder: "Type a message...",
@@ -567,7 +614,6 @@
       updateLanguageUI();
     });
 
-
     // ==========================================
     // =            Firebase 基礎設定            =
     // ==========================================
@@ -590,7 +636,7 @@
 
     let currentUserUid = null;
 
-    // --- 導覽列與頂部按鈕切換邏輯 ---
+    // --- 導覽列與頂部按鈕 ---
     const navTabs = document.querySelectorAll('.nav-tab');
     const views = document.querySelectorAll('.view-section');
 
@@ -618,7 +664,6 @@
       await markAllMailsAsRead();
     });
 
-    // --- 版本更新日誌彈窗事件 ---
     document.getElementById('version-btn').addEventListener('click', () => {
       updateLanguageUI();
       document.getElementById('changelog-overlay').classList.add('active');
@@ -627,185 +672,25 @@
       document.getElementById('changelog-overlay').classList.remove('active');
     });
 
-    // ==========================================
-    // =            QR Code 生成與掃描邏輯        =
-    // ==========================================
-    
-    // 1. 生成我的二維碼
-    const qrDisplay = document.getElementById('qrcode-display');
-    const qrCodeText = document.getElementById('qr-code-text');
-    let qrInstance = null;
-
-    document.getElementById('show-qr-btn').addEventListener('click', () => {
-      if (!currentUserData) return;
-      const code = currentUserData.exclusiveCode;
-      qrCodeText.textContent = code;
-      qrDisplay.innerHTML = ''; 
-      
-      qrInstance = new QRCode(qrDisplay, {
-        text: code,
-        width: 180,
-        height: 180,
-        colorDark : "#000000",
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
-      });
-      document.getElementById('my-qr-overlay').classList.add('active');
-    });
-
-    document.getElementById('close-qr-btn').addEventListener('click', () => {
-      document.getElementById('my-qr-overlay').classList.remove('active');
-    });
-
-    // 2. 掃描二維碼
-    const html5QrCode = new Html5Qrcode("reader");
-    let isScanning = false;
-
-    document.getElementById('scan-qr-btn').addEventListener('click', () => {
-      document.getElementById('scan-qr-overlay').classList.add('active');
-      
-      Html5Qrcode.getCameras().then(devices => {
-        if (devices && devices.length) {
-          const cameraId = devices[devices.length - 1].id; 
-          isScanning = true;
-          html5QrCode.start(
-            { facingMode: "environment" }, 
-            { fps: 10, qrbox: { width: 250, height: 250 } },
-            (decodedText, decodedResult) => {
-              if (isScanning) {
-                html5QrCode.stop().then(() => {
-                  isScanning = false;
-                  document.getElementById('scan-qr-overlay').classList.remove('active');
-                  document.getElementById('friend-search-input').value = decodedText;
-                  document.getElementById('friend-search-btn').click();
-                });
-              }
-            },
-            (errorMessage) => { }
-          ).catch((err) => {
-            isScanning = false;
-            document.getElementById('scan-qr-overlay').classList.remove('active');
-            alert(t('alert_cam_err'));
-          });
-        } else {
-          document.getElementById('scan-qr-overlay').classList.remove('active');
-          alert(t('alert_cam_err'));
-        }
-      }).catch(err => {
-        document.getElementById('scan-qr-overlay').classList.remove('active');
-        alert(t('alert_cam_err'));
-      });
-    });
-
-    document.getElementById('close-scan-btn').addEventListener('click', () => {
-      if (isScanning) {
-        html5QrCode.stop().then(() => {
-          isScanning = false;
-          document.getElementById('scan-qr-overlay').classList.remove('active');
-        }).catch(err => {
-          document.getElementById('scan-qr-overlay').classList.remove('active');
-        });
-      } else {
-        document.getElementById('scan-qr-overlay').classList.remove('active');
-      }
-    });
 
     // ==========================================
-    // =            聊天室核心邏輯系統           =
+    // =            全新 Auth 驗證與註冊系統      =
     // ==========================================
-    window.unsubscribeChat = null;
-
-    window.openChatroom = function(targetUid, targetName) {
-      if (!currentUserUid) return;
-      document.getElementById('chat-friend-name').textContent = targetName;
-      
-      // 生成一對一聊天專屬識別 ID (利用雙方 UID 字串字典排序組合)
-      const chatId = currentUserUid < targetUid ? `${currentUserUid}_${targetUid}` : `${targetUid}_${currentUserUid}`;
-      
-      const msgContainer = document.getElementById('chat-messages');
-      msgContainer.innerHTML = '';
-      document.getElementById('chat-overlay').classList.add('active');
-      
-      // 清除可能存在的舊監聽器
-      if (window.unsubscribeChat) { window.unsubscribeChat(); }
-      
-      const chatRef = ref(db, `chats/${chatId}/messages`);
-      
-      // 開啟即時訊息同步監聽
-      window.unsubscribeChat = onValue(chatRef, (snapshot) => {
-        msgContainer.innerHTML = '';
-        if (snapshot.exists()) {
-          snapshot.forEach(childSnap => {
-            const msg = childSnap.val();
-            const isMe = msg.senderId === currentUserUid;
-            
-            const row = document.createElement('div');
-            row.className = `msg-row ${isMe ? 'me' : 'other'}`;
-            
-            const timeStr = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
-            row.innerHTML = `
-              <div class="msg-bubble">
-                <div>${escapeHTML(msg.text)}</div>
-                <span class="msg-time">${timeStr}</span>
-              </div>
-            `;
-            msgContainer.appendChild(row);
-          });
-          // 自動滾動至最新訊息
-          msgContainer.scrollTop = msgContainer.scrollHeight;
-        }
-      });
-      
-      // 綁定發送事件
-      const sendBtn = document.getElementById('chat-send-btn');
-      const input = document.getElementById('chat-input');
-      
-      sendBtn.onclick = () => {
-        const text = input.value.trim();
-        if (!text) return;
-        
-        push(chatRef, {
-          senderId: currentUserUid,
-          senderName: currentUserData.username,
-          text: text,
-          timestamp: new Date().toISOString()
-        });
-        input.value = '';
-      };
-      
-      input.onkeypress = (e) => {
-        if (e.key === 'Enter') sendBtn.click();
-      };
-    };
-
-    window.closeChatroom = function() {
-      // 安全銷毀 Firebase 即時資料流監聽，避免背景持續耗能
-      if (window.unsubscribeChat) {
-        window.unsubscribeChat();
-        window.unsubscribeChat = null;
-      }
-      document.getElementById('chat-overlay').classList.remove('active');
-    };
-
-    function escapeHTML(str) {
-      return str.replace(/[&<>'"]/g, tag => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-      }[tag] || tag));
-    }
-
-
-    // --- 驗證與登入邏輯 ---
     const elements = {
       overlay: document.getElementById('auth-overlay'),
       mainForm: document.getElementById('main-auth-form'),
       googleCompleteForm: document.getElementById('google-complete-form'),
       title: document.getElementById('auth-title'),
       subtitle: document.getElementById('auth-subtitle'),
-      username: document.getElementById('auth-username'),
-      password: document.getElementById('auth-password'),
-      birthday: document.getElementById('auth-birthday'),
+      
+      loginFields: document.getElementById('login-fields'),
       registerFields: document.getElementById('register-fields'),
+      identifier: document.getElementById('auth-identifier'),
+      regEmail: document.getElementById('auth-reg-email'),
+      regUsername: document.getElementById('auth-reg-username'),
+      password: document.getElementById('auth-password'),
+      
+      forgotPwLink: document.getElementById('forgot-pw-link'),
       submitBtn: document.getElementById('auth-submit-btn'),
       googleBtn: document.getElementById('google-auth-btn'),
       toggleMsg: document.getElementById('auth-toggle-msg'),
@@ -814,6 +699,7 @@
       googleUsernameInput: document.getElementById('google-username'),
       googleSubmitBtn: document.getElementById('google-complete-submit'),
       cancelGoogleComplete: document.getElementById('cancel-google-complete'),
+      
       displayName: document.getElementById('display-name'),
       displayCode: document.getElementById('display-exclusive-code'),
       logoutBtn: document.getElementById('logout-btn')
@@ -830,18 +716,23 @@
 
     elements.toggleMsg.addEventListener('click', () => {
       isLoginMode = !isLoginMode;
-      [elements.username, elements.password, elements.birthday].forEach(el => el.value = '');
+      [elements.identifier, elements.regEmail, elements.regUsername, elements.password].forEach(el => el.value = '');
+      
       if (isLoginMode) {
         elements.title.setAttribute('data-i18n', 'auth_login_title');
         elements.subtitle.setAttribute('data-i18n', 'auth_login_subtitle');
+        elements.loginFields.style.display = 'block';
         elements.registerFields.style.display = 'none';
+        elements.forgotPwLink.style.display = 'block';
         elements.submitBtn.setAttribute('data-i18n', 'auth_login_btn');
         document.getElementById('google-btn-text').setAttribute('data-i18n', 'auth_google_login');
         elements.toggleMsg.setAttribute('data-i18n', 'auth_toggle_to_register_html');
       } else {
         elements.title.setAttribute('data-i18n', 'auth_reg_title');
         elements.subtitle.setAttribute('data-i18n', 'auth_reg_subtitle');
-        elements.registerFields.style.display = 'none'; 
+        elements.loginFields.style.display = 'none';
+        elements.registerFields.style.display = 'block';
+        elements.forgotPwLink.style.display = 'none';
         elements.submitBtn.setAttribute('data-i18n', 'auth_reg_btn');
         document.getElementById('google-btn-text').setAttribute('data-i18n', 'auth_google_reg');
         elements.toggleMsg.setAttribute('data-i18n', 'auth_toggle_to_login_html');
@@ -856,13 +747,14 @@
       elements.mainForm.style.display = 'block';
     });
 
+    // 保留給舊帳號登入對應的 Pseudo Email 生成
     function getSafeEmail(username) {
       let safeStr = '';
       for(let i=0; i<username.length; i++) safeStr += username.charCodeAt(i).toString(36);
       return `user_${safeStr}@calender.local`;
     }
 
-    async function createUserDataInDB(user, username) {
+    async function createUserDataInDB(user, username, email = null) {
       const countRef = ref(db, 'metadata/userCount');
       let assignedCount = 1;
       await runTransaction(countRef, (currentCount) => {
@@ -871,36 +763,76 @@
         return next;
       });
       const exclusiveCode = String(assignedCount).padStart(4, '0');
-      const data = { username: username, exclusiveCode: exclusiveCode, createdAt: new Date().toISOString() };
+      const data = { 
+        username: username, 
+        exclusiveCode: exclusiveCode, 
+        createdAt: new Date().toISOString() 
+      };
+      if (email) data.realEmail = email; // 儲存真實信箱
+      
       await set(ref(db, 'users/' + user.uid), data);
       return data;
     }
 
     elements.submitBtn.addEventListener('click', async () => {
-      const username = elements.username.value.trim();
       const password = elements.password.value.trim();
-      if (!username) return alert(t('alert_no_user'));
       if (!password) return alert(t('alert_no_pw'));
-      const pseudoEmail = getSafeEmail(username);
       elements.loading.style.display = 'block';
 
       if (isLoginMode) {
-        try { await signInWithEmailAndPassword(auth, pseudoEmail, password); } 
-        catch (error) { alert(t('alert_login_fail')); }
+        // --- 登入流程 ---
+        const identifier = elements.identifier.value.trim();
+        if (!identifier) { elements.loading.style.display = 'none'; return alert(t('alert_login_fail')); }
+        
+        let loginEmail = identifier;
+
+        // 如果輸入沒有包含 @，代表是用戶嘗試用 4碼專屬碼登入
+        if (!identifier.includes('@')) {
+           const usersRef = ref(db, 'users');
+           const q = query(usersRef, orderByChild('exclusiveCode'), equalTo(identifier));
+           try {
+             const snapshot = await get(q);
+             if (snapshot.exists()) {
+               const userData = Object.values(snapshot.val())[0];
+               // 優先使用資料庫登記的真實信箱，若無則使用舊版的映射信箱
+               loginEmail = userData.realEmail || getSafeEmail(userData.username);
+             } else {
+               elements.loading.style.display = 'none';
+               return alert(t('alert_no_user_code'));
+             }
+           } catch (error) {
+             elements.loading.style.display = 'none';
+             return alert(t('alert_login_fail'));
+           }
+        }
+
+        try { 
+          await signInWithEmailAndPassword(auth, loginEmail, password); 
+        } catch (error) { 
+          alert(t('alert_login_fail')); 
+        }
+
       } else {
+        // --- 註冊流程 ---
+        const email = elements.regEmail.value.trim();
+        const username = elements.regUsername.value.trim();
+        if (!email || !email.includes('@')) { elements.loading.style.display = 'none'; return alert(t('alert_no_email')); }
+        if (!username) { elements.loading.style.display = 'none'; return alert(t('alert_no_user')); }
         if (!passwordRegex.test(password)) { elements.loading.style.display = 'none'; return alert(t('alert_pw_format')); }
+        
         try {
-          const cred = await createUserWithEmailAndPassword(auth, pseudoEmail, password);
-          const userData = await createUserDataInDB(cred.user, username);
+          const cred = await createUserWithEmailAndPassword(auth, email, password);
+          const userData = await createUserDataInDB(cred.user, username, email);
           alert(`${t('alert_reg_success')}${userData.exclusiveCode}`);
           updateProfileUI(userData.username, userData.exclusiveCode);
         } catch (error) {
-          if (error.code === 'auth/email-already-in-use') alert(t('alert_name_used')); else alert(t('alert_reg_fail') + error.message);
+          if (error.code === 'auth/email-already-in-use') alert(t('alert_email_used')); else alert(t('alert_reg_fail') + error.message);
         }
       }
       elements.loading.style.display = 'none';
     });
 
+    // Google 快速登入
     elements.googleBtn.addEventListener('click', async () => {
       elements.loading.style.display = 'block';
       try {
@@ -927,7 +859,7 @@
       if (!gUsername) return alert(t('alert_no_user'));
       elements.googleLoading.style.display = 'block';
       try {
-        const userData = await createUserDataInDB(pendingGoogleUser, gUsername);
+        const userData = await createUserDataInDB(pendingGoogleUser, gUsername, pendingGoogleUser.email);
         alert(`${t('alert_reg_success')}${userData.exclusiveCode}`);
         updateProfileUI(userData.username, userData.exclusiveCode);
         elements.googleCompleteForm.style.display = 'none';
@@ -939,25 +871,29 @@
 
     elements.logoutBtn.addEventListener('click', () => { signOut(auth); location.reload(); });
 
+    // --- 驗證狀態監聽與舊用戶信箱綁定機制 ---
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         if (pendingGoogleUser && user.uid === pendingGoogleUser.uid) return;
+
+        // 偵測是否為舊用戶 (使用 @calender.local 的虛擬信箱)，若是則強制要求綁定
+        const isLegacyPseudoEmail = user.email && user.email.endsWith('@calender.local');
+        if (isLegacyPseudoEmail) {
+           document.getElementById('bind-email-overlay').classList.add('active');
+        } else {
+           document.getElementById('bind-email-overlay').classList.remove('active');
+        }
+
         try {
           const snapshot = await get(child(ref(db), `users/${user.uid}`));
           if (snapshot.exists()) {
             currentUserData = snapshot.val();
             currentUserUid = user.uid;
             
-            if (!/^\d{4}$/.test(currentUserData.exclusiveCode)) {
-              await fixLegacyUserCode(user.uid, currentUserData);
-            } else {
-              updateProfileUI(currentUserData.username, currentUserData.exclusiveCode);
-            }
+            updateProfileUI(currentUserData.username, currentUserData.exclusiveCode);
             
             const privacySnap = await get(child(ref(db), `settings/${user.uid}/allowOnlineStatus`));
-            if(privacySnap.exists()) {
-              document.getElementById('online-status-toggle').checked = privacySnap.val();
-            }
+            if(privacySnap.exists()) { document.getElementById('online-status-toggle').checked = privacySnap.val(); }
 
             setupOnlineStatus(user.uid);
             initFriendsSystem(); 
@@ -970,19 +906,49 @@
       }
     });
 
-    async function fixLegacyUserCode(uid, uData) {
-      const countRef = ref(db, 'metadata/userCount');
-      let assignedCount = 1;
-      await runTransaction(countRef, (currentCount) => {
-        const next = (currentCount || 0) + 1;
-        assignedCount = next;
-        return next;
-      });
-      const newCode = String(assignedCount).padStart(4, '0');
-      await update(ref(db, `users/${uid}`), { exclusiveCode: newCode });
-      currentUserData.exclusiveCode = newCode;
-      updateProfileUI(uData.username, newCode);
-    }
+    // --- 舊帳號綁定真實電子郵件 ---
+    document.getElementById('bind-email-submit').addEventListener('click', async () => {
+      const newEmail = document.getElementById('bind-email-input').value.trim();
+      if (!newEmail || !newEmail.includes('@')) return alert(t('alert_invalid_email'));
+      
+      try {
+         await updateEmail(auth.currentUser, newEmail);
+         await update(ref(db, `users/${auth.currentUser.uid}`), { realEmail: newEmail });
+         alert(t('alert_bind_success'));
+         document.getElementById('bind-email-overlay').classList.remove('active');
+      } catch (e) {
+         if (e.code === 'auth/requires-recent-login') {
+            alert("為確保安全，請重新登入後再綁定電子郵件。");
+            signOut(auth);
+         } else if (e.code === 'auth/email-already-in-use') {
+            alert(t('alert_email_used'));
+         } else {
+            alert(t('alert_op_fail') + " " + e.message);
+         }
+      }
+    });
+
+    // --- 忘記密碼發送重設信件 ---
+    document.getElementById('forgot-pw-link').addEventListener('click', () => {
+       document.getElementById('forgot-pw-overlay').classList.add('active');
+    });
+    
+    document.getElementById('forgot-pw-cancel').addEventListener('click', () => {
+       document.getElementById('forgot-pw-overlay').classList.remove('active');
+    });
+
+    document.getElementById('forgot-pw-submit').addEventListener('click', async () => {
+       const email = document.getElementById('forgot-pw-email-input').value.trim();
+       if (!email || !email.includes('@')) return alert(t('alert_invalid_email'));
+       
+       try {
+         await sendPasswordResetEmail(auth, email);
+         alert(t('alert_reset_sent'));
+         document.getElementById('forgot-pw-overlay').classList.remove('active');
+       } catch (error) {
+         alert(t('alert_reset_fail'));
+       }
+    });
 
     function setupOnlineStatus(uid) {
       const connectedRef = ref(db, '.info/connected');
@@ -1006,10 +972,114 @@
     });
 
     // ==========================================
-    // =            信箱通知系統核心              =
+    // =            QR Code & 掃描器              =
+    // ==========================================
+    const qrDisplay = document.getElementById('qrcode-display');
+    const qrCodeText = document.getElementById('qr-code-text');
+    let qrInstance = null;
+
+    document.getElementById('show-qr-btn').addEventListener('click', () => {
+      if (!currentUserData) return;
+      const code = currentUserData.exclusiveCode;
+      qrCodeText.textContent = code;
+      qrDisplay.innerHTML = ''; 
+      
+      qrInstance = new QRCode(qrDisplay, {
+        text: code, width: 180, height: 180, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H
+      });
+      document.getElementById('my-qr-overlay').classList.add('active');
+    });
+
+    document.getElementById('close-qr-btn').addEventListener('click', () => {
+      document.getElementById('my-qr-overlay').classList.remove('active');
+    });
+
+    const html5QrCode = new Html5Qrcode("reader");
+    let isScanning = false;
+
+    document.getElementById('scan-qr-btn').addEventListener('click', () => {
+      document.getElementById('scan-qr-overlay').classList.add('active');
+      Html5Qrcode.getCameras().then(devices => {
+        if (devices && devices.length) {
+          isScanning = true;
+          html5QrCode.start(
+            { facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } },
+            (decodedText, decodedResult) => {
+              if (isScanning) {
+                html5QrCode.stop().then(() => {
+                  isScanning = false;
+                  document.getElementById('scan-qr-overlay').classList.remove('active');
+                  document.getElementById('friend-search-input').value = decodedText;
+                  document.getElementById('friend-search-btn').click();
+                });
+              }
+            }, (errorMessage) => { }
+          ).catch((err) => {
+            isScanning = false; document.getElementById('scan-qr-overlay').classList.remove('active'); alert(t('alert_cam_err'));
+          });
+        } else { document.getElementById('scan-qr-overlay').classList.remove('active'); alert(t('alert_cam_err')); }
+      }).catch(err => { document.getElementById('scan-qr-overlay').classList.remove('active'); alert(t('alert_cam_err')); });
+    });
+
+    document.getElementById('close-scan-btn').addEventListener('click', () => {
+      if (isScanning) { html5QrCode.stop().then(() => { isScanning = false; document.getElementById('scan-qr-overlay').classList.remove('active'); }).catch(err => { document.getElementById('scan-qr-overlay').classList.remove('active'); }); } 
+      else { document.getElementById('scan-qr-overlay').classList.remove('active'); }
+    });
+
+    // ==========================================
+    // =            聊天室功能                   =
+    // ==========================================
+    window.unsubscribeChat = null;
+
+    window.openChatroom = function(targetUid, targetName) {
+      if (!currentUserUid) return;
+      document.getElementById('chat-friend-name').textContent = targetName;
+      const chatId = currentUserUid < targetUid ? `${currentUserUid}_${targetUid}` : `${targetUid}_${currentUserUid}`;
+      const msgContainer = document.getElementById('chat-messages');
+      msgContainer.innerHTML = '';
+      document.getElementById('chat-overlay').classList.add('active');
+      
+      if (window.unsubscribeChat) { window.unsubscribeChat(); }
+      const chatRef = ref(db, `chats/${chatId}/messages`);
+      
+      window.unsubscribeChat = onValue(chatRef, (snapshot) => {
+        msgContainer.innerHTML = '';
+        if (snapshot.exists()) {
+          snapshot.forEach(childSnap => {
+            const msg = childSnap.val();
+            const isMe = msg.senderId === currentUserUid;
+            const row = document.createElement('div');
+            row.className = `msg-row ${isMe ? 'me' : 'other'}`;
+            const timeStr = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            row.innerHTML = `<div class="msg-bubble"><div>${escapeHTML(msg.text)}</div><span class="msg-time">${timeStr}</span></div>`;
+            msgContainer.appendChild(row);
+          });
+          msgContainer.scrollTop = msgContainer.scrollHeight;
+        }
+      });
+      
+      const sendBtn = document.getElementById('chat-send-btn');
+      const input = document.getElementById('chat-input');
+      sendBtn.onclick = () => {
+        const text = input.value.trim();
+        if (!text) return;
+        push(chatRef, { senderId: currentUserUid, senderName: currentUserData.username, text: text, timestamp: new Date().toISOString() });
+        input.value = '';
+      };
+      input.onkeypress = (e) => { if (e.key === 'Enter') sendBtn.click(); };
+    };
+
+    window.closeChatroom = function() {
+      if (window.unsubscribeChat) { window.unsubscribeChat(); window.unsubscribeChat = null; }
+      document.getElementById('chat-overlay').classList.remove('active');
+    };
+
+    function escapeHTML(str) { return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)); }
+
+    // ==========================================
+    // =            信箱通知與好友系統            =
     // ==========================================
     let currentMailData = [];
-
     function initMailSystem() {
       const mailRef = ref(db, `mail/${currentUserUid}`);
       onValue(mailRef, (snapshot) => {
@@ -1018,86 +1088,47 @@
           currentMailData = Object.keys(mails).map(key => ({ id: key, ...mails[key] }));
           currentMailData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
           renderMailList(currentMailData);
-          
           const isMailOpen = document.getElementById('view-mail').classList.contains('active');
-          if (isMailOpen) {
-            markAllMailsAsRead();
-            document.getElementById('mail-badge').style.display = 'none';
-          } else {
+          if (isMailOpen) { markAllMailsAsRead(); document.getElementById('mail-badge').style.display = 'none'; } 
+          else {
             const unreadCount = currentMailData.filter(m => !m.read).length;
             const badge = document.getElementById('mail-badge');
-            if (unreadCount > 0) {
-              badge.style.display = 'inline-block';
-              badge.textContent = unreadCount;
-            } else {
-              badge.style.display = 'none';
-            }
+            if (unreadCount > 0) { badge.style.display = 'inline-block'; badge.textContent = unreadCount; } else { badge.style.display = 'none'; }
           }
-        } else {
-          currentMailData = [];
-          renderMailList(currentMailData);
-          document.getElementById('mail-badge').style.display = 'none';
-        }
+        } else { currentMailData = []; renderMailList(currentMailData); document.getElementById('mail-badge').style.display = 'none'; }
       });
     }
 
     async function markAllMailsAsRead() {
       if (!currentUserUid || currentMailData.length === 0) return;
       const updates = {};
-      currentMailData.forEach(mail => {
-        if (!mail.read) {
-          updates[`mail/${currentUserUid}/${mail.id}/read`] = true;
-          mail.read = true; 
-        }
-      });
+      currentMailData.forEach(mail => { if (!mail.read) { updates[`mail/${currentUserUid}/${mail.id}/read`] = true; mail.read = true; }});
       if (Object.keys(updates).length > 0) await update(ref(db), updates);
     }
 
     function renderMailList(mailArray) {
       const listDiv = document.getElementById('mail-list');
-      if (mailArray.length === 0) {
-        listDiv.innerHTML = `<div class="empty-state">${t('mail_empty')}</div>`;
-        return;
-      }
+      if (mailArray.length === 0) { listDiv.innerHTML = `<div class="empty-state">${t('mail_empty')}</div>`; return; }
       let html = '';
       mailArray.forEach(mail => {
         let actionText = '';
         if (mail.type === 'request') actionText = t('msg_added_you');
         else if (mail.type === 'accept') actionText = t('msg_accepted_you');
         else if (mail.type === 'reject') actionText = t('msg_rejected_you');
-        const dateStr = new Date(mail.timestamp).toLocaleString();
-        html += `
-          <div class="mail-item">
-            <div class="mail-content">
-              <p><strong>${mail.senderName}</strong> ${actionText}</p>
-              <span>${dateStr}</span>
-            </div>
-          </div>`;
+        html += `<div class="mail-item"><div class="mail-content"><p><strong>${mail.senderName}</strong> ${actionText}</p><span>${new Date(mail.timestamp).toLocaleString()}</span></div></div>`;
       });
       listDiv.innerHTML = html;
     }
 
     async function sendMailNotification(targetUid, type, senderName) {
-      const mailRef = ref(db, `mail/${targetUid}`);
-      await push(mailRef, {
-        type: type,
-        senderName: senderName,
-        timestamp: new Date().toISOString(),
-        read: false
-      });
+      await push(ref(db, `mail/${targetUid}`), { type: type, senderName: senderName, timestamp: new Date().toISOString(), read: false });
     }
 
-    // ==========================================
-    // =            朋友系統核心邏輯              =
-    // ==========================================
     let currentPendingData = [];
     let currentFriendsData = [];
     let lastSearchedHtml = '';
 
-    function initFriendsSystem() {
-      listenToPendingRequests();
-      listenToFriendsList();
-    }
+    function initFriendsSystem() { listenToPendingRequests(); listenToFriendsList(); }
 
     function updateSearchAreaByLang() {
       if(lastSearchedHtml === 'empty') document.getElementById('search-result-area').innerHTML = `<div class="empty-state">${t('alert_no_match')}</div>`;
@@ -1110,180 +1141,96 @@
       const resultArea = document.getElementById('search-result-area');
       if (!term) return alert(t('alert_search_empty').replace('...',''));
 
-      resultArea.style.display = 'block';
-      resultArea.innerHTML = `<div class="empty-state">${t('alert_search_empty')}</div>`;
+      resultArea.style.display = 'block'; resultArea.innerHTML = `<div class="empty-state">${t('alert_search_empty')}</div>`;
 
       try {
         const usersSnap = await get(ref(db, 'users'));
-        let found = false;
-        let html = '';
-        
+        let found = false; let html = '';
         if (usersSnap.exists()) {
           usersSnap.forEach(childSnap => {
-            const uId = childSnap.key;
-            const uData = childSnap.val();
+            const uId = childSnap.key; const uData = childSnap.val();
             if (uId === currentUserUid) return; 
             if (uData.username === term || uData.exclusiveCode === term) {
               found = true;
-              html += `
-                <div class="friend-item">
-                  <div class="friend-info">
-                    <div class="friend-avatar"></div>
-                    <div class="friend-details">
-                      <h4>${uData.username}</h4>
-                      <p>${t('id_label')} ${uData.exclusiveCode}</p>
-                    </div>
-                  </div>
-                  <div class="action-btns">
-                    <button class="btn-small primary" onclick="sendFriendRequest('${uId}')">${t('btn_send_request')}</button>
-                  </div>
-                </div>`;
+              html += `<div class="friend-item"><div class="friend-info"><div class="friend-avatar"></div><div class="friend-details"><h4>${uData.username}</h4><p>${t('id_label')} ${uData.exclusiveCode}</p></div></div><div class="action-btns"><button class="btn-small primary" onclick="sendFriendRequest('${uId}')">${t('btn_send_request')}</button></div></div>`;
             }
           });
-          
-          if(found) { resultArea.innerHTML = html; lastSearchedHtml = 'found'; } 
-          else { resultArea.innerHTML = `<div class="empty-state">${t('alert_no_match')}</div>`; lastSearchedHtml = 'empty'; }
-        } else {
-          resultArea.innerHTML = `<div class="empty-state">${t('alert_no_users_sys')}</div>`; lastSearchedHtml = 'no_users';
-        }
-      } catch (error) { 
-        resultArea.innerHTML = `<div class="empty-state">${t('alert_search_err')}</div>`; lastSearchedHtml = 'err';
-      }
+          if(found) { resultArea.innerHTML = html; lastSearchedHtml = 'found'; } else { resultArea.innerHTML = `<div class="empty-state">${t('alert_no_match')}</div>`; lastSearchedHtml = 'empty'; }
+        } else { resultArea.innerHTML = `<div class="empty-state">${t('alert_no_users_sys')}</div>`; lastSearchedHtml = 'no_users'; }
+      } catch (error) { resultArea.innerHTML = `<div class="empty-state">${t('alert_search_err')}</div>`; lastSearchedHtml = 'err'; }
     });
 
     window.sendFriendRequest = async (targetUid) => {
       try {
         const friendCheck = await get(ref(db, `friends/${currentUserUid}/list/${targetUid}`));
         if(friendCheck.exists()) return alert(t('alert_already_friend'));
-        
         await set(ref(db, `friends/${targetUid}/pending/${currentUserUid}`), true);
         await sendMailNotification(targetUid, 'request', currentUserData.username);
-
         alert(t('alert_req_sent'));
-        document.getElementById('search-result-area').innerHTML = ''; 
-        document.getElementById('friend-search-input').value = '';
+        document.getElementById('search-result-area').innerHTML = ''; document.getElementById('friend-search-input').value = '';
       } catch (e) { alert(t('alert_op_fail')); }
     };
 
     function renderPendingRequests(dataArray) {
       const listDiv = document.getElementById('pending-requests-list');
-      if(dataArray.length === 0) {
-        listDiv.innerHTML = `<div class="empty-state">${t('friends_requests_empty')}</div>`;
-        return;
-      }
+      if(dataArray.length === 0) { listDiv.innerHTML = `<div class="empty-state">${t('friends_requests_empty')}</div>`; return; }
       let html = '';
       dataArray.forEach(req => {
         if (req.data) {
-          html += `
-            <div class="friend-item">
-              <div class="friend-info">
-                <div class="friend-avatar"></div>
-                <div class="friend-details">
-                  <h4>${req.data.username}</h4>
-                  <p>${req.data.exclusiveCode}</p>
-                </div>
-              </div>
-              <div class="action-btns">
-                <button class="btn-small primary" onclick="acceptRequest('${req.uid}', '${req.data.username}')">${t('btn_accept')}</button>
-                <button class="btn-small" onclick="rejectRequest('${req.uid}', '${req.data.username}')">${t('btn_reject')}</button>
-              </div>
-            </div>`;
+          html += `<div class="friend-item"><div class="friend-info"><div class="friend-avatar"></div><div class="friend-details"><h4>${req.data.username}</h4><p>${req.data.exclusiveCode}</p></div></div><div class="action-btns"><button class="btn-small primary" onclick="acceptRequest('${req.uid}', '${req.data.username}')">${t('btn_accept')}</button><button class="btn-small" onclick="rejectRequest('${req.uid}', '${req.data.username}')">${t('btn_reject')}</button></div></div>`;
         }
       });
       listDiv.innerHTML = html;
     }
 
     function listenToPendingRequests() {
-      const pendingRef = ref(db, `friends/${currentUserUid}/pending`);
-      onValue(pendingRef, async (snapshot) => {
+      onValue(ref(db, `friends/${currentUserUid}/pending`), async (snapshot) => {
         const badge = document.getElementById('requests-badge');
         if (snapshot.exists()) {
-          const requests = snapshot.val();
-          const uids = Object.keys(requests);
-          badge.style.display = 'inline-block';
-          badge.textContent = uids.length;
+          const requests = snapshot.val(); const uids = Object.keys(requests);
+          badge.style.display = 'inline-block'; badge.textContent = uids.length;
           try {
-            const requestsPromises = uids.map(async (uid) => {
-              const userSnap = await get(child(ref(db), `users/${uid}`));
-              return { uid, data: userSnap.exists() ? userSnap.val() : null };
-            });
+            const requestsPromises = uids.map(async (uid) => { const userSnap = await get(child(ref(db), `users/${uid}`)); return { uid, data: userSnap.exists() ? userSnap.val() : null }; });
             currentPendingData = await Promise.all(requestsPromises);
             renderPendingRequests(currentPendingData);
           } catch (error) { console.error(error); }
-        } else {
-          badge.style.display = 'none';
-          currentPendingData = [];
-          renderPendingRequests(currentPendingData);
-        }
+        } else { badge.style.display = 'none'; currentPendingData = []; renderPendingRequests(currentPendingData); }
       });
     }
 
     window.acceptRequest = async (requesterUid, requesterName) => {
       try {
         const updates = {};
-        updates[`friends/${currentUserUid}/list/${requesterUid}`] = true;
-        updates[`friends/${requesterUid}/list/${currentUserUid}`] = true;
-        updates[`friends/${currentUserUid}/pending/${requesterUid}`] = null;
+        updates[`friends/${currentUserUid}/list/${requesterUid}`] = true; updates[`friends/${requesterUid}/list/${currentUserUid}`] = true; updates[`friends/${currentUserUid}/pending/${requesterUid}`] = null;
         await update(ref(db), updates);
-
         await sendMailNotification(requesterUid, 'accept', currentUserData.username);
       } catch (e) { alert(t('alert_op_fail')); }
     };
 
     window.rejectRequest = async (requesterUid, requesterName) => {
-      try { 
-        await remove(ref(db, `friends/${currentUserUid}/pending/${requesterUid}`)); 
-        await sendMailNotification(requesterUid, 'reject', currentUserData.username);
-      } 
+      try { await remove(ref(db, `friends/${currentUserUid}/pending/${requesterUid}`)); await sendMailNotification(requesterUid, 'reject', currentUserData.username); } 
       catch (e) { alert(t('alert_op_fail')); }
     };
 
     function renderMyFriendsList(dataArray) {
       const listDiv = document.getElementById('my-friends-list');
-      if(dataArray.length === 0) {
-        listDiv.innerHTML = `<div class="empty-state">${t('friends_list_empty')}</div>`;
-        return;
-      }
+      if(dataArray.length === 0) { listDiv.innerHTML = `<div class="empty-state">${t('friends_list_empty')}</div>`; return; }
       let html = '';
       dataArray.forEach(friend => {
         if (friend.data) {
-          html += `
-            <div class="friend-item">
-              <!-- 點擊好友區域直接開啟對話視窗 -->
-              <div class="friend-info" style="cursor: pointer;" onclick="openChatroom('${friend.uid}', '${friend.data.username}')">
-                <div class="friend-avatar"></div>
-                <div class="friend-details">
-                  <h4 style="display: flex; align-items: center;">
-                    <span id="status-${friend.uid}" class="friend-status" data-uid="${friend.uid}" style="font-size: 11px; font-weight: 800; margin-right: 8px; color: var(--text-muted);">${t('status_offline')}</span>
-                    ${friend.data.username} 
-                  </h4>
-                  <p>${t('id_label')} ${friend.data.exclusiveCode}</p>
-                </div>
-              </div>
-              <div class="action-btns">
-                <button class="btn-small" onclick="removeFriend('${friend.uid}')">${t('btn_delete')}</button>
-              </div>
-            </div>`;
+          html += `<div class="friend-item"><div class="friend-info" style="cursor: pointer;" onclick="openChatroom('${friend.uid}', '${friend.data.username}')"><div class="friend-avatar"></div><div class="friend-details"><h4 style="display: flex; align-items: center;"><span id="status-${friend.uid}" class="friend-status" data-uid="${friend.uid}" style="font-size: 11px; font-weight: 800; margin-right: 8px; color: var(--text-muted);">${t('status_offline')}</span>${friend.data.username} </h4><p>${t('id_label')} ${friend.data.exclusiveCode}</p></div></div><div class="action-btns"><button class="btn-small" onclick="removeFriend('${friend.uid}')">${t('btn_delete')}</button></div></div>`;
         }
       });
       listDiv.innerHTML = html;
       
       dataArray.forEach(friend => {
-        const statusRef = ref(db, `users/${friend.uid}/status`);
-        const privacyRef = ref(db, `settings/${friend.uid}/allowOnlineStatus`);
-        
-        onValue(statusRef, (statusSnap) => {
-          get(privacyRef).then(privacySnap => {
+        onValue(ref(db, `users/${friend.uid}/status`), (statusSnap) => {
+          get(ref(db, `settings/${friend.uid}/allowOnlineStatus`)).then(privacySnap => {
             const allowOnline = !privacySnap.exists() || privacySnap.val() === true;
             const statusEl = document.getElementById(`status-${friend.uid}`);
             if (statusEl) {
-              if (allowOnline && statusSnap.exists() && statusSnap.val() === 'online') {
-                statusEl.textContent = t('status_online');
-                statusEl.style.color = 'var(--text-main)'; 
-              } else {
-                statusEl.textContent = t('status_offline');
-                statusEl.style.color = 'var(--text-muted)'; 
-              }
+              if (allowOnline && statusSnap.exists() && statusSnap.val() === 'online') { statusEl.textContent = t('status_online'); statusEl.style.color = 'var(--text-main)'; } 
+              else { statusEl.textContent = t('status_offline'); statusEl.style.color = 'var(--text-muted)'; }
             }
           });
         });
@@ -1291,59 +1238,41 @@
     }
 
     function listenToFriendsList() {
-      const friendsRef = ref(db, `friends/${currentUserUid}/list`);
-      onValue(friendsRef, async (snapshot) => {
+      onValue(ref(db, `friends/${currentUserUid}/list`), async (snapshot) => {
         if (snapshot.exists()) {
-          const friends = snapshot.val();
-          const uids = Object.keys(friends);
+          const friends = snapshot.val(); const uids = Object.keys(friends);
           try {
-            const friendsDataPromises = uids.map(async (uid) => {
-              const userSnap = await get(child(ref(db), `users/${uid}`));
-              return { uid, data: userSnap.exists() ? userSnap.val() : null };
-            });
-            currentFriendsData = await Promise.all(friendsDataPromises);
-            renderMyFriendsList(currentFriendsData);
+            const friendsDataPromises = uids.map(async (uid) => { const userSnap = await get(child(ref(db), `users/${uid}`)); return { uid, data: userSnap.exists() ? userSnap.val() : null }; });
+            currentFriendsData = await Promise.all(friendsDataPromises); renderMyFriendsList(currentFriendsData);
           } catch (error) { console.error(error); }
-        } else {
-          currentFriendsData = [];
-          renderMyFriendsList(currentFriendsData);
-        }
+        } else { currentFriendsData = []; renderMyFriendsList(currentFriendsData); }
       });
     }
 
     window.removeFriend = async (targetUid) => {
       if(confirm(t('alert_del_confirm'))) {
         const updates = {};
-        updates[`friends/${currentUserUid}/list/${targetUid}`] = null;
-        updates[`friends/${targetUid}/list/${currentUserUid}`] = null;
+        updates[`friends/${currentUserUid}/list/${targetUid}`] = null; updates[`friends/${targetUid}/list/${currentUserUid}`] = null;
         await update(ref(db), updates);
       }
     };
 
-    // --- 日曆渲染邏輯 ---
-    let currentDate = new Date();
-    let today = new Date();
+    // --- 日曆渲染 ---
+    let currentDate = new Date(); let today = new Date();
     
     function renderCalendar() {
       const daysGrid = document.getElementById('days-grid');
       daysGrid.innerHTML = ''; 
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth(); 
+      const year = currentDate.getFullYear(); const month = currentDate.getMonth(); 
       document.getElementById('month-year-display').textContent = i18n[currentLang].month_format(year, month + 1);
       
-      const firstDay = new Date(year, month, 1).getDay();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstDay = new Date(year, month, 1).getDay(); const daysInMonth = new Date(year, month + 1, 0).getDate();
       
-      for (let i = 0; i < firstDay; i++) {
-        const div = document.createElement('div');
-        div.className = 'day-cell empty';
-        daysGrid.appendChild(div);
-      }
+      for (let i = 0; i < firstDay; i++) { const div = document.createElement('div'); div.className = 'day-cell empty'; daysGrid.appendChild(div); }
       for (let day = 1; day <= daysInMonth; day++) {
         const div = document.createElement('div');
         div.className = 'day-cell' + (year === today.getFullYear() && month === today.getMonth() && day === today.getDate() ? ' today' : '');
-        div.textContent = day;
-        daysGrid.appendChild(div);
+        div.textContent = day; daysGrid.appendChild(div);
       }
     }
 
