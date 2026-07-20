@@ -188,7 +188,7 @@
         <i class="fa-regular fa-envelope"></i>
         <span class="mail-badge" id="mail-badge">0</span>
       </button>
-      <span class="version-text">v.02</span>
+      <span class="version-text">v.03</span>
     </div>
   </div>
 
@@ -294,7 +294,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getDatabase, ref, set, get, child, onValue, remove, update, onDisconnect, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, set, get, child, onValue, remove, update, onDisconnect, push, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     // ==========================================
     // =            多國語言字典系統             =
@@ -306,7 +306,6 @@
         auth_reg_title: "註冊帳號",
         auth_reg_subtitle: "建立專屬日曆與辨識碼。",
         auth_username_placeholder: "用戶名稱",
-        auth_birthday_placeholder: "生日月日 (選填)",
         auth_password_placeholder: "密碼 (至少8碼，須含英文字母與數字)",
         loading: "處理中...",
         auth_login_btn: "登入",
@@ -351,13 +350,12 @@
         alert_no_user: "請填寫用戶名稱！",
         alert_no_pw: "請填寫密碼！",
         alert_login_fail: "登入失敗，請確認帳號或密碼是否正確。",
-        alert_bd_length: "生日請填寫四碼！",
         alert_pw_format: "密碼必須至少 8 個字元，包含英文字母與數字。",
         alert_reg_success: "註冊成功！專屬碼：",
         alert_name_used: "此用戶名稱已被註冊！",
-        alert_reg_fail: "注册失败：",
+        alert_reg_fail: "註冊失敗：",
         alert_g_not_reg: "此 Google 帳號尚未註冊！請切換至「註冊」進行註冊。",
-        alert_g_auto_login: "此 Google 帳號已經注册過，已為您自動登入！",
+        alert_g_auto_login: "此 Google 帳號已經註冊過，已為您自動登入！",
         alert_auth_fail: "驗證失敗：",
         alert_search_empty: "搜尋中...",
         alert_already_friend: "你們已經是好友了！",
@@ -379,7 +377,6 @@
         auth_reg_title: "Register",
         auth_reg_subtitle: "Create your calendar & unique ID.",
         auth_username_placeholder: "Username",
-        auth_birthday_placeholder: "Birthday MMDD (Opt)",
         auth_password_placeholder: "Password (Min 8 chars, letters & numbers)",
         loading: "Processing...",
         auth_login_btn: "Login",
@@ -424,7 +421,6 @@
         alert_no_user: "Please enter a username!",
         alert_no_pw: "Please enter a password!",
         alert_login_fail: "Login failed. Check your credentials.",
-        alert_bd_length: "Birthday must be 4 digits!",
         alert_pw_format: "Password must be at least 8 characters with letters & numbers.",
         alert_reg_success: "Registration successful! ID: ",
         alert_name_used: "Username already taken!",
@@ -449,7 +445,7 @@
     };
 
     let currentLang = 'zh-TW';
-    let currentUserData = null; // 暫存用戶資料以解決切換語系後變回載入中問題
+    let currentUserData = null;
 
     function t(key) { return i18n[currentLang][key] || key; }
 
@@ -475,7 +471,6 @@
       }
     }
 
-    // 語言選擇器變更事件
     const languageSelect = document.getElementById('language-select');
     languageSelect.addEventListener('change', (e) => {
       currentLang = e.target.value;
@@ -531,8 +526,6 @@
       views.forEach(v => v.classList.remove('active'));
       document.getElementById('tab-mail').classList.add('active');
       document.getElementById('view-mail').classList.add('active');
-      
-      // 點擊信箱後清除未讀徽章
       document.getElementById('mail-badge').style.display = 'none';
     });
 
@@ -582,7 +575,7 @@
       } else {
         elements.title.setAttribute('data-i18n', 'auth_reg_title');
         elements.subtitle.setAttribute('data-i18n', 'auth_reg_subtitle');
-        elements.registerFields.style.display = 'block';
+        elements.registerFields.style.display = 'none'; // 取消生日欄位對應
         elements.submitBtn.setAttribute('data-i18n', 'auth_reg_btn');
         document.getElementById('google-btn-text').setAttribute('data-i18n', 'auth_google_reg');
         elements.toggleMsg.setAttribute('data-i18n', 'auth_toggle_to_login_html');
@@ -603,17 +596,21 @@
       return `user_${safeStr}@calender.local`;
     }
 
-    async function createUserDataInDB(user, username, birthday) {
+    async function createUserDataInDB(user, username) {
       const countRef = ref(db, 'metadata/userCount');
-      const countSnap = await get(countRef);
-      const currentCount = countSnap.exists() ? countSnap.val() + 1 : 1;
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      const ranLetters = Array.from({length:3}, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
-      const exclusiveCode = `${String(currentCount).padStart(3, '0')}-${birthday || '0000'}-${ranLetters}`;
+      
+      // 使用 Transaction 確保循序派發 0001, 0002... 格式
+      let assignedCount = 1;
+      await runTransaction(countRef, (currentCount) => {
+        const next = (currentCount || 0) + 1;
+        assignedCount = next;
+        return next;
+      });
 
-      const data = { username: username, birthday: birthday || '0000', exclusiveCode: exclusiveCode, createdAt: new Date().toISOString() };
+      const exclusiveCode = String(assignedCount).padStart(4, '0');
+
+      const data = { username: username, exclusiveCode: exclusiveCode, createdAt: new Date().toISOString() };
       await set(ref(db, 'users/' + user.uid), data);
-      await set(countRef, currentCount);
       return data;
     }
 
@@ -629,12 +626,10 @@
         try { await signInWithEmailAndPassword(auth, pseudoEmail, password); } 
         catch (error) { alert(t('alert_login_fail')); }
       } else {
-        let birthday = elements.birthday.value.trim();
-        if(birthday && birthday.length !== 4) { elements.loading.style.display = 'none'; return alert(t('alert_bd_length')); }
         if (!passwordRegex.test(password)) { elements.loading.style.display = 'none'; return alert(t('alert_pw_format')); }
         try {
           const cred = await createUserWithEmailAndPassword(auth, pseudoEmail, password);
-          const userData = await createUserDataInDB(cred.user, username, birthday);
+          const userData = await createUserDataInDB(cred.user, username);
           alert(`${t('alert_reg_success')}${userData.exclusiveCode}`);
           updateProfileUI(userData.username, userData.exclusiveCode);
         } catch (error) {
@@ -670,7 +665,7 @@
       if (!gUsername) return alert(t('alert_no_user'));
       elements.googleLoading.style.display = 'block';
       try {
-        const userData = await createUserDataInDB(pendingGoogleUser, gUsername, "0000");
+        const userData = await createUserDataInDB(pendingGoogleUser, gUsername);
         alert(`${t('alert_reg_success')}${userData.exclusiveCode}`);
         updateProfileUI(userData.username, userData.exclusiveCode);
         elements.googleCompleteForm.style.display = 'none';
@@ -690,9 +685,14 @@
           if (snapshot.exists()) {
             currentUserData = snapshot.val();
             currentUserUid = user.uid;
-            updateProfileUI(currentUserData.username, currentUserData.exclusiveCode);
             
-            // 載入隱私設定
+            // 若為舊格式帳號，自動升級為 4 碼循序編號
+            if (!/^\d{4}$/.test(currentUserData.exclusiveCode)) {
+              await fixLegacyUserCode(user.uid, currentUserData);
+            } else {
+              updateProfileUI(currentUserData.username, currentUserData.exclusiveCode);
+            }
+            
             const privacySnap = await get(child(ref(db), `settings/${user.uid}/allowOnlineStatus`));
             if(privacySnap.exists()) {
               document.getElementById('online-status-toggle').checked = privacySnap.val();
@@ -709,6 +709,21 @@
       }
     });
 
+    // 重新排序並升級舊帳號編碼的輔助函式
+    async function fixLegacyUserCode(uid, uData) {
+      const countRef = ref(db, 'metadata/userCount');
+      let assignedCount = 1;
+      await runTransaction(countRef, (currentCount) => {
+        const next = (currentCount || 0) + 1;
+        assignedCount = next;
+        return next;
+      });
+      const newCode = String(assignedCount).padStart(4, '0');
+      await update(ref(db, `users/${uid}`), { exclusiveCode: newCode });
+      currentUserData.exclusiveCode = newCode;
+      updateProfileUI(uData.username, newCode);
+    }
+
     function setupOnlineStatus(uid) {
       const connectedRef = ref(db, '.info/connected');
       const userStatusRef = ref(db, `users/${uid}/status`);
@@ -723,7 +738,6 @@
       });
     }
 
-    // 隱私設定開關監聽
     document.getElementById('online-status-toggle').addEventListener('change', async (e) => {
       const allow = e.target.checked;
       if (currentUserUid) {
@@ -744,11 +758,9 @@
         if (snapshot.exists()) {
           const mails = snapshot.val();
           currentMailData = Object.keys(mails).map(key => ({ id: key, ...mails[key] }));
-          // 依照時間排序 (最新在上)
           currentMailData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
           renderMailList(currentMailData);
           
-          // 計算未讀並顯示徽章
           const unreadCount = currentMailData.filter(m => !m.read).length;
           const badge = document.getElementById('mail-badge');
           if (unreadCount > 0) {
@@ -794,7 +806,7 @@
     async function sendMailNotification(targetUid, type, senderName) {
       const mailRef = ref(db, `mail/${targetUid}`);
       await push(mailRef, {
-        type: type, // 'request', 'accept', 'reject'
+        type: type,
         senderName: senderName,
         timestamp: new Date().toISOString(),
         read: false
@@ -872,8 +884,6 @@
         if(friendCheck.exists()) return alert(t('alert_already_friend'));
         
         await set(ref(db, `friends/${targetUid}/pending/${currentUserUid}`), true);
-        
-        // 發送通知信箱
         await sendMailNotification(targetUid, 'request', currentUserData.username);
 
         alert(t('alert_req_sent'));
@@ -943,7 +953,6 @@
         updates[`friends/${currentUserUid}/pending/${requesterUid}`] = null;
         await update(ref(db), updates);
 
-        // 通知對方已被接受
         await sendMailNotification(requesterUid, 'accept', currentUserData.username);
       } catch (e) { alert(t('alert_op_fail')); }
     };
@@ -951,7 +960,6 @@
     window.rejectRequest = async (requesterUid, requesterName) => {
       try { 
         await remove(ref(db, `friends/${currentUserUid}/pending/${requesterUid}`)); 
-        // 通知對方已被拒絕
         await sendMailNotification(requesterUid, 'reject', currentUserData.username);
       } 
       catch (e) { alert(t('alert_op_fail')); }
@@ -986,7 +994,6 @@
       });
       listDiv.innerHTML = html;
       
-      // 綁定狀態監聽（同時判斷對方的隱私設定）
       dataArray.forEach(friend => {
         const statusRef = ref(db, `users/${friend.uid}/status`);
         const privacyRef = ref(db, `settings/${friend.uid}/allowOnlineStatus`);
