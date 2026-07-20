@@ -80,7 +80,7 @@
     
     .friends-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
     .friend-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; border: 2px solid var(--border-color); background: var(--bg-white); }
-    .friend-info { display: flex; align-items: center; gap: 14px; }
+    .friend-info { display: flex; align-items: center; gap: 14px; flex-grow: 1; }
     .friend-avatar { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--text-main); background-color: #eee; }
     .friend-details h4 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
     .friend-details p { font-size: 11px; color: var(--text-muted); font-weight: 600; letter-spacing: 1px; }
@@ -140,9 +140,20 @@
     .auth-switch span { color: var(--text-main); font-weight: 800; cursor: pointer; text-decoration: underline; text-underline-offset: 4px;}
     .loading-text { font-size: 13px; font-weight: 700; color: var(--text-main); text-align: center; margin-bottom: 12px; display: none; text-transform: uppercase;}
     
-    /* 掃描器特殊樣式 */
+    /* 掃描器與聊天室特殊樣式 */
     #reader { border: none !important; width: 100%; }
     #reader video { width: 100% !important; object-fit: cover; }
+
+    /* 聊天室專屬樣式 */
+    .chat-messages { display: flex; flex-direction: column; gap: 14px; padding: 20px 5vw; overflow-y: auto; flex-grow: 1; width: 100%; }
+    .msg-row { display: flex; width: 100%; }
+    .msg-row.me { justify-content: flex-end; }
+    .msg-row.other { justify-content: flex-start; }
+    .msg-bubble { max-width: 75%; padding: 12px 16px; font-size: 14px; font-weight: 600; line-height: 1.5; }
+    .msg-row.me .msg-bubble { background: var(--text-main); color: var(--bg-white); border: 2px solid var(--text-main); border-radius: 16px 16px 0px 16px; }
+    .msg-row.other .msg-bubble { background: var(--bg-white); color: var(--text-main); border: 2px solid var(--border-color); border-radius: 16px 16px 16px 0px; }
+    .msg-time { font-size: 10px; color: var(--text-muted); margin-top: 6px; display: block; text-align: right; font-weight: 500; }
+    .msg-row.other .msg-time { text-align: left; }
     
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-thumb { background: var(--text-main); }
@@ -192,7 +203,7 @@
   <!-- 更新日誌 Modal -->
   <div id="changelog-overlay" class="modal-overlay">
     <div class="modal-content">
-      <div class="auth-main-title" id="changelog-title" data-i18n="changelog_title">更新日誌 v.05</div>
+      <div class="auth-main-title" id="changelog-title" data-i18n="changelog_title">更新日誌 v.06</div>
       <div class="modal-subtitle" id="changelog-body" data-i18n="changelog_content_html" style="text-align: left; line-height: 1.7; color: var(--text-main); margin-bottom: 30px;">
         <!-- 由 JS 動態注入 -->
       </div>
@@ -220,6 +231,23 @@
     </div>
   </div>
 
+  <!-- 即時聊天室 Fullscreen Overlay -->
+  <div id="chat-overlay" class="modal-overlay" style="background: var(--bg-white); z-index: 110;">
+    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; background: var(--bg-white);">
+      <div class="top-header" style="width: 100%; background: var(--bg-white); position: sticky; top: 0; z-index: 10;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="action-icon-btn" onclick="closeChatroom()"><i class="fa-solid fa-chevron-left"></i></button>
+          <div style="font-weight: 800; font-size: 18px;" id="chat-friend-name">Friend</div>
+        </div>
+      </div>
+      <div id="chat-messages" class="chat-messages"></div>
+      <div class="search-bar" style="width: 100%; max-width: 900px; margin: 0 auto; padding: 16px 5vw; background: var(--bg-white); border-top: 2px solid var(--border-color); position: sticky; bottom: 0; margin-bottom: 0;">
+        <input type="text" id="chat-input" data-i18n-placeholder="chat_input_placeholder" placeholder="輸入訊息...">
+        <button id="chat-send-btn" data-i18n="chat_send_btn">發送</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 主畫面：頂部資訊與設定區塊 -->
   <div class="top-header">
     <div class="brand">MyLog</div>
@@ -229,7 +257,7 @@
         <i class="fa-regular fa-envelope"></i>
         <span class="mail-badge" id="mail-badge">0</span>
       </button>
-      <span class="version-text" id="version-btn">v.05</span>
+      <span class="version-text" id="version-btn">v.06</span>
     </div>
   </div>
 
@@ -268,7 +296,7 @@
         <button id="friend-search-btn" data-i18n="friends_search_btn">搜尋</button>
       </div>
       
-      <!-- 新增：二維碼快捷操作 -->
+      <!-- 二維碼快捷操作 -->
       <div class="action-btns" style="margin-bottom: 12px; gap: 10px;">
         <button class="btn-small primary" id="show-qr-btn" style="flex: 1;"><i class="fa-solid fa-qrcode"></i> <span data-i18n="btn_my_qr">我的二維碼</span></button>
         <button class="btn-small" id="scan-qr-btn" style="flex: 1;"><i class="fa-solid fa-camera"></i> <span data-i18n="btn_scan_qr">掃描二維碼</span></button>
@@ -416,10 +444,12 @@
         msg_rejected_you: "拒絕了你的好友申請",
         month_format: (y, m) => `${y}年 ${m}月`,
         id_label: "ID:",
-        changelog_title: "更新日誌 v.05",
-        changelog_content_html: "<strong>本次更新內容：</strong><br><br>1. <strong>面對面加好友</strong>：朋友頁面新增專屬「二維碼」生成與「相機掃描」功能。<br>2. <strong>掃描自動搜尋</strong>：掃描朋友的二維碼後，系統會自動幫你搜尋該用戶，一鍵即可發送申請！",
+        changelog_title: "更新日誌 v.06",
+        changelog_content_html: "<strong>本次更新內容：</strong><br><br>1. <strong>即時聊天室</strong>：現在點擊朋友清單中的任何一位好友，即可直接進入專屬的一對一聊天室！<br>2. <strong>Neubrutalism 經典風格對話框</strong>：採用黑白高對比對話泡泡設計，支援即時滾動與 Enter 發送。",
         btn_close: "關閉",
-        btn_cancel: "取消"
+        btn_cancel: "取消",
+        chat_input_placeholder: "輸入訊息...",
+        chat_send_btn: "發送"
       },
       "en": {
         auth_login_title: "Login",
@@ -495,10 +525,12 @@
         msg_rejected_you: "rejected your friend request",
         month_format: (y, m) => { const ms = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; return `${ms[m-1]} ${y}`; },
         id_label: "ID:",
-        changelog_title: "Changelog v.05",
-        changelog_content_html: "<strong>What's New:</strong><br><br>1. <strong>Face-to-Face Add</strong>: QR Code generator and Scanner added in the Friends tab.<br>2. <strong>Auto Search</strong>: Once a friend's QR code is scanned, the system will automatically search their profile so you can send a request instantly!",
+        changelog_title: "Changelog v.06",
+        changelog_content_html: "<strong>What's New:</strong><br><br>1. <strong>Real-time Chatroom</strong>: Click on any friend in your list to open a private 1-on-1 chat room instantly!<br>2. <strong>Minimalist Chat Interface</strong>: Brutalist high-contrast message bubbles supporting real-time auto-scroll and Enter key mapping.",
         btn_close: "Close",
-        btn_cancel: "Cancel"
+        btn_cancel: "Cancel",
+        chat_input_placeholder: "Type a message...",
+        chat_send_btn: "Send"
       }
     };
 
@@ -640,18 +672,16 @@
             { facingMode: "environment" }, 
             { fps: 10, qrbox: { width: 250, height: 250 } },
             (decodedText, decodedResult) => {
-              // 掃描成功
               if (isScanning) {
                 html5QrCode.stop().then(() => {
                   isScanning = false;
                   document.getElementById('scan-qr-overlay').classList.remove('active');
-                  // 自動填入搜尋框並觸發搜尋
                   document.getElementById('friend-search-input').value = decodedText;
                   document.getElementById('friend-search-btn').click();
                 });
               }
             },
-            (errorMessage) => { /* 忽略掃描過程中的雜訊錯誤 */ }
+            (errorMessage) => { }
           ).catch((err) => {
             isScanning = false;
             document.getElementById('scan-qr-overlay').classList.remove('active');
@@ -680,7 +710,92 @@
       }
     });
 
-    // --- 驗證與登入邏輯 (保留現有運作方式) ---
+    // ==========================================
+    // =            聊天室核心邏輯系統           =
+    // ==========================================
+    window.unsubscribeChat = null;
+
+    window.openChatroom = function(targetUid, targetName) {
+      if (!currentUserUid) return;
+      document.getElementById('chat-friend-name').textContent = targetName;
+      
+      // 生成一對一聊天專屬識別 ID (利用雙方 UID 字串字典排序組合)
+      const chatId = currentUserUid < targetUid ? `${currentUserUid}_${targetUid}` : `${targetUid}_${currentUserUid}`;
+      
+      const msgContainer = document.getElementById('chat-messages');
+      msgContainer.innerHTML = '';
+      document.getElementById('chat-overlay').classList.add('active');
+      
+      // 清除可能存在的舊監聽器
+      if (window.unsubscribeChat) { window.unsubscribeChat(); }
+      
+      const chatRef = ref(db, `chats/${chatId}/messages`);
+      
+      // 開啟即時訊息同步監聽
+      window.unsubscribeChat = onValue(chatRef, (snapshot) => {
+        msgContainer.innerHTML = '';
+        if (snapshot.exists()) {
+          snapshot.forEach(childSnap => {
+            const msg = childSnap.val();
+            const isMe = msg.senderId === currentUserUid;
+            
+            const row = document.createElement('div');
+            row.className = `msg-row ${isMe ? 'me' : 'other'}`;
+            
+            const timeStr = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            row.innerHTML = `
+              <div class="msg-bubble">
+                <div>${escapeHTML(msg.text)}</div>
+                <span class="msg-time">${timeStr}</span>
+              </div>
+            `;
+            msgContainer.appendChild(row);
+          });
+          // 自動滾動至最新訊息
+          msgContainer.scrollTop = msgContainer.scrollHeight;
+        }
+      });
+      
+      // 綁定發送事件
+      const sendBtn = document.getElementById('chat-send-btn');
+      const input = document.getElementById('chat-input');
+      
+      sendBtn.onclick = () => {
+        const text = input.value.trim();
+        if (!text) return;
+        
+        push(chatRef, {
+          senderId: currentUserUid,
+          senderName: currentUserData.username,
+          text: text,
+          timestamp: new Date().toISOString()
+        });
+        input.value = '';
+      };
+      
+      input.onkeypress = (e) => {
+        if (e.key === 'Enter') sendBtn.click();
+      };
+    };
+
+    window.closeChatroom = function() {
+      // 安全銷毀 Firebase 即時資料流監聽，避免背景持續耗能
+      if (window.unsubscribeChat) {
+        window.unsubscribeChat();
+        window.unsubscribeChat = null;
+      }
+      document.getElementById('chat-overlay').classList.remove('active');
+    };
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      }[tag] || tag));
+    }
+
+
+    // --- 驗證與登入邏輯 ---
     const elements = {
       overlay: document.getElementById('auth-overlay'),
       mainForm: document.getElementById('main-auth-form'),
@@ -1134,7 +1249,8 @@
         if (friend.data) {
           html += `
             <div class="friend-item">
-              <div class="friend-info">
+              <!-- 點擊好友區域直接開啟對話視窗 -->
+              <div class="friend-info" style="cursor: pointer;" onclick="openChatroom('${friend.uid}', '${friend.data.username}')">
                 <div class="friend-avatar"></div>
                 <div class="friend-details">
                   <h4 style="display: flex; align-items: center;">
