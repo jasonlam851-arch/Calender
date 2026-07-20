@@ -6,6 +6,11 @@
   <title>MyLog 專屬日曆系統</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- 引入 QR Code 生成與掃描庫 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
   <style>
     /* 純黑白極簡風格設定 */
     :root {
@@ -81,7 +86,7 @@
     .friend-details p { font-size: 11px; color: var(--text-muted); font-weight: 600; letter-spacing: 1px; }
     
     .action-btns { display: flex; gap: 6px; }
-    .btn-small { padding: 6px 12px; font-size: 11px; font-weight: 700; cursor: pointer; border: 2px solid var(--text-main); text-transform: uppercase; background: var(--bg-white); color: var(--text-main); transition: 0.2s; }
+    .btn-small { padding: 8px 12px; font-size: 12px; font-weight: 700; cursor: pointer; border: 2px solid var(--text-main); text-transform: uppercase; background: var(--bg-white); color: var(--text-main); transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 6px; }
     .btn-small.primary { background: var(--text-main); color: var(--bg-white); }
     .btn-small:hover { background: var(--text-main); color: var(--bg-white); }
     .btn-small.primary:hover { background: var(--bg-white); color: var(--text-main); }
@@ -135,6 +140,10 @@
     .auth-switch span { color: var(--text-main); font-weight: 800; cursor: pointer; text-decoration: underline; text-underline-offset: 4px;}
     .loading-text { font-size: 13px; font-weight: 700; color: var(--text-main); text-align: center; margin-bottom: 12px; display: none; text-transform: uppercase;}
     
+    /* 掃描器特殊樣式 */
+    #reader { border: none !important; width: 100%; }
+    #reader video { width: 100% !important; object-fit: cover; }
+    
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-thumb { background: var(--text-main); }
   </style>
@@ -183,11 +192,31 @@
   <!-- 更新日誌 Modal -->
   <div id="changelog-overlay" class="modal-overlay">
     <div class="modal-content">
-      <div class="auth-main-title" id="changelog-title" data-i18n="changelog_title">更新日誌 v.04</div>
+      <div class="auth-main-title" id="changelog-title" data-i18n="changelog_title">更新日誌 v.05</div>
       <div class="modal-subtitle" id="changelog-body" data-i18n="changelog_content_html" style="text-align: left; line-height: 1.7; color: var(--text-main); margin-bottom: 30px;">
         <!-- 由 JS 動態注入 -->
       </div>
       <button class="modal-btn" id="close-changelog-btn" data-i18n="btn_close">關閉</button>
+    </div>
+  </div>
+
+  <!-- 我的二維碼 Modal -->
+  <div id="my-qr-overlay" class="modal-overlay">
+    <div class="modal-content" style="text-align: center;">
+      <div class="auth-main-title" data-i18n="qr_title">我的專屬碼</div>
+      <div id="qrcode-display" style="display: flex; justify-content: center; margin-bottom: 16px; padding: 10px; border: 2px solid var(--border-color);"></div>
+      <p style="font-weight: 900; font-size: 24px; letter-spacing: 2px; margin-bottom: 8px;" id="qr-code-text"></p>
+      <p style="color: var(--text-muted); font-size: 13px; font-weight: 600; margin-bottom: 24px;" data-i18n="qr_desc">讓朋友掃描此二維碼以添加好友</p>
+      <button class="modal-btn" id="close-qr-btn" data-i18n="btn_close">關閉</button>
+    </div>
+  </div>
+
+  <!-- 掃描二維碼 Modal -->
+  <div id="scan-qr-overlay" class="modal-overlay">
+    <div class="modal-content" style="text-align: center; padding: 20px;">
+      <div class="auth-main-title" data-i18n="scan_title" style="margin-bottom: 16px; padding-top: 10px;">掃描好友二維碼</div>
+      <div id="reader" style="width: 100%; min-height: 250px; background: #fafafa; border: 2px solid var(--border-color); margin-bottom: 20px;"></div>
+      <button class="modal-btn google-btn" id="close-scan-btn" data-i18n="btn_cancel">取消</button>
     </div>
   </div>
 
@@ -200,7 +229,7 @@
         <i class="fa-regular fa-envelope"></i>
         <span class="mail-badge" id="mail-badge">0</span>
       </button>
-      <span class="version-text" id="version-btn">v.04</span>
+      <span class="version-text" id="version-btn">v.05</span>
     </div>
   </div>
 
@@ -238,6 +267,13 @@
         <input type="text" id="friend-search-input" data-i18n-placeholder="friends_search_placeholder" placeholder="輸入用戶名或專屬碼搜尋...">
         <button id="friend-search-btn" data-i18n="friends_search_btn">搜尋</button>
       </div>
+      
+      <!-- 新增：二維碼快捷操作 -->
+      <div class="action-btns" style="margin-bottom: 12px; gap: 10px;">
+        <button class="btn-small primary" id="show-qr-btn" style="flex: 1;"><i class="fa-solid fa-qrcode"></i> <span data-i18n="btn_my_qr">我的二維碼</span></button>
+        <button class="btn-small" id="scan-qr-btn" style="flex: 1;"><i class="fa-solid fa-camera"></i> <span data-i18n="btn_scan_qr">掃描二維碼</span></button>
+      </div>
+
       <div id="search-result-area" style="display: none; margin-top: 16px;"></div>
     </div>
 
@@ -287,7 +323,7 @@
     </div>
   </div>
 
-  <!-- 底部導覽列（移除了設定、信箱，僅保留核心頁面切換） -->
+  <!-- 底部導覽列 -->
   <div class="bottom-nav">
     <button class="nav-tab active" data-target="view-calendar">
       <i class="fa-regular fa-calendar" style="margin-right: 6px;"></i> <span data-i18n="nav_calendar">日曆</span>
@@ -330,11 +366,9 @@
         profile_logout: "登出系統",
         nav_calendar: "日曆",
         nav_friends: "朋友",
-        nav_settings: "設定",
-        nav_mail: "信箱",
         day_0: "日", day_1: "一", day_2: "二", day_3: "三", day_4: "四", day_5: "五", day_6: "六",
         friends_search_title: "搜尋好友",
-        friends_search_placeholder: "輸入用戶名或專屬碼搜尋...",
+        friends_search_placeholder: "輸入用戶名或專屬碼...",
         friends_search_btn: "搜尋",
         friends_requests_title: "好友申請",
         friends_requests_empty: "目前沒有新的好友申請。",
@@ -344,6 +378,11 @@
         btn_accept: "接受",
         btn_reject: "拒絕",
         btn_delete: "刪除",
+        btn_my_qr: "我的二維碼",
+        btn_scan_qr: "掃描二維碼",
+        qr_title: "我的專屬碼",
+        qr_desc: "讓朋友掃描此二維碼以添加好友",
+        scan_title: "掃描好友二維碼",
         status_online: "在線",
         status_offline: "離線",
         setting_title: "系統設定",
@@ -369,6 +408,7 @@
         alert_no_match: "找不到符合條件的用戶，請確認輸入是否正確。",
         alert_no_users_sys: "系統內尚無其他用戶。",
         alert_search_err: "搜尋發生錯誤，請重新整理頁面後再試。",
+        alert_cam_err: "無法開啟相機，請確認設備權限設定。",
         alert_op_fail: "操作失敗",
         alert_del_confirm: "確定要刪除這位好友嗎？",
         msg_added_you: "向你發送了好友申請",
@@ -376,9 +416,10 @@
         msg_rejected_you: "拒絕了你的好友申請",
         month_format: (y, m) => `${y}年 ${m}月`,
         id_label: "ID:",
-        changelog_title: "更新日誌 v.04",
-        changelog_content_html: "<strong>本次更新內容：</strong><br><br>1. <strong>介面優化</strong>：下方的「設定」及「信箱」標籤已取消，只能從上方圖案打開。<br>2. <strong>信箱修復</strong>：修復了每次打開信箱都會重複顯示舊訊息通知的錯誤。<br>3. <strong>版本功能</strong>：新增點擊版本號查看更新內容功能。",
-        btn_close: "關閉"
+        changelog_title: "更新日誌 v.05",
+        changelog_content_html: "<strong>本次更新內容：</strong><br><br>1. <strong>面對面加好友</strong>：朋友頁面新增專屬「二維碼」生成與「相機掃描」功能。<br>2. <strong>掃描自動搜尋</strong>：掃描朋友的二維碼後，系統會自動幫你搜尋該用戶，一鍵即可發送申請！",
+        btn_close: "關閉",
+        btn_cancel: "取消"
       },
       "en": {
         auth_login_title: "Login",
@@ -404,11 +445,9 @@
         profile_logout: "Logout",
         nav_calendar: "Calendar",
         nav_friends: "Friends",
-        nav_settings: "Settings",
-        nav_mail: "Mail",
         day_0: "Sun", day_1: "Mon", day_2: "Tue", day_3: "Wed", day_4: "Thu", day_5: "Fri", day_6: "Sat",
         friends_search_title: "Search Friends",
-        friends_search_placeholder: "Search by username or ID...",
+        friends_search_placeholder: "Search username or ID...",
         friends_search_btn: "Search",
         friends_requests_title: "Requests",
         friends_requests_empty: "No new friend requests.",
@@ -418,6 +457,11 @@
         btn_accept: "Accept",
         btn_reject: "Reject",
         btn_delete: "Delete",
+        btn_my_qr: "My QR Code",
+        btn_scan_qr: "Scan QR",
+        qr_title: "My Exclusive ID",
+        qr_desc: "Let friends scan this QR Code to add you",
+        scan_title: "Scan Friend's QR Code",
         status_online: "Online",
         status_offline: "Offline",
         setting_title: "System Settings",
@@ -443,6 +487,7 @@
         alert_no_match: "No users found matching your search.",
         alert_no_users_sys: "No other users in the system.",
         alert_search_err: "Search error. Please try again.",
+        alert_cam_err: "Cannot open camera, check device permissions.",
         alert_op_fail: "Operation failed",
         alert_del_confirm: "Are you sure you want to delete this friend?",
         msg_added_you: "sent you a friend request",
@@ -450,9 +495,10 @@
         msg_rejected_you: "rejected your friend request",
         month_format: (y, m) => { const ms = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; return `${ms[m-1]} ${y}`; },
         id_label: "ID:",
-        changelog_title: "Changelog v.04",
-        changelog_content_html: "<strong>What's New:</strong><br><br>1. <strong>UI Optimization</strong>: Bottom tabs for Settings and Mail removed; can only open from top bar icons.<br>2. <strong>Mail Fix</strong>: Fixed issue where old messages repeatedly triggered unread notifications.<br>3. <strong>Version Feature</strong>: Click on the version number to view update logs.",
-        btn_close: "Close"
+        changelog_title: "Changelog v.05",
+        changelog_content_html: "<strong>What's New:</strong><br><br>1. <strong>Face-to-Face Add</strong>: QR Code generator and Scanner added in the Friends tab.<br>2. <strong>Auto Search</strong>: Once a friend's QR code is scanned, the system will automatically search their profile so you can send a request instantly!",
+        btn_close: "Close",
+        btn_cancel: "Cancel"
       }
     };
 
@@ -537,8 +583,6 @@
       views.forEach(v => v.classList.remove('active'));
       document.getElementById('view-mail').classList.add('active');
       document.getElementById('mail-badge').style.display = 'none';
-      
-      // 開啟信箱時，立即將當前所有未讀舊訊息在資料庫標記為已讀
       await markAllMailsAsRead();
     });
 
@@ -547,12 +591,96 @@
       updateLanguageUI();
       document.getElementById('changelog-overlay').classList.add('active');
     });
-
     document.getElementById('close-changelog-btn').addEventListener('click', () => {
       document.getElementById('changelog-overlay').classList.remove('active');
     });
 
-    // --- 驗證與登入邏輯 ---
+    // ==========================================
+    // =            QR Code 生成與掃描邏輯        =
+    // ==========================================
+    
+    // 1. 生成我的二維碼
+    const qrDisplay = document.getElementById('qrcode-display');
+    const qrCodeText = document.getElementById('qr-code-text');
+    let qrInstance = null;
+
+    document.getElementById('show-qr-btn').addEventListener('click', () => {
+      if (!currentUserData) return;
+      const code = currentUserData.exclusiveCode;
+      qrCodeText.textContent = code;
+      qrDisplay.innerHTML = ''; 
+      
+      qrInstance = new QRCode(qrDisplay, {
+        text: code,
+        width: 180,
+        height: 180,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+      });
+      document.getElementById('my-qr-overlay').classList.add('active');
+    });
+
+    document.getElementById('close-qr-btn').addEventListener('click', () => {
+      document.getElementById('my-qr-overlay').classList.remove('active');
+    });
+
+    // 2. 掃描二維碼
+    const html5QrCode = new Html5Qrcode("reader");
+    let isScanning = false;
+
+    document.getElementById('scan-qr-btn').addEventListener('click', () => {
+      document.getElementById('scan-qr-overlay').classList.add('active');
+      
+      Html5Qrcode.getCameras().then(devices => {
+        if (devices && devices.length) {
+          const cameraId = devices[devices.length - 1].id; 
+          isScanning = true;
+          html5QrCode.start(
+            { facingMode: "environment" }, 
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            (decodedText, decodedResult) => {
+              // 掃描成功
+              if (isScanning) {
+                html5QrCode.stop().then(() => {
+                  isScanning = false;
+                  document.getElementById('scan-qr-overlay').classList.remove('active');
+                  // 自動填入搜尋框並觸發搜尋
+                  document.getElementById('friend-search-input').value = decodedText;
+                  document.getElementById('friend-search-btn').click();
+                });
+              }
+            },
+            (errorMessage) => { /* 忽略掃描過程中的雜訊錯誤 */ }
+          ).catch((err) => {
+            isScanning = false;
+            document.getElementById('scan-qr-overlay').classList.remove('active');
+            alert(t('alert_cam_err'));
+          });
+        } else {
+          document.getElementById('scan-qr-overlay').classList.remove('active');
+          alert(t('alert_cam_err'));
+        }
+      }).catch(err => {
+        document.getElementById('scan-qr-overlay').classList.remove('active');
+        alert(t('alert_cam_err'));
+      });
+    });
+
+    document.getElementById('close-scan-btn').addEventListener('click', () => {
+      if (isScanning) {
+        html5QrCode.stop().then(() => {
+          isScanning = false;
+          document.getElementById('scan-qr-overlay').classList.remove('active');
+        }).catch(err => {
+          document.getElementById('scan-qr-overlay').classList.remove('active');
+        });
+      } else {
+        document.getElementById('scan-qr-overlay').classList.remove('active');
+      }
+    });
+
+    // --- 驗證與登入邏輯 (保留現有運作方式) ---
     const elements = {
       overlay: document.getElementById('auth-overlay'),
       mainForm: document.getElementById('main-auth-form'),
@@ -621,16 +749,13 @@
 
     async function createUserDataInDB(user, username) {
       const countRef = ref(db, 'metadata/userCount');
-      
       let assignedCount = 1;
       await runTransaction(countRef, (currentCount) => {
         const next = (currentCount || 0) + 1;
         assignedCount = next;
         return next;
       });
-
       const exclusiveCode = String(assignedCount).padStart(4, '0');
-
       const data = { username: username, exclusiveCode: exclusiveCode, createdAt: new Date().toISOString() };
       await set(ref(db, 'users/' + user.uid), data);
       return data;
@@ -747,7 +872,6 @@
     function setupOnlineStatus(uid) {
       const connectedRef = ref(db, '.info/connected');
       const userStatusRef = ref(db, `users/${uid}/status`);
-      
       onValue(connectedRef, (snap) => {
         if (snap.val() === true) {
           onDisconnect(userStatusRef).set('offline').then(() => {
@@ -766,7 +890,6 @@
       }
     });
 
-
     // ==========================================
     // =            信箱通知系統核心              =
     // ==========================================
@@ -781,13 +904,11 @@
           currentMailData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
           renderMailList(currentMailData);
           
-          // 檢查信箱頁面是否正在開啟
           const isMailOpen = document.getElementById('view-mail').classList.contains('active');
           if (isMailOpen) {
             markAllMailsAsRead();
             document.getElementById('mail-badge').style.display = 'none';
           } else {
-            // 只計算真正未讀取的訊息
             const unreadCount = currentMailData.filter(m => !m.read).length;
             const badge = document.getElementById('mail-badge');
             if (unreadCount > 0) {
@@ -805,7 +926,6 @@
       });
     }
 
-    // 將所有未讀取訊息標記為已讀
     async function markAllMailsAsRead() {
       if (!currentUserUid || currentMailData.length === 0) return;
       const updates = {};
@@ -815,9 +935,7 @@
           mail.read = true; 
         }
       });
-      if (Object.keys(updates).length > 0) {
-        await update(ref(db), updates);
-      }
+      if (Object.keys(updates).length > 0) await update(ref(db), updates);
     }
 
     function renderMailList(mailArray) {
@@ -832,9 +950,7 @@
         if (mail.type === 'request') actionText = t('msg_added_you');
         else if (mail.type === 'accept') actionText = t('msg_accepted_you');
         else if (mail.type === 'reject') actionText = t('msg_rejected_you');
-
         const dateStr = new Date(mail.timestamp).toLocaleString();
-
         html += `
           <div class="mail-item">
             <div class="mail-content">
@@ -855,7 +971,6 @@
         read: false
       });
     }
-
 
     // ==========================================
     // =            朋友系統核心邏輯              =
