@@ -26,7 +26,8 @@
     .header-actions { display: flex; align-items: center; gap: 10px; }
     .action-icon-btn { background: var(--bg-white); color: var(--text-main); border: 2px solid var(--text-main); width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; font-size: 14px; border-radius: 4px; position: relative; }
     .action-icon-btn:hover { background: var(--text-main); color: var(--bg-white); }
-    .version-text { font-size: 12px; font-weight: 800; color: var(--text-main); letter-spacing: 1px; margin-left: 4px; text-transform: uppercase; border: 2px solid var(--text-main); padding: 4px 8px; border-radius: 4px; }
+    .version-text { font-size: 12px; font-weight: 800; color: var(--text-main); letter-spacing: 1px; margin-left: 4px; text-transform: uppercase; border: 2px solid var(--text-main); padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+    .version-text:hover { background: var(--text-main); color: var(--bg-white); }
     
     /* 信件未讀徽章 */
     .mail-badge { position: absolute; top: -5px; right: -5px; background: var(--text-main); color: var(--bg-white); font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 10px; border: 1px solid var(--bg-white); display: none; }
@@ -179,6 +180,17 @@
     </div>
   </div>
 
+  <!-- 更新日誌 Modal -->
+  <div id="changelog-overlay" class="modal-overlay">
+    <div class="modal-content">
+      <div class="auth-main-title" id="changelog-title" data-i18n="changelog_title">更新日誌 v.04</div>
+      <div class="modal-subtitle" id="changelog-body" data-i18n="changelog_content_html" style="text-align: left; line-height: 1.7; color: var(--text-main); margin-bottom: 30px;">
+        <!-- 由 JS 動態注入 -->
+      </div>
+      <button class="modal-btn" id="close-changelog-btn" data-i18n="btn_close">關閉</button>
+    </div>
+  </div>
+
   <!-- 主畫面：頂部資訊與設定區塊 -->
   <div class="top-header">
     <div class="brand">MyLog</div>
@@ -188,7 +200,7 @@
         <i class="fa-regular fa-envelope"></i>
         <span class="mail-badge" id="mail-badge">0</span>
       </button>
-      <span class="version-text">v.03</span>
+      <span class="version-text" id="version-btn">v.04</span>
     </div>
   </div>
 
@@ -275,19 +287,13 @@
     </div>
   </div>
 
-  <!-- 底部導覽列 -->
+  <!-- 底部導覽列（移除了設定、信箱，僅保留核心頁面切換） -->
   <div class="bottom-nav">
     <button class="nav-tab active" data-target="view-calendar">
       <i class="fa-regular fa-calendar" style="margin-right: 6px;"></i> <span data-i18n="nav_calendar">日曆</span>
     </button>
     <button class="nav-tab" data-target="view-friends">
       <i class="fa-solid fa-user-group" style="margin-right: 6px;"></i> <span data-i18n="nav_friends">朋友</span>
-    </button>
-    <button class="nav-tab" data-target="view-settings" id="tab-settings">
-      <i class="fa-solid fa-gear" style="margin-right: 6px;"></i> <span data-i18n="nav_settings">設定</span>
-    </button>
-    <button class="nav-tab" data-target="view-mail" id="tab-mail">
-      <i class="fa-regular fa-envelope" style="margin-right: 6px;"></i> <span data-i18n="nav_mail">信箱</span>
     </button>
   </div>
 
@@ -369,7 +375,10 @@
         msg_accepted_you: "接受了你的好友申請",
         msg_rejected_you: "拒絕了你的好友申請",
         month_format: (y, m) => `${y}年 ${m}月`,
-        id_label: "ID:"
+        id_label: "ID:",
+        changelog_title: "更新日誌 v.04",
+        changelog_content_html: "<strong>本次更新內容：</strong><br><br>1. <strong>介面優化</strong>：下方的「設定」及「信箱」標籤已取消，只能從上方圖案打開。<br>2. <strong>信箱修復</strong>：修復了每次打開信箱都會重複顯示舊訊息通知的錯誤。<br>3. <strong>版本功能</strong>：新增點擊版本號查看更新內容功能。",
+        btn_close: "關閉"
       },
       "en": {
         auth_login_title: "Login",
@@ -440,7 +449,10 @@
         msg_accepted_you: "accepted your friend request",
         msg_rejected_you: "rejected your friend request",
         month_format: (y, m) => { const ms = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; return `${ms[m-1]} ${y}`; },
-        id_label: "ID:"
+        id_label: "ID:",
+        changelog_title: "Changelog v.04",
+        changelog_content_html: "<strong>What's New:</strong><br><br>1. <strong>UI Optimization</strong>: Bottom tabs for Settings and Mail removed; can only open from top bar icons.<br>2. <strong>Mail Fix</strong>: Fixed issue where old messages repeatedly triggered unread notifications.<br>3. <strong>Version Feature</strong>: Click on the version number to view update logs.",
+        btn_close: "Close"
       }
     };
 
@@ -500,7 +512,7 @@
 
     let currentUserUid = null;
 
-    // --- 底部導覽列切換邏輯 ---
+    // --- 導覽列與頂部按鈕切換邏輯 ---
     const navTabs = document.querySelectorAll('.nav-tab');
     const views = document.querySelectorAll('.view-section');
 
@@ -517,16 +529,27 @@
     document.getElementById('open-settings-btn').addEventListener('click', () => {
       navTabs.forEach(t => t.classList.remove('active'));
       views.forEach(v => v.classList.remove('active'));
-      document.getElementById('tab-settings').classList.add('active');
       document.getElementById('view-settings').classList.add('active');
     });
 
-    document.getElementById('open-mail-btn').addEventListener('click', () => {
+    document.getElementById('open-mail-btn').addEventListener('click', async () => {
       navTabs.forEach(t => t.classList.remove('active'));
       views.forEach(v => v.classList.remove('active'));
-      document.getElementById('tab-mail').classList.add('active');
       document.getElementById('view-mail').classList.add('active');
       document.getElementById('mail-badge').style.display = 'none';
+      
+      // 開啟信箱時，立即將當前所有未讀舊訊息在資料庫標記為已讀
+      await markAllMailsAsRead();
+    });
+
+    // --- 版本更新日誌彈窗事件 ---
+    document.getElementById('version-btn').addEventListener('click', () => {
+      updateLanguageUI();
+      document.getElementById('changelog-overlay').classList.add('active');
+    });
+
+    document.getElementById('close-changelog-btn').addEventListener('click', () => {
+      document.getElementById('changelog-overlay').classList.remove('active');
     });
 
     // --- 驗證與登入邏輯 ---
@@ -575,7 +598,7 @@
       } else {
         elements.title.setAttribute('data-i18n', 'auth_reg_title');
         elements.subtitle.setAttribute('data-i18n', 'auth_reg_subtitle');
-        elements.registerFields.style.display = 'none'; // 取消生日欄位對應
+        elements.registerFields.style.display = 'none'; 
         elements.submitBtn.setAttribute('data-i18n', 'auth_reg_btn');
         document.getElementById('google-btn-text').setAttribute('data-i18n', 'auth_google_reg');
         elements.toggleMsg.setAttribute('data-i18n', 'auth_toggle_to_login_html');
@@ -599,7 +622,6 @@
     async function createUserDataInDB(user, username) {
       const countRef = ref(db, 'metadata/userCount');
       
-      // 使用 Transaction 確保循序派發 0001, 0002... 格式
       let assignedCount = 1;
       await runTransaction(countRef, (currentCount) => {
         const next = (currentCount || 0) + 1;
@@ -686,7 +708,6 @@
             currentUserData = snapshot.val();
             currentUserUid = user.uid;
             
-            // 若為舊格式帳號，自動升級為 4 碼循序編號
             if (!/^\d{4}$/.test(currentUserData.exclusiveCode)) {
               await fixLegacyUserCode(user.uid, currentUserData);
             } else {
@@ -709,7 +730,6 @@
       }
     });
 
-    // 重新排序並升級舊帳號編碼的輔助函式
     async function fixLegacyUserCode(uid, uData) {
       const countRef = ref(db, 'metadata/userCount');
       let assignedCount = 1;
@@ -761,13 +781,21 @@
           currentMailData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
           renderMailList(currentMailData);
           
-          const unreadCount = currentMailData.filter(m => !m.read).length;
-          const badge = document.getElementById('mail-badge');
-          if (unreadCount > 0) {
-            badge.style.display = 'inline-block';
-            badge.textContent = unreadCount;
+          // 檢查信箱頁面是否正在開啟
+          const isMailOpen = document.getElementById('view-mail').classList.contains('active');
+          if (isMailOpen) {
+            markAllMailsAsRead();
+            document.getElementById('mail-badge').style.display = 'none';
           } else {
-            badge.style.display = 'none';
+            // 只計算真正未讀取的訊息
+            const unreadCount = currentMailData.filter(m => !m.read).length;
+            const badge = document.getElementById('mail-badge');
+            if (unreadCount > 0) {
+              badge.style.display = 'inline-block';
+              badge.textContent = unreadCount;
+            } else {
+              badge.style.display = 'none';
+            }
           }
         } else {
           currentMailData = [];
@@ -775,6 +803,21 @@
           document.getElementById('mail-badge').style.display = 'none';
         }
       });
+    }
+
+    // 將所有未讀取訊息標記為已讀
+    async function markAllMailsAsRead() {
+      if (!currentUserUid || currentMailData.length === 0) return;
+      const updates = {};
+      currentMailData.forEach(mail => {
+        if (!mail.read) {
+          updates[`mail/${currentUserUid}/${mail.id}/read`] = true;
+          mail.read = true; 
+        }
+      });
+      if (Object.keys(updates).length > 0) {
+        await update(ref(db), updates);
+      }
     }
 
     function renderMailList(mailArray) {
