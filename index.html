@@ -36,8 +36,8 @@
     .logout-btn { background: var(--bg-white); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 0; padding: 8px 20px; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 16px; transition: 0.2s; text-transform: uppercase; }
     .logout-btn:hover { background: var(--text-main); color: var(--bg-white); }
     
-    .calendar-wrapper { flex-grow: 1; padding: 40px 5vw 80px; display: flex; justify-content: center; }
-    .calendar-container { width: 100%; max-width: 900px; }
+    .calendar-wrapper { padding: 40px 5vw 40px; display: flex; justify-content: center; border-bottom: 1px solid var(--border-color); }
+    .calendar-container, .friends-container { width: 100%; max-width: 900px; }
     .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
     .calendar-header h2 { font-size: 28px; font-weight: 800; }
     .nav-controls { display: flex; gap: 12px; }
@@ -51,10 +51,37 @@
     .day-cell.today { background: var(--text-main); color: var(--bg-white); font-weight: 800; }
     .day-cell.today::after { content: ''; position: absolute; bottom: 8px; width: 6px; height: 6px; background-color: var(--bg-white); border-radius: 50%; }
     
+    /* 朋友系統樣式 */
+    .friends-wrapper { padding: 40px 5vw 80px; display: flex; justify-content: center; flex-grow: 1; }
+    .friends-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .friends-header h2 { font-size: 24px; font-weight: 800; }
+    .requests-btn { width: auto; padding: 10px 20px; margin: 0; position: relative; font-size: 13px; }
+    .requests-badge { position: absolute; top: -8px; right: -8px; background: var(--text-main); color: var(--bg-white); font-size: 11px; font-weight: 800; width: 22px; height: 22px; display: flex; justify-content: center; align-items: center; border-radius: 50%; border: 2px solid var(--bg-white); }
+    
+    .search-bar { display: flex; gap: 12px; margin-bottom: 32px; }
+    .search-bar input { margin-bottom: 0; flex-grow: 1; }
+    .search-bar button { width: auto; margin-bottom: 0; padding: 0 24px; }
+    
+    .friends-list { display: flex; flex-direction: column; gap: 16px; }
+    .friend-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 2px solid var(--border-color); }
+    .friend-info { display: flex; align-items: center; gap: 16px; }
+    .friend-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--text-main); background-color: #eee; }
+    .friend-details h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .friend-details p { font-size: 12px; color: var(--text-muted); font-weight: 600; letter-spacing: 1px; }
+    
+    .action-btns { display: flex; gap: 8px; }
+    .btn-small { padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; border: 2px solid var(--text-main); text-transform: uppercase; background: var(--bg-white); color: var(--text-main); transition: 0.2s; }
+    .btn-small.primary { background: var(--text-main); color: var(--bg-white); }
+    .btn-small:hover { background: var(--text-main); color: var(--bg-white); }
+    .btn-small.primary:hover { background: var(--bg-white); color: var(--text-main); }
+    .empty-state { text-align: center; padding: 40px; color: var(--text-muted); font-weight: 600; font-size: 14px; border: 2px dashed var(--border-color); }
+
     /* Modal 樣式 */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 100; }
     .modal-overlay.active { opacity: 1; visibility: visible; }
-    .modal-content { background: var(--bg-white); width: 90%; max-width: 400px; border-radius: 0; padding: 40px; border: 3px solid var(--border-color); box-shadow: 12px 12px 0px rgba(0,0,0,1); }
+    .modal-content { background: var(--bg-white); width: 90%; max-width: 400px; border-radius: 0; padding: 40px; border: 3px solid var(--border-color); box-shadow: 12px 12px 0px rgba(0,0,0,1); max-height: 90vh; overflow-y: auto; }
+    .modal-close { position: absolute; top: 20px; right: 20px; font-size: 20px; cursor: pointer; color: var(--text-main); background: none; border: none; }
+    .modal-content-relative { position: relative; }
     
     .auth-main-title { font-size: 22px; font-weight: 900; color: var(--text-main); text-transform: uppercase; margin-bottom: 24px; text-align: center; border-bottom: 2px solid var(--border-color); padding-bottom: 16px; letter-spacing: 2px;}
     .modal-header { font-weight: 800; font-size: 24px; margin-bottom: 8px; }
@@ -69,42 +96,38 @@
     
     .google-btn { background: var(--bg-white); color: var(--text-main); border: 2px solid var(--border-color); }
     .google-btn:hover { background: var(--text-main); color: var(--bg-white); }
-    .google-btn i { font-size: 18px; }
     
     .divider { display: flex; align-items: center; text-align: center; color: var(--text-main); font-size: 12px; font-weight: 700; margin-bottom: 16px; margin-top: 8px; text-transform: uppercase;}
     .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 2px solid var(--border-color); margin: 0 10px; }
     
-    #register-fields { display: none; } 
+    #register-fields, #google-complete-form { display: none; } 
     .auth-switch { text-align: center; margin-top: 20px; font-size: 14px; color: var(--text-muted); font-weight: 500;}
     .auth-switch span { color: var(--text-main); font-weight: 800; cursor: pointer; text-decoration: underline; text-underline-offset: 4px;}
     .loading-text { font-size: 13px; font-weight: 700; color: var(--text-main); text-align: center; margin-bottom: 12px; display: none; text-transform: uppercase;}
     
-    /* Google 註冊新畫面隱藏 */
-    #google-complete-form { display: none; }
+    /* 隱藏滾動條 */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-thumb { background: var(--text-main); }
   </style>
 </head>
 <body>
 
   <!-- 登入 / 註冊系統 Modal -->
   <div id="auth-overlay" class="modal-overlay active">
-    <div class="modal-content">
+    <div class="modal-content modal-content-relative">
       <div class="auth-main-title">MyLog</div>
 
-      <!-- 主驗證表單 (登入/一般註冊) -->
       <div id="main-auth-form">
         <div class="modal-header" id="auth-title">登入帳號</div>
         <div class="modal-subtitle" id="auth-subtitle">登入以存取您的專屬日曆。</div>
         
         <input type="text" id="auth-username" class="modal-input" placeholder="用戶名稱" autocomplete="off">
-        
         <div id="register-fields">
-          <input type="text" id="auth-birthday" class="modal-input" placeholder="生日月日" maxlength="4">
+          <input type="text" id="auth-birthday" class="modal-input" placeholder="生日月日 (選填)" maxlength="4">
         </div>
-        
         <input type="password" id="auth-password" class="modal-input" placeholder="密碼 (至少8碼，須含英文字母與數字)">
         
         <div class="loading-text" id="auth-loading">處理中...</div>
-        
         <button class="modal-btn" id="auth-submit-btn">登入</button>
         
         <div class="divider">或</div>
@@ -112,16 +135,12 @@
           <i class="fa-brands fa-google"></i> <span id="google-btn-text">使用 Google 登入</span>
         </button>
         
-        <div class="auth-switch">
-          <span id="auth-toggle-msg">還沒有帳號？ <span>立即註冊</span></span>
-        </div>
+        <div class="auth-switch"><span id="auth-toggle-msg">還沒有帳號？ <span>立即註冊</span></span></div>
       </div>
 
-      <!-- Google 註冊補全畫面 -->
       <div id="google-complete-form">
         <div class="modal-header">即將完成註冊</div>
         <div class="modal-subtitle">請為您的帳號設定一個用戶名稱。</div>
-        
         <input type="text" id="google-username" class="modal-input" placeholder="用戶名稱" autocomplete="off">
         
         <div class="loading-text" id="google-loading">處理中...</div>
@@ -131,7 +150,18 @@
           <span id="cancel-google-complete" style="color: var(--text-muted); text-decoration: none; font-weight: 500;">返回上一步</span>
         </div>
       </div>
+    </div>
+  </div>
 
+  <!-- 好友申請 Modal -->
+  <div id="requests-overlay" class="modal-overlay">
+    <div class="modal-content modal-content-relative">
+      <button class="modal-close" id="close-requests-modal"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header">好友申請</div>
+      <div class="modal-subtitle">管理您的好友邀請</div>
+      <div class="friends-list" id="pending-requests-list">
+        <!-- 申請列表渲染區域 -->
+      </div>
     </div>
   </div>
 
@@ -146,6 +176,8 @@
       <button class="logout-btn" id="logout-btn">登出系統</button>
     </div>
   </div>
+
+  <!-- 日曆區塊 -->
   <div class="calendar-wrapper">
     <div class="calendar-container">
       <div class="calendar-header">
@@ -160,11 +192,35 @@
     </div>
   </div>
 
+  <!-- 朋友系統區塊 -->
+  <div class="friends-wrapper">
+    <div class="friends-container">
+      <div class="friends-header">
+        <h2>日曆 - 朋友</h2>
+        <button class="modal-btn requests-btn" id="show-requests-btn">
+          好友申請 <div class="requests-badge" id="requests-badge" style="display: none;">0</div>
+        </button>
+      </div>
+      
+      <div class="search-bar">
+        <input type="text" id="friend-search-input" class="modal-input" placeholder="輸入用戶名或專屬碼搜尋好友...">
+        <button class="modal-btn" id="friend-search-btn">搜尋</button>
+      </div>
+      
+      <!-- 搜尋結果暫時顯示區 -->
+      <div id="search-result-area" style="display: none; margin-bottom: 24px;"></div>
+
+      <div class="friends-list" id="my-friends-list">
+        <div class="empty-state">尚未添加任何好友</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Firebase Web SDK 邏輯 -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, set, get, child, query, orderByChild, equalTo, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAP4TENSlysfRTXx-a-Nk5gPM5f8UuT1Gs",
@@ -179,12 +235,14 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
-    
     const googleProvider = new GoogleAuthProvider();
     googleProvider.setCustomParameters({ prompt: 'select_account' });
-
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
+    let currentUserUid = null;
+    let currentUserData = null;
+
+    // --- 驗證與登入邏輯 ---
     const elements = {
       overlay: document.getElementById('auth-overlay'),
       mainForm: document.getElementById('main-auth-form'),
@@ -197,7 +255,6 @@
       registerFields: document.getElementById('register-fields'),
       submitBtn: document.getElementById('auth-submit-btn'),
       googleBtn: document.getElementById('google-auth-btn'),
-      googleBtnText: document.getElementById('google-btn-text'),
       toggleMsg: document.getElementById('auth-toggle-msg'),
       loading: document.getElementById('auth-loading'),
       googleLoading: document.getElementById('google-loading'),
@@ -210,7 +267,7 @@
     };
 
     let isLoginMode = true;
-    let pendingGoogleUser = null; // 暫存等待完成註冊的 Google 帳號
+    let pendingGoogleUser = null; 
 
     function updateProfileUI(username, exclusiveCode) {
       elements.overlay.classList.remove('active');
@@ -218,7 +275,6 @@
       elements.displayCode.textContent = exclusiveCode;
     }
 
-    // --- 切換 登入/註冊 模式 ---
     elements.toggleMsg.addEventListener('click', () => {
       isLoginMode = !isLoginMode;
       [elements.username, elements.password, elements.birthday].forEach(el => el.value = '');
@@ -227,24 +283,20 @@
         elements.subtitle.textContent = '登入以存取您的專屬日曆。';
         elements.registerFields.style.display = 'none';
         elements.submitBtn.textContent = '登入';
-        elements.googleBtnText.textContent = '使用 Google 登入';
+        document.getElementById('google-btn-text').textContent = '使用 Google 登入';
         elements.toggleMsg.innerHTML = '還沒有帳號？ <span>立即註冊</span>';
       } else {
         elements.title.textContent = '註冊帳號';
         elements.subtitle.textContent = '建立專屬日曆與辨識碼。';
         elements.registerFields.style.display = 'block';
         elements.submitBtn.textContent = '註冊';
-        elements.googleBtnText.textContent = '使用 Google 註冊';
+        document.getElementById('google-btn-text').textContent = '使用 Google 註冊';
         elements.toggleMsg.innerHTML = '已經有帳號了？ <span>直接登入</span>';
       }
     });
 
-    // 取消 Google 註冊流程
     elements.cancelGoogleComplete.addEventListener('click', async () => {
-      if(pendingGoogleUser) {
-        await pendingGoogleUser.delete().catch(()=>{});
-        await signOut(auth);
-      }
+      if(pendingGoogleUser) { await pendingGoogleUser.delete().catch(()=>{}); await signOut(auth); }
       pendingGoogleUser = null;
       elements.googleCompleteForm.style.display = 'none';
       elements.mainForm.style.display = 'block';
@@ -252,85 +304,60 @@
 
     function getSafeEmail(username) {
       let safeStr = '';
-      for(let i=0; i<username.length; i++) {
-        safeStr += username.charCodeAt(i).toString(36);
-      }
+      for(let i=0; i<username.length; i++) safeStr += username.charCodeAt(i).toString(36);
       return `user_${safeStr}@calender.local`;
-    }
-
-    function generateRandomLetters(length = 3) {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      return Array.from({length}, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
     }
 
     async function createUserDataInDB(user, username, birthday) {
       const countRef = ref(db, 'metadata/userCount');
       const countSnap = await get(countRef);
       const currentCount = countSnap.exists() ? countSnap.val() + 1 : 1;
-      
-      const exclusiveCode = `${String(currentCount).padStart(3, '0')}-${birthday || '0000'}-${generateRandomLetters(3)}`;
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const ranLetters = Array.from({length:3}, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+      const exclusiveCode = `${String(currentCount).padStart(3, '0')}-${birthday || '0000'}-${ranLetters}`;
 
-      await set(ref(db, 'users/' + user.uid), {
-        username: username || '使用者',
-        birthday: birthday || '0000',
-        exclusiveCode: exclusiveCode,
-        createdAt: new Date().toISOString()
-      });
+      const data = { username: username, birthday: birthday || '0000', exclusiveCode: exclusiveCode, createdAt: new Date().toISOString() };
+      await set(ref(db, 'users/' + user.uid), data);
       await set(countRef, currentCount);
-      return { username, exclusiveCode };
+      return data;
     }
 
-    // --- 帳號密碼提交 (一般) ---
     elements.submitBtn.addEventListener('click', async () => {
       const username = elements.username.value.trim();
       const password = elements.password.value.trim();
-      
       if (!username) return alert("請填寫用戶名稱！");
       if (!password) return alert("請填寫密碼！");
-
       const pseudoEmail = getSafeEmail(username);
       elements.loading.style.display = 'block';
 
       if (isLoginMode) {
-        try {
-          await signInWithEmailAndPassword(auth, pseudoEmail, password);
-        } catch (error) {
-          alert("登入失敗，請確認帳號或密碼是否正確。");
-        }
+        try { await signInWithEmailAndPassword(auth, pseudoEmail, password); } 
+        catch (error) { alert("登入失敗，請確認帳號或密碼是否正確。"); }
       } else {
-        const birthday = elements.birthday.value.trim();
-        if (!birthday || birthday.length !== 4) { elements.loading.style.display = 'none'; return alert("請填寫四碼生日！"); }
+        let birthday = elements.birthday.value.trim();
+        if(birthday && birthday.length !== 4) { elements.loading.style.display = 'none'; return alert("生日請填寫四碼！"); }
         if (!passwordRegex.test(password)) { elements.loading.style.display = 'none'; return alert("密碼必須至少 8 個字元，包含英文字母與數字。"); }
-
         try {
-          const userCredential = await createUserWithEmailAndPassword(auth, pseudoEmail, password);
-          const userData = await createUserDataInDB(userCredential.user, username, birthday);
+          const cred = await createUserWithEmailAndPassword(auth, pseudoEmail, password);
+          const userData = await createUserDataInDB(cred.user, username, birthday);
           alert(`註冊成功！專屬碼：${userData.exclusiveCode}`);
           updateProfileUI(userData.username, userData.exclusiveCode);
         } catch (error) {
-          if (error.code === 'auth/email-already-in-use') alert("此用戶名稱已被註冊！");
-          else alert("註冊失敗：" + error.message);
+          if (error.code === 'auth/email-already-in-use') alert("此用戶名稱已被註冊！"); else alert("註冊失敗：" + error.message);
         }
       }
       elements.loading.style.display = 'none';
     });
 
-    // --- Google 登入/註冊 按鈕 ---
     elements.googleBtn.addEventListener('click', async () => {
       elements.loading.style.display = 'block';
-      
       try {
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
         const userSnap = await get(child(ref(db), `users/${user.uid}`));
-        
         if (!userSnap.exists()) {
-          if (isLoginMode) {
-            await user.delete(); 
-            await signOut(auth);
-            alert("此 Google 帳號尚未註冊！請切換至「註冊」進行註冊。");
-          } else {
-            // 進入 Google 補全畫面 (只需要輸入用戶名稱)
+          if (isLoginMode) { await user.delete(); await signOut(auth); alert("此 Google 帳號尚未註冊！請切換至「註冊」進行註冊。"); } 
+          else {
             pendingGoogleUser = user;
             elements.mainForm.style.display = 'none';
             elements.googleCompleteForm.style.display = 'block';
@@ -339,59 +366,224 @@
           if (!isLoginMode) alert("此 Google 帳號已經註冊過，已為您自動登入！");
           updateProfileUI(userSnap.val().username, userSnap.val().exclusiveCode);
         }
-      } catch (error) {
-        if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
-            alert("驗證失敗：" + error.message);
-        }
-      } finally {
-        elements.loading.style.display = 'none';
-      }
+      } catch (error) { if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') alert("驗證失敗：" + error.message); } 
+      finally { elements.loading.style.display = 'none'; }
     });
 
-    // --- Google 註冊補全提交 ---
     elements.googleSubmitBtn.addEventListener('click', async () => {
       const gUsername = elements.googleUsernameInput.value.trim();
       if (!gUsername) return alert("請填寫用戶名稱！");
-      
       elements.googleLoading.style.display = 'block';
       try {
-        // 出生月日與密碼免填，後台由 Google 管理，專屬碼生日預設帶 0000
         const userData = await createUserDataInDB(pendingGoogleUser, gUsername, "0000");
         alert(`註冊成功！專屬碼：${userData.exclusiveCode}`);
         updateProfileUI(userData.username, userData.exclusiveCode);
         elements.googleCompleteForm.style.display = 'none';
         elements.mainForm.style.display = 'block';
         pendingGoogleUser = null;
-      } catch (error) {
-        alert("資料建立失敗：" + error.message);
-      }
+      } catch (error) { alert("資料建立失敗：" + error.message); }
       elements.googleLoading.style.display = 'none';
     });
 
+    elements.logoutBtn.addEventListener('click', () => { signOut(auth); location.reload(); });
 
-    // --- 嚴格的狀態監聽器 ---
+    // --- 嚴格狀態監聽與朋友系統初始化 ---
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // 如果目前正在補全表單的過程中，不執行自動關閉畫面
         if (pendingGoogleUser && user.uid === pendingGoogleUser.uid) return;
-
         try {
           const snapshot = await get(child(ref(db), `users/${user.uid}`));
           if (snapshot.exists()) {
-            updateProfileUI(snapshot.val().username, snapshot.val().exclusiveCode);
-          } else {
-            elements.overlay.classList.add('active');
-          }
+            currentUserData = snapshot.val();
+            currentUserUid = user.uid;
+            updateProfileUI(currentUserData.username, currentUserData.exclusiveCode);
+            initFriendsSystem(); // 初始化好友系統
+          } else { elements.overlay.classList.add('active'); }
         } catch (e) { console.error(e); }
-      } else {
-        elements.overlay.classList.add('active');
-      }
+      } else { elements.overlay.classList.add('active'); currentUserUid = null; }
     });
 
-    elements.logoutBtn.addEventListener('click', () => {
-      signOut(auth);
-      location.reload(); 
+
+    // ==========================================
+    // =           朋友系統核心邏輯             =
+    // ==========================================
+
+    function initFriendsSystem() {
+      listenToPendingRequests();
+      listenToFriendsList();
+    }
+
+    // 1. 搜尋好友
+    document.getElementById('friend-search-btn').addEventListener('click', async () => {
+      const term = document.getElementById('friend-search-input').value.trim();
+      const resultArea = document.getElementById('search-result-area');
+      if (!term) return alert("請輸入搜尋內容！");
+
+      resultArea.style.display = 'block';
+      resultArea.innerHTML = '<div class="empty-state">搜尋中...</div>';
+
+      try {
+        // 先嘗試搜尋專屬碼
+        let q = query(ref(db, 'users'), orderByChild('exclusiveCode'), equalTo(term));
+        let snap = await get(q);
+        
+        // 若找不到，嘗試搜尋用戶名
+        if (!snap.exists()) {
+          q = query(ref(db, 'users'), orderByChild('username'), equalTo(term));
+          snap = await get(q);
+        }
+
+        if (snap.exists()) {
+          let html = '';
+          snap.forEach(childSnap => {
+            const uId = childSnap.key;
+            const uData = childSnap.val();
+            if (uId === currentUserUid) return; // 排除自己
+            
+            html += `
+              <div class="friend-item">
+                <div class="friend-info">
+                  <div class="friend-avatar"></div>
+                  <div class="friend-details">
+                    <h4>${uData.username}</h4>
+                    <p>ID: ${uData.exclusiveCode}</p>
+                  </div>
+                </div>
+                <div class="action-btns">
+                  <button class="btn-small primary" onclick="sendFriendRequest('${uId}')">發送申請</button>
+                </div>
+              </div>
+            `;
+          });
+          resultArea.innerHTML = html || '<div class="empty-state">找不到符合條件的用戶。</div>';
+        } else {
+          resultArea.innerHTML = '<div class="empty-state">找不到該用戶，請確認輸入是否正確。</div>';
+        }
+      } catch (error) { console.error(error); resultArea.innerHTML = '<div class="empty-state">搜尋發生錯誤。</div>'; }
     });
+
+    // 2. 發送好友申請 (掛載到全域)
+    window.sendFriendRequest = async (targetUid) => {
+      try {
+        // 檢查是否已是好友
+        const friendCheck = await get(ref(db, `friends/${currentUserUid}/list/${targetUid}`));
+        if(friendCheck.exists()) return alert("你們已經是好友了！");
+        
+        // 發送申請
+        await set(ref(db, `friends/${targetUid}/pending/${currentUserUid}`), true);
+        alert("已成功發送好友申請！");
+        document.getElementById('search-result-area').innerHTML = ''; // 清空搜尋
+        document.getElementById('friend-search-input').value = '';
+      } catch (e) { alert("發送失敗"); }
+    };
+
+    // 3. 監聽收到的好友申請
+    function listenToPendingRequests() {
+      const pendingRef = ref(db, `friends/${currentUserUid}/pending`);
+      onValue(pendingRef, async (snapshot) => {
+        const badge = document.getElementById('requests-badge');
+        const listDiv = document.getElementById('pending-requests-list');
+        
+        if (snapshot.exists()) {
+          const requests = snapshot.val();
+          const uids = Object.keys(requests);
+          badge.style.display = 'flex';
+          badge.textContent = uids.length;
+
+          let html = '';
+          for (const uid of uids) {
+            const userSnap = await get(child(ref(db), `users/${uid}`));
+            if (userSnap.exists()) {
+              const uData = userSnap.val();
+              html += `
+                <div class="friend-item" style="border-width: 1px; margin-bottom: 8px;">
+                  <div class="friend-info">
+                    <div class="friend-details">
+                      <h4>${uData.username}</h4>
+                      <p>${uData.exclusiveCode}</p>
+                    </div>
+                  </div>
+                  <div class="action-btns">
+                    <button class="btn-small primary" onclick="acceptRequest('${uid}')">接受</button>
+                    <button class="btn-small" onclick="rejectRequest('${uid}')">拒絕</button>
+                  </div>
+                </div>
+              `;
+            }
+          }
+          listDiv.innerHTML = html;
+        } else {
+          badge.style.display = 'none';
+          listDiv.innerHTML = '<div class="empty-state">目前沒有新的好友申請。</div>';
+        }
+      });
+    }
+
+    // 打開與關閉申請 Modal
+    document.getElementById('show-requests-btn').addEventListener('click', () => document.getElementById('requests-overlay').classList.add('active'));
+    document.getElementById('close-requests-modal').addEventListener('click', () => document.getElementById('requests-overlay').classList.remove('active'));
+
+    // 4. 接受 / 拒絕 申請
+    window.acceptRequest = async (requesterUid) => {
+      try {
+        const updates = {};
+        updates[`friends/${currentUserUid}/list/${requesterUid}`] = true;
+        updates[`friends/${requesterUid}/list/${currentUserUid}`] = true;
+        updates[`friends/${currentUserUid}/pending/${requesterUid}`] = null; // 刪除申請
+        await update(ref(db), updates);
+      } catch (e) { alert("操作失敗"); }
+    };
+
+    window.rejectRequest = async (requesterUid) => {
+      try { await remove(ref(db, `friends/${currentUserUid}/pending/${requesterUid}`)); } 
+      catch (e) { alert("操作失敗"); }
+    };
+
+    // 5. 監聽並渲染我的好友列表
+    function listenToFriendsList() {
+      const friendsRef = ref(db, `friends/${currentUserUid}/list`);
+      onValue(friendsRef, async (snapshot) => {
+        const listDiv = document.getElementById('my-friends-list');
+        if (snapshot.exists()) {
+          const friends = snapshot.val();
+          const uids = Object.keys(friends);
+          let html = '';
+          for (const uid of uids) {
+            const userSnap = await get(child(ref(db), `users/${uid}`));
+            if (userSnap.exists()) {
+              const uData = userSnap.val();
+              html += `
+                <div class="friend-item">
+                  <div class="friend-info">
+                    <div class="friend-avatar"></div>
+                    <div class="friend-details">
+                      <h4>${uData.username}</h4>
+                      <p>專屬碼: ${uData.exclusiveCode}</p>
+                    </div>
+                  </div>
+                  <div class="action-btns">
+                    <button class="btn-small" onclick="removeFriend('${uid}')">刪除</button>
+                  </div>
+                </div>
+              `;
+            }
+          }
+          listDiv.innerHTML = html;
+        } else {
+          listDiv.innerHTML = '<div class="empty-state">尚未添加任何好友</div>';
+        }
+      });
+    }
+
+    // 刪除好友
+    window.removeFriend = async (targetUid) => {
+      if(confirm("確定要刪除這位好友嗎？")) {
+        const updates = {};
+        updates[`friends/${currentUserUid}/list/${targetUid}`] = null;
+        updates[`friends/${targetUid}/list/${currentUserUid}`] = null;
+        await update(ref(db), updates);
+      }
+    };
 
     // --- 日曆渲染邏輯 ---
     let currentDate = new Date();
